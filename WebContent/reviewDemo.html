@@ -1,0 +1,141 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<script type="text/javascript" src="js/jquery2.24.min.js"></script>
+<script type="text/javascript" src="js/commonDemo.js"></script>
+<link rel="stylesheet" href="css/commonDemo.css" type="text/css" />
+<script type="text/javascript">
+	var urlServer = location.href.substring(0, location.href
+			.indexOf("mystockserver") + 14)
+			+ "api/";
+
+	function getReviews() {
+		$.ajax({
+			type : 'GET',
+			headers : {
+				"Authorization" : "Basic " + $("#idToken").val()
+			},
+			url : urlServer + "finance/review/getReviews?"
+					+ getListParams("idReviewsForm"),
+			success : function(data, textStatus, jqXHR) {
+				$("#idReviewsFormResult").val(jqXHR.responseText);
+				$("#codeGetReviews").text(jqXHR.status);
+				$("#dateGetReviews").text(getCurrentDate);
+				$("#divGetReviews").show();
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#idReviewsFormResult").val(jqXHR.responseText);
+				$("#codeGetReviews").text(jqXHR.status);
+				$("#dateGetReviews").text(getCurrentDate);
+				$("#divGetReviews").show();
+			}
+		});
+	}
+
+	function postReview() {
+		$.ajax({
+			type : 'POST',
+			headers : {
+				"Authorization" : "Basic " + $("#idToken").val()
+			},
+			contentType : "application/x-www-form-urlencoded",
+			data : $("#idPostReviewForm").serialize(),
+			url : urlServer + "finance/review/postReview",
+			success : function(data, textStatus, jqXHR) {
+				$("#idPostReviewFormResult").val(jqXHR.responseText);
+				$("#codePostReview").text(jqXHR.status);
+				$("#datePostReview").text(getCurrentDate);
+				$("#divPostReview").show();
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#idPostReviewFormResult").val(jqXHR.responseText);
+				$("#codePostReview").text(jqXHR.status);
+				$("#datePostReview").text(getCurrentDate);
+				$("#divPostReview").show();
+			}
+		});
+	}
+</script>
+<body>
+	<title>Mystockserver - Review</title>
+	<br />
+	<div style="height: 100px; vertical-align: middle;">
+		<h1>Mystockserver - Review</h1>
+	</div>
+
+	<br /> Token
+	<input type="text" id="idToken" placeholder="Input your token">
+	<br />
+	<br />
+	<div style="height: 50px;">
+		<h2>
+			Get reviews<br /> <br />
+		</h2>
+	</div>
+	<br />
+	<form name="reviewsForm" method="get" id="idReviewsForm">
+		Stock <input type="text" id="s" value="28"> Account token <input
+			type="text" id="t" value="3cmioevic0eqv912tm1q"> Start year <input
+			type="text" id="sy" value="2017"> End year <input type="text"
+			id="ey" value="2017"> Period <input type="text" id="p"
+			value="Y"> <input type="button" onclick="getReviews()"
+			value="getReviews" />
+	</form>
+	<div id="divGetReviews" style="display: none;">
+		<span style="font-weight: bold">Code : </span> <span
+			id="codeGetReviews"></span> <span style="font-weight: bold">Date
+			: </span> <span id="dateGetReviews"></span>
+	</div>
+	<br>
+	<div>
+		<textarea cols="100" id="idReviewsFormResult" rows="20">
+		</textarea>
+	</div>
+	<br />
+	<br />
+	<div style="height: 50px;">
+		<h2>
+			Post review<br /> <br />
+		</h2>
+	</div>
+	<br />
+
+
+	<form name="postReviewForm" method="post" id="idPostReviewForm">
+
+		Token <input type="text" id="t" value="" name="t"> id <input
+			type="text" id="id" value="197" name="id"> stock <input
+			type="text" id="s" value="59" name="s"> period <input
+			type="text" id="p" value="Y" name="p"> startYear <input
+			type="text" id="sy" value="2012" name="sy"> endYear <input
+			type="text" id="ey" value="2012" name="ey"> startDate <input
+			type="text" id="sd" value="2012-01-01" name="sd">
+		publicationDate <input type="text" id="pb" value="2012-02-25"
+			name="pb">nbSharesEndPeriod <input type="text" id="ns"
+			value="10000" name="ns"> free float <input type="text" id="ff"
+			placeholder="75.27" name="ff"> operations <input type="text" id="o"
+			value="240" name="o"> balanceSheets <input type="text"
+			id="bs" value="209" name="bs"> Currency <input type="text"
+			id="c" value="978" name="c"> </br> <input type="button"
+			onclick="postReview()" value="postReview" />
+
+
+	</form>
+	<div id="divPostReview" style="display: none;">
+		<span style="font-weight: bold">Code : </span> <span
+			id="codePostReview"></span> <span style="font-weight: bold">Date
+			: </span> <span id="datePostReview"></span>
+	</div>
+	<br>
+	<div>
+		<textarea cols="100" id="idPostReviewFormResult" rows="20">
+		</textarea>
+	</div>
+
+
+	<div style="width: 100%; text-align: center;">
+		<b>Mystocks - Copyright 2018</b>
+	</div>
+</body>
+
+</html>

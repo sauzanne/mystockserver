@@ -1,0 +1,132 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="js/jquery2.24.min.js"></script>
+<script type="text/javascript" src="js/commonDemo.js"></script>
+<link rel="stylesheet" href="css/commonDemo.css" type="text/css" />
+<script type="text/javascript">
+	var urlServer = location.href.substring(0, location.href
+			.indexOf("mystockserver") + 14)
+			+ "api/";
+
+	function getNewsFlow() {
+		$.ajax({
+			type : 'GET',
+			headers : {
+				"Authorization" : "Basic " + $("#idToken").val()
+			},
+			url : urlServer + "finance/newsflow/getNewsFlow?"
+					+ getListParams("idNewsFlowForm"),
+			success : function(data, textStatus, jqXHR) {
+				$("#idNewsFlowFormResult").val(jqXHR.responseText);
+				$("#codeGetNewsFlow").text(jqXHR.status);
+				$("#dateGetNewsFlow").text(getCurrentDate);
+				$("#divGetNewsFlow").show();
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#idNewsFlowFormResult").val(jqXHR.responseText);
+				$("#codeGetNewsFlow").text(jqXHR.status);
+				$("#dateGetNewsFlow").text(getCurrentDate);
+				$("#divGetNewsFlow").show();
+			}
+		});
+	}
+
+	function postNewsFlow() {
+		$.ajax({
+			type : 'POST',
+			headers : {
+				"Authorization" : "Basic " + $("#idToken").val()
+			},
+			contentType : "application/x-www-form-urlencoded",
+			data : $("#idPostNewsFlowForm").serialize(),
+			url : urlServer + "finance/newsflow/postNewsFlow",
+			success : function(data, textStatus, jqXHR) {
+				$("#idPostNewsFlowFormResult").val(jqXHR.responseText);
+				$("#codePostNewsFlow").text(jqXHR.status);
+				$("#datePostNewsFlow").text(getCurrentDate);
+				$("#divPostNewsFlow").show();
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#idPostNewsFlowFormResult").val(jqXHR.responseText);
+				$("#codePostNewsFlow").text(jqXHR.status);
+				$("#datePostNewsFlow").text(getCurrentDate);
+				$("#divPostNewsFlow").show();
+			}
+		});
+	}
+</script>
+</head>
+<body>
+	<title>Mystockserver - News flow</title>
+	<br />
+	<div style="height: 100px; vertical-align: middle;">
+		<h1>Mystockserver - News flow</h1>
+	</div>
+
+	<br /> Token
+	<input type="text" id="idToken" placeholder="Input your token">
+	<br />
+	<br />
+	<div style="height: 50px;">
+		<h2>
+			Get news flow from user<br /> <br />
+		</h2>
+	</div>
+	<br />
+	<form name="newsFlowForm" method="get" id="idNewsFlowForm">
+		Token <input type="text" id="t" value=""> <input type="button"
+			onclick="getNewsFlow()" value="getNewsFlow" />
+	</form>
+	<div id="divGetNewsFlow" style="display: none;">
+		<span style="font-weight: bold">Code : </span> <span
+			id="codeGetNewsFlow"></span> <span style="font-weight: bold">Date
+			: </span> <span id="dateGetNewsFlow"></span>
+	</div>
+	<br>
+	<div>
+		<textarea cols="100" id="idNewsFlowFormResult" nrows="20">
+		</textarea>
+	</div>
+	<br />
+
+	<div style="height: 50px;">
+		<h2>
+			Post news flow<br /> <br />
+		</h2>
+	</div>
+
+	<form name="postNewsFlowForm" method="post" id="idPostNewsFlowForm">
+
+		Token <input type="text" id="t" value="" name="t"> id <input
+			type="text" id="id" value="18" name="id"> name <input
+			type="text" id="n" value="boursier.com" name="n"> url <input
+			type="text" id="u"
+			value="http://www.boursier.com/(S(tluffdbozlfm3okioeqgux5u))/syndication/atom/news"
+			name="u"> notification <input type="checkbox" id="nt" name="nt" />  keyword<br/>
+		<textarea cols="100" rows="20" id="k" name="k">plastivaloire, abc arbitrage, opr, velcan energy, grèce, albioma, aurea, bigben,faiveley, actia,
+ bigben, platine, platinum, orange, business et decision, bnd, futuren, parrot, eo2, mpi, brésil, amérique latine, alstom, systran, amazon, vergnet, velcan, mr bricolage, sfr, tesla, yandex, derichebourg, porsche, gaumont, GIROD, microwave, sword, vergnet, qiwi, bouygues, peugeot, renault, ubi,volkswagen, maurel, neopost, maurel et prom, ubisoft, engie, cnim, engie, pizzorno, fnac, umanis, michelin, brexit, signaux girod, iliad, Business et Decision, Aufeminin.com, automobile, archos, it link, umanis, trump, itlink, samsung, pétrole, voltalia, coface, latecoere, graines voltz, solutions 30, sqli, ile et vilaine, innate pharma, ose immuno, ose immunotherapeutics, astellia, opa, zodiac, sanofi, lg display, median, solocal, erytech, peugeot, psa, maurel,eramet, free, pétrole, environnement sa, prodways, ald, deutsche bank, micropole, aures, gemalto,technipfmc, cgg, carrefour, sqli, arcelormittal, société générale,1000mercis, telefonica, spotify, dnxcorp, navya, michelin</textarea>
+		<br/> <input
+			type="button" onclick="postNewsFlow()" value="postNewsFlow" />
+
+
+	</form>
+	<div id="divGetPostNewsFlow" style="display: none;">
+		<span style="font-weight: bold">Code : </span> <span
+			id="codePostNewsFlow"></span> <span style="font-weight: bold">Date
+			: </span> <span id="datePostNewsFlow"></span>
+	</div>
+	<br>
+	<div>
+		<textarea cols="100" id="idPostNewsFlowFormResult" rows="20">
+		</textarea>
+	</div>
+
+
+
+	<div style="width: 100%; text-align: center;">
+		<b>Mystocks - Copyright 2018</b>
+	</div>
+</body>
+
+</html>

@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Mystockserver - Operations</title>
+<meta charset="UTF-8">
+<script type="text/javascript" src="js/jquery2.24.min.js"></script>
+<script type="text/javascript" src="js/commonDemo.js"></script>
+<link rel="stylesheet" href="css/commonDemo.css" type="text/css" />
+<script type="application/javascript">
+	
+	
+	var urlServer = location.href.substring(0, location.href.indexOf("mystockserver") + 14)+ "api/";
+			
+	
+
+	function postOperations(dType) {
+		$.ajax({
+			type : 'POST',
+			headers : {"Authorization": "Basic "+$("#idToken").val()},
+			contentType : "application/x-www-form-urlencoded",
+			data : $("#idOperationsForm").serialize(),
+			dataType : dType,
+			url : urlServer + "finance/operations/postOperations",
+			success : function(data, textStatus, jqXHR) {
+				$("#idResults").val(jqXHR.responseText);
+				$("#codePostOperations").text(jqXHR.status);
+				$("#datePostOperations").text(getCurrentDate);
+				$("#divPostOperations").show();
+
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#idResults").val(jqXHR.responseText);
+				$("#codePostOperations").text(jqXHR.status);
+				$("#datePostOperations").text(getCurrentDate);
+				$("#divPostOperations").show();
+			}
+		});
+	}
+	
+
+
+
+
+
+</script>
+</head>
+<body>
+	<br />
+	<div style="height: 100px; vertical-align: middle;">
+		<h1>Mystockserver - Operations</h1>
+	</div>
+	<br />
+	</br>
+	<br /> Token
+	<input type="text" id="idToken" placeholder="Input your token">
+	<br />
+	<br />
+	<div style="height: 50px;">
+		<h2>
+			Post operations<br /> <br />
+		</h2>
+	</div>
+	<br />
+
+	<form name="operationsForm" method="post" id="idOperationsForm">
+		<input type="text" id="t" value=""
+			placeholder="Account token" name="t"><br /> <input type="text" id="id"
+			value="" name="id" placeholder="id operation in case of update">
+		<input type="text" id="r" value="" name="r" placeholder="revenues">
+		<input type="text" id="e" value="" name="e" placeholder="ebit">
+		<input type="text" id="ce" value="" name="ce"
+			placeholder="current ebit"> <input type="text" id="ea"
+			value="" name="ea" placeholder="ebitda"> <input type="text"
+			id="cor" value="" name="cor" placeholder="cost of revenues">
+		</br> <input type="text" id="fe" value="" name="fe"
+			placeholder="financial expenses"> <input type="text" id="se"
+			value="" name="se" placeholder="shareowners earnings"> <input
+			type="text" id="ae" value="" name="ae"
+			placeholder="adjusted earnings"> <input type="text" id="ocf"
+			value="" name="ocf" placeholder="operationnal cash flow"><input
+			type="text" id="fcf" value="" name="fcf" placeholder="free cash flow">
+		<input type="text" id="ei" value="" name="ei"
+			placeholder="exceptionnal items"></br> </br> <input type="button"
+			onclick="postOperations('text')" value="create/update Operations" />
+	</form>
+	<div id="divPostOperations" style="display: none;">
+		<span style="font-weight: bold">Code : </span> <span
+			id="codePostOperations"></span> <span style="font-weight: bold">Date
+			: </span> <span id="datePostOperations"></span>
+	</div>
+	</br>
+
+	Result	</br>
+	
+	<textarea cols="50" id="idResults">
+	</textarea>
+
+	<div style="width: 100%; text-align: center;">
+		<b>Mystocks - Copyright 2018</b>
+	</div>
+
+</body>
+
+</html>

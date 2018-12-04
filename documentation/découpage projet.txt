@@ -1,0 +1,33 @@
+Découpage du projet
+
+main package
+fr.mystocks.mystockserver
+
+fr.mystocks.mystockserver.data => couche data
+fr.mystocks.mystockserver.view => couche de présentation (REST, services de présentation)
+fr.mystocks.mystockserver.service => couche de services
+fr.mystocks.mystockserver.technic => tout ce qui concerne la technique (Tools*)
+fr.mystocks.mystockserver.functional => tout ce qui concerne du fonctionnel et qui est commun (Utils*)
+
+Constantes techniques
+Les constantes techniques communes doivent être placées dans TechnicalConstant
+
+Comparateur 
+Les mettre directement avec l'objet comparé donc par exemple dans data lorsqu'il s'agit de comparé un objet métier
+Mettre le nom de l'objet comparé suivi de comparator
+
+Encryption des mots de passe
+Nous utiliserons du SHA 512 pour encrypter les mots de passe en BDD
+
+Gestion des exceptions
+Se baser sur les conseils délivrés ici http://blog.octo.com/la-gestion-des-exceptions-en-java/
+
+Configuration du déploiement à chaud dans Eclipse
+https://www.mkyong.com/eclipse/how-to-configure-hot-deploy-in-eclipse/
+
+Configuration de Log4j2
+http://andrew-flower.com/blog/Basic_Log4j2_Configuration
+
+Différence entre @Inject et @Autowired
+https://stackoverflow.com/questions/7142622/what-is-the-difference-between-inject-and-autowired-in-spring-framework-which
+

@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<script src="js/jquery2.24.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="js/commonDemo.js"></script>
+<link rel="stylesheet" href="css/commonDemo.css" type="text/css" />
+
+<script type="application/javascript">
+	
+	
+	
+	
+	
+	
+	var urlServer = location.href.substring(0, location.href.indexOf("mystockserver") + 14)+ "api/";
+			
+	
+
+	function postAuthentication(dType) {
+		$.ajax({
+			type : 'POST',
+			headers : {"Authorization": "Basic "+$("#idToken").val()},
+			contentType : "application/json",
+			data : '{"userName" : "' + $("#idUserName").val()
+			+ '", "password" : "' + $("#idPassword").val() + '","token" : "' + $("#idAccountToken").val() + '"}',
+			dataType : dType,
+			url : urlServer + "security/account/postAuthentication",
+			success : function(data, textStatus, jqXHR) {
+				$("#codePostAccount").text(jqXHR.status);
+				$("#datePostAccount").text(getCurrentDate);
+
+				$("#idPostAccountResult").val(jqXHR.responseText);
+				$("#divPostAccount").show();
+
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#codePostAccount").text(jqXHR.status);
+				$("#datePostAccount").text(getCurrentDate);
+
+				$("#idPostAccountResult").val(jqXHR.responseText);
+				$("#divPostAccount").show();
+
+			}
+		});
+	}
+	
+
+
+
+</script>
+</head>
+<body>
+	Token
+	<input type="text" id="idToken" placeholder="Your token">
+	<br />
+	<br />
+	<br />
+	<h1>Mystocks account : post authentication</h1>
+	<br />
+	<h2>Type userName / password</h2>
+	<br />
+	<form name="accountForm" method="post" id="idAccountForm">
+		Username <input type="text" placeholder="Your username"
+			id="idUserName"><br /> <br /> Password <input type="text"
+			placeholder="Uncrypted password" id="idPassword"><br /> <br />
+		Token <input type="text" placeholder="Place your token"
+			id="idAccountToken"><br /> <br /> <input type="button"
+			onclick="javascript:postAuthentication('text')"
+			value="postAuthentication"><br />
+	</form>
+	<br>
+	<div id="divPostAccount" style="display: none;">
+		<span style="font-weight: bold">Code : </span> <span
+			id="codePostAccount"></span> <span style="font-weight: bold">Date
+			: </span> <span id="datePostAccount"></span>
+	</div>
+	<br>
+	<div>
+		<textarea cols="100" id="idPostAccountResult" rows="20">
+		</textarea>
+	</div>
+	<br>
+	<br>
+	<br>
+	<div style="width: 100%; text-align: center;">
+		<b>Mystocks - Copyright 2018</b>
+	</div>
+
+
+</body>
+
+</html>

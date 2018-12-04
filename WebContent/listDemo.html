@@ -1,0 +1,301 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="js/jquery2.24.min.js"
+	integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+	crossorigin="anonymous"></script>
+<script type="text/javascript" src="js/commonDemo.js"></script>
+<link rel="stylesheet" href="css/commonDemo.css" type="text/css" />
+<script type="text/javascript">
+	var urlServer = location.href.substring(0, location.href
+			.indexOf("mystockserver") + 14)
+			+ "api/";
+
+	function getLists() {
+		$.ajax({
+			type : 'GET',
+			headers : {
+				"Authorization" : "Basic " + $("#idToken").val()
+			},
+			url : urlServer + "finance/liststock/getLists?"
+					+ getListParams("idListsForm"),
+			success : function(data, textStatus, jqXHR) {
+				$("#idListsFormResult").val(jqXHR.responseText);
+				$("#codeGetLists").text(jqXHR.status);
+				$("#dateGetLists").text(getCurrentDate);
+				$("#divGetLists").show();
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#idListsFormResult").val(jqXHR.responseText);
+				$("#codeGetLists").text(jqXHR.status);
+				$("#dateGetLists").text(getCurrentDate);
+				$("#divGetLists").show();
+			}
+		});
+
+	}
+
+	function putElement() {
+		$.ajax({
+			type : 'PUT',
+			headers : {
+				"Authorization" : "Basic " + $("#idToken").val()
+			},
+			contentType : 'application/x-www-form-urlencoded',
+			data : $("#idPutElementForm").serialize(),
+			url : urlServer + "finance/liststock/putElement",
+			success : function(data, textStatus, jqXHR) {
+				$("#idPutElementResult").val(jqXHR.responseText);
+				$("#codePutElement").text(jqXHR.status);
+				$("#datePutElement").text(getCurrentDate);
+				$("#divPutElement").show();
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#idPutElementResult").val(jqXHR.responseText);
+				$("#codePutElement").text(jqXHR.status);
+				$("#datePutElement").text(getCurrentDate);
+				$("#divPutElement").show();
+			}
+		});
+	}
+
+	function postRetryElements() {
+		$
+				.ajax({
+					type : 'POST',
+					headers : {
+						"Authorization" : "Basic " + $("#idToken").val()
+					},
+					contentType : 'application/json',
+					data : '{"login" : "' + $("#loginDeleteElements").val()
+							+ '", "listToDelete" : ['
+							+ $("#listToDelete").val() + ']}',
+					url : urlServer + "finance/liststock/postRetryElements",
+					success : function(data, textStatus, jqXHR) {
+						$("#idDeleteElementsResult").val(jqXHR.responseText);
+						$("#codeDeleteElement").text(jqXHR.status);
+						$("#dateDeleteElement").text(getCurrentDate);
+						$("#divDeleteElement").show();
+					},
+					error : function(jqXHR, textStatus, errorThrown) {
+						$("#idDeleteElementsResult").val(jqXHR.responseText);
+						$("#codeDeleteElement").text(jqXHR.status);
+						$("#dateDeleteElement").text(getCurrentDate);
+						$("#divDeleteElement").show();
+					}
+				});
+	}
+
+	function putList() {
+		$.ajax({
+			type : 'PUT',
+			headers : {
+				"Authorization" : "Basic " + $("#idToken").val()
+			},
+			contentType : 'application/x-www-form-urlencoded',
+			data : $("#idPutListForm").serialize(),
+			url : urlServer + "finance/liststock/putList",
+			success : function(data, textStatus, jqXHR) {
+				$("#idPutListResult").val(jqXHR.responseText);
+				$("#codePutList").text(jqXHR.status);
+				$("#datePutList").text(getCurrentDate);
+				$("#divPutList").show();
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#idPutListResult").val(jqXHR.responseText);
+				$("#codePutList").text(jqXHR.status);
+				$("#datePutList").text(getCurrentDate);
+				$("#divPutList").show();
+			}
+		});
+	}
+
+	/*function deleteList() {
+		$.ajax({
+			type : 'DELETE',
+			headers : {
+				"Authorization" : "Basic " + $("#idToken").val()
+			},
+			contentType : 'application/x-www-form-urlencoded',
+			data : $("#idDeleteListForm").serialize(),
+			url : urlServer + "finance/liststock/deleteList",
+			success : function(data, textStatus, jqXHR) {
+				$("#idDeleteListResult").val(jqXHR.responseText);
+				$("#codeDeleteList").text(jqXHR.status);
+				$("#dateDeleteList").text(getCurrentDate);
+				$("#divDeleteList").show();
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#idDeleteListResult").val(jqXHR.responseText);
+				$("#codeDeleteList").text(jqXHR.status);
+				$("#dateDeleteList").text(getCurrentDate);
+				$("#divDeleteList").show();
+			}
+		});
+	}*/
+
+	function deleteList() {
+		$.ajax({
+			type : 'DELETE',
+			headers : {
+				"Authorization" : "Basic " + $("#idToken").val()
+			},
+			contentType : 'application/x-www-form-urlencoded',
+			data : 'text',
+			url : urlServer + "finance/liststock/deleteList?id="+$("#idStockListToDelete").val(),
+			success : function(data, textStatus, jqXHR) {
+				$("#idDeleteListResult").val(jqXHR.responseText);
+				$("#codeDeleteList").text(jqXHR.status);
+				$("#dateDeleteList").text(getCurrentDate);
+				$("#divDeleteList").show();
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#idDeleteListResult").val(jqXHR.responseText);
+				$("#codeDeleteList").text(jqXHR.status);
+				$("#dateDeleteList").text(getCurrentDate);
+				$("#divDeleteList").show();
+			}
+		});
+	}
+</script>
+<body>
+	<title>Mystockserver - List stocks</title>
+	<br />
+	<div style="height: 100px; vertical-align: middle;">
+		<h1>Mystockserver - List stocks</h1>
+	</div>
+
+	<br /> Token
+	<input type="text" id="idToken" placeholder="Input your token">
+	<br />
+	<br />
+	<div style="height: 50px;">
+		<h2>
+			Get lists from user<br /> <br />
+		</h2>
+	</div>
+	<br />
+	<form name="listsForm" method="get" id="idListsForm">
+		User <input type="text" id="u" value="mystocks"> <input
+			type="text" id="l" value="1"> <input type="button"
+			onclick="getLists()" value="getLists" />
+	</form>
+	<div id="divGetLists" style="display: none;">
+		<span style="font-weight: bold">Code : </span> <span id="codeGetLists"></span>
+		<span style="font-weight: bold">Date : </span> <span id="dateGetLists"></span>
+	</div>
+	<br>
+	<div>
+		<textarea cols="100" id="idListsFormResult" rows="20">
+		</textarea>
+	</div>
+	<div style="height: 50px;">
+		<h2>
+			Put new list<br /> <br />
+		</h2>
+	</div>
+	<br />
+	<form name="putListForm" method="put" id="idPutListForm">
+		Name <input type="text" name="n" value="Mes actions du PEA-PME">
+		Account id <input type="text" name="i" value="1000"> <input
+			type="button" onclick="putList()" value=putList />
+	</form>
+	<div id="divPutList" style="display: none;">
+		<span style="font-weight: bold">Code : </span> <span id="codePutList"></span>
+		<span style="font-weight: bold">Date : </span> <span id="datePutList"></span>
+	</div>
+	<br>
+	<div>
+		<textarea cols="100" id="idPutListResult" rows="20">
+		</textarea>
+	</div>
+
+	<br />
+	<br />
+	<div>
+		<textarea cols="100" id="idListsFormResult" rows="20">
+		</textarea>
+	</div>
+	<div style="height: 50px;">
+		<h2>
+			Delete list<br /> <br />
+		</h2>
+	</div>
+	<br />
+	<form name="deleteListForm" method="delete" id="idDeleteListForm">
+		Id to delete <input type="text" name="id" value="5"
+			id="idStockListToDelete"> <input type="button"
+			onclick="deleteList()" value=deleteList />
+	</form>
+	<div id="divDeleteList" style="display: none;">
+		<span style="font-weight: bold">Code : </span> <span
+			id="codeDeleteList"></span> <span style="font-weight: bold">Date
+			: </span> <span id="dateDeleteList"></span>
+	</div>
+	<br>
+	<div>
+		<textarea cols="100" id="idDeleteListResult" rows="20">
+		</textarea>
+	</div>
+
+	<br />
+	<br />
+
+	<br>
+	<br>
+	<br />
+	<br />
+	<div style="height: 50px;">
+		<h2>
+			Put new element in list<br /> <br />
+		</h2>
+	</div>
+	<br />
+	<form name="putElementForm" method="put" id="idPutElementForm">
+		Stock <input type="text" name="s" value="23"> List <input
+			type="text" name="l" value="1"> <input type="button"
+			onclick="putElement()" value="putElement" />
+	</form>
+	<div id="divPutElement" style="display: none;">
+		<span style="font-weight: bold">Code : </span> <span
+			id="codePutElement"></span> <span style="font-weight: bold">Date
+			: </span> <span id="datePutElement"></span>
+	</div>
+	<br>
+	<div>
+		<textarea cols="100" id="idPutElementResult" rows="20">
+		</textarea>
+	</div>
+
+	<br />
+	<br />
+	<div style="height: 50px;">
+		<h2>
+			Delete elements in list<br /> <br />
+		</h2>
+	</div>
+	<br />
+	<form name="deleteElementsForm" method="put" id="idDeleteElementsForm">
+		Stock <input type="text" id="listToDelete" value="23,24">
+		Login <input type="text" id="loginDeleteElements" value="sauzanne">
+		<input type="button" onclick="postRetryElements()"
+			value="postRetryElements" />
+	</form>
+	<div id="divPutElement" style="display: none;">
+		<span style="font-weight: bold">Code : </span> <span
+			id="codeDeleteElements"></span> <span style="font-weight: bold">Date
+			: </span> <span id="dateDeleteElements"></span>
+	</div>
+	<br>
+	<div>
+		<textarea cols="100" id="idDeleteElementsResult" rows="20">
+		</textarea>
+	</div>
+
+
+	<div style="width: 100%; text-align: center;">
+		<b>Mystocks - Copyright 2018</b>
+	</div>
+</body>
+
+</html>

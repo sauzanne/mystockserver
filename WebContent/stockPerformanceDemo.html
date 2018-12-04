@@ -1,0 +1,109 @@
+<html>
+<head>
+<title>Mystockserver - Stock performance</title>
+<meta charset="UTF-8">
+<script type="text/javascript" src="js/jquery2.24.min.js"></script>
+<script type="text/javascript" src="js/commonDemo.js"></script>
+<link rel="stylesheet" href="css/commonDemo.css" type="text/css" />
+<script type="text/javascript">
+	var urlServer = location.href.substring(0, location.href
+			.indexOf("mystockserver") + 14)
+			+ "api/";
+
+	function getPerformance() {
+		$.ajax({
+			type : 'GET',
+			headers : {
+				"Authorization" : "Basic " + $("#idToken").val()
+			},
+			url : urlServer + "finance/stockperformance/getPerformance?"
+					+ getListParams("idPerformanceForm"),
+			success : function(data, textStatus, jqXHR) {
+				$("#idPerformanceFormResult").val(jqXHR.responseText);
+				$("#codeGetPerformance").text(jqXHR.status);
+				$("#dateGetPerformance").text(getCurrentDate);
+				$("#divGetPerformance").show();
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#idPerformanceFormResult").val(jqXHR.responseText);
+				$("#codeGetPerformance").text(jqXHR.status);
+				$("#dateGetPerformance").text(getCurrentDate);
+				$("#divGetPerformance").show();
+			}
+		});
+	}
+</script>
+<body>
+	<br />
+	<div style="height: 100px; vertical-align: middle;">
+		<h1>Mystockserver - Stock performance</h1>
+	</div>
+
+	<br /> Token
+	<input type="text" id="idToken" placeholder="Input your token">
+	<br />
+	<br />
+	<div style="height: 50px;">
+		<h2>
+			Get Performance<br /> <br />
+		</h2>
+	</div>
+	Available measures for now :<br/>
+	e -> earnings<br/>
+	r -> revenues<br/>
+	et -> ebit<br/>
+	eda -> ebitda<br/>
+	ce -> current ebit<br/>
+	b -> book<br/>
+	d -> dividend<br/>
+	pe -> price/earnings ratio<br/>
+	Use comma to separate measures or leave the field empty to get all available measures<br/>
+	<br />
+	<form name="performanceForm" method="get" id="idPerformanceForm">
+		Stock ticker code* <input type="text" id="c" placeholder="ML">
+		Place* <input type="text" id="p" placeholder="PA"> Start year* <input
+			type="text" id="sy" placeholder="2017"> End year <input
+			type="text" id="ey" placeholder="2018"> Period* <select
+			id="pe">
+			<option value="Q1">Q1</option>
+			<option value="Q2">Q2</option>
+			<option value="Q3">Q3</option>
+			<option value="Q4">Q4</option>
+			<option value="HY1">HY1</option>
+			<option value="HY2">HY2</option>
+			<option value="Y" selected="selected">Y</option>
+		</select> Previous start year <input type="text" id="psy" placeholder="2017">
+		Previous end year <input type="text" id="pey" placeholder="2017">
+		Previous period <select id="ppe">
+			<option value="Q1">Q1</option>
+			<option value="Q2">Q2</option>
+			<option value="Q3">Q3</option>
+			<option value="Q4">Q4</option>
+			<option value="HY1">HY1</option>
+			<option value="HY2">HY2</option>
+			<option value="Y" selected="selected">Y</option>
+		</select> Measures*
+		<input type="text" id="m" placeholder="pe,e">
+		<input type="button" onclick="getPerformance()"
+			value="getPerformance" />
+	</form>
+	<div id="divGetPerformance" style="display: none;">
+		<span style="font-weight: bold">Code : </span> <span
+			id="codeGetPerformance"></span> <span style="font-weight: bold">Date
+			: </span> <span id="dateGetPerformance"></span>
+	</div>
+	<br>
+	<div>
+		<textarea cols="100" id="idPerformanceFormResult" rows="20">
+		</textarea>
+	</div>
+	<br />
+	<br />
+
+
+	<div style="width: 100%; text-align: center;">
+		<b>Mystocks - Copyright 2018</b>
+	</div>
+</body>
+
+</html>

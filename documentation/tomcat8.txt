@@ -1,0 +1,5 @@
+configuration de la mémoire de tomcat8 au lancement
+/etc/default/tomcat8 => configure les options tomcat8 de lancement
+jps -v => mémoire allouée aux différents programmes java
+/usr/share/tomcat8/bin => script initialisation tomcat8
+service tomcat8 start/stop/restart => commande de lancement

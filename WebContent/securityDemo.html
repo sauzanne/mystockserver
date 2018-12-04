@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script type="text/javascript" src="js/jquery2.24.min.js"></script>
+<script type="text/javascript" src="js/commonDemo.js"></script>
+<link rel="stylesheet" href="css/commonDemo.css" type="text/css" />
+<script type="text/javascript">
+	var urlServer = location.href.substring(0, location.href
+			.indexOf("mystockserver") + 14)
+			+ "api/";
+
+	function getToken(dType) {
+		$.ajax({
+			type : 'POST',
+			data : '{"userName" : "' + $("#idUserName").val()
+					+ '", "password" : "' + $("#idPassword").val() + '"}',
+			contentType : "application/json",
+			dataType : dType,
+			url : urlServer + "authentication",
+			success : function(data, textStatus, jqXHR) {
+				$("#idToken").val(jqXHR.responseText);
+				$("#codeAuthentication").text(jqXHR.status);
+				$("#dateAuthentication").text(getCurrentDate);
+				$("#divAuthentication").show();
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#idToken").val(jqXHR.responseText);
+				$("#codeAuthentication").text(jqXHR.status);
+				$("#dateAuthentication").text(getCurrentDate);
+				$("#divAuthentication").show();
+			}
+		});
+
+	}
+</script>
+</head>
+<body>
+	<title>MystockServer - Security authentification</title>
+	<br />
+	
+	<div style="height: 100px; vertical-align: middle;">
+		<h1>MystockServer</h1>
+	</div>
+	<br />
+	<br />
+	<br />
+	<h1>Security authentification : get token</h1>
+	<br />
+	<h2>Type userName / password</h2>
+	<br />
+	<form name="securityForm" method="post" id="idSecurityForm">
+		Username <input type="text" placeholder="Your username"
+			id="idUserName"><br /> <br /> Password <input type="text"
+			placeholder="Uncrypted password" id="idPassword"><br /> <br />
+		<input type="button" onclick="javascript:getToken('text')"
+			value="authentication"><br />
+	</form>
+	<br>
+	<div id="divAuthentication" style="display: none;">
+		<span style="font-weight: bold">Code : </span> <span
+			id="codeAuthentication"></span> <span style="font-weight: bold">Date
+			: </span> <span id="dateAuthentication"></span>
+	</div>
+	<br>
+	<textarea cols="50" id="idToken" rows="10">
+	</textarea>
+	<br>
+	<br>
+	<div style="width: 100%; text-align: center;">
+		<b>Mystocks - Copyright 2018</b>
+	</div>
+</body>
+</html>

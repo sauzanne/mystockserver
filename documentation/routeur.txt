@@ -1,0 +1,3 @@
+mettre des DNS dans la configuration du wifi ubuntu
+configurer le routeur avec les DNS du provider
+regarder également dans /etc/resolve.conf et dans /etc/resolvconf/resolv.conf.d/head

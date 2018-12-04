@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="ERROR" name="example-config">
+    <Properties>
+        <Property name="LOG_DIR">${log.dir}</Property>
+        <Property name="ARCHIVE">${log.dir}/archive</Property>
+        <Property name="PATTERN">%-5level %d [%t] %c:%M(%L): %m%n</Property>
+    </Properties>
+    <Appenders>
+        <Console name="STDOUT" target="SYSTEM_OUT">
+            <PatternLayout pattern="${PATTERN}"/>
+        </Console>
+
+        <RollingFile name="fileWriter"
+                     fileName="${LOG_DIR}/example1.log"
+                     filePattern="${ARCHIVE}/example1.log.%d{yyyy-MM-dd-hh-mm}.gz">
+            <PatternLayout pattern="${PATTERN}"/>
+            <TimeBasedTriggeringPolicy/>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="fileWriter"/>
+        </Root>
+        <Logger name="fr.mystocks.mystockserver" level="TRACE" additivity="false">
+            <AppenderRef ref="STDOUT"/>
+        </Logger>
+       <!--  <Logger name="com.andrew_flower.example.Other" level="ERROR" additivity="true"/>-->
+    </Loggers>
+</Configuration>
+
+<!--  <?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+		</Console>
+		<File name="MyFile" fileName="all.log" immediateFlush="false"
+			append="false">
+			<PatternLayout
+				pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+		</File>
+	</Appenders>
+	<Loggers>
+		<Logger name="org.hibernate" level="INFO">
+			<AppenderRef ref="Console" />
+		</Logger>
+
+		<Logger name="org.hibernate.sql" level="debug">
+			<AppenderRef ref="Console" />
+		</Logger>
+
+		<Logger name="org.hibernate.type" level="TRACE">
+			<AppenderRef ref="Console" />
+		</Logger>
+		
+		<Logger name="org.hibernate.hql.ast.AST" level="info">
+			<AppenderRef ref="Console" />
+		</Logger>
+
+
+		 <Root level="trace"> <AppenderRef ref="Console" /> <AppenderRef ref="MyFile" /> </Root> 
+
+	  </Loggers>
+</Configuration>-->
+

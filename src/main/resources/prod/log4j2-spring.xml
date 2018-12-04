@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorInterval="60">
+	<Appenders>
+		<File name="SpringBoot-File-Appender" fileName="${log.dir}/mystockserver_springboot.log">
+			<PatternLayout>
+				<pattern>
+					[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n
+				</pattern>
+			</PatternLayout>
+		</File>
+
+		<RollingFile name="Rolling-File" fileName="${log.dir}/mystockserver.log"
+			filePattern="${log.dir}$${date:yyyy-MM}/mystockserver-%d{dd-MM-yyyy}-%i.log">
+			<PatternLayout>
+				<Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+			</PatternLayout>
+
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="10 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="10" />
+		</RollingFile>
+	</Appenders>
+	<Loggers>
+		<Logger name="org.springframework.web" level="error"
+			additivity="false">
+			<AppenderRef ref="SpringBoot-File-Appender" />
+		</Logger>
+		<Logger name="com.ffbb.ffbbserver" level="error" additivity="false">
+			<AppenderRef ref="Rolling-File" />
+		</Logger>
+		<Root>
+			<AppenderRef ref="Rolling-File" />
+		</Root>
+	</Loggers>
+</Configuration>

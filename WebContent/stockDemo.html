@@ -1,0 +1,212 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<script src="js/jquery2.24.min.js"
+	integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+	crossorigin="anonymous"></script>
+<script type="application/javascript">
+	
+	
+	
+	var urlServer = location.href.substring(0, location.href.indexOf("mystockserver") + 14)+ "api/";
+			
+	
+
+	function postStock(dType) {
+		$.ajax({
+			type : 'POST',
+			headers : {"Authorization": "Basic "+$("#idToken").val()},
+			contentType : "application/x-www-form-urlencoded",
+			data : $("#idStockForm").serialize(),
+			dataType : dType,
+			url : urlServer + "finance/stock/postStock",
+			success : function(data, textStatus, jqXHR) {
+				$("#idResults").val(jqXHR.responseText);
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#idResults").val('Une erreur est survenue.');
+			}
+		});
+	}
+	
+	function postStockTicker(dType) {
+		$.ajax({
+			type : 'POST',
+			headers : {"Authorization": "Basic "+$("#idToken").val()},
+			contentType : "application/x-www-form-urlencoded",
+			data : $("#idStockTickerForm").serialize(),
+			dataType : dType,
+			url : urlServer + "finance/stockticker/postStockTicker",
+			success : function(data, textStatus, jqXHR) {
+				$("#idResults").val(jqXHR.responseText);
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#idResults").val('Une erreur est survenue.');
+			}
+		});
+	}
+
+	
+	
+	function getReferential(referentialName, idSelect) {
+		$.ajax({
+			type : 'GET',
+			headers : {"Authorization": "Basic "+$("#idToken").val()},
+			dataType : 'text',
+			url : urlServer + "common/referential/getAll?rn="+referentialName,
+			success : function(data, textStatus, jqXHR) {
+				data = $.parseJSON(data);
+				$.each(data, function(i, item) {
+					$('#'+idSelect).append($('<option>', { 
+				        value: item.id,
+				        text : item.code 
+				    }));	
+				});
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#result").val('Une erreur est survenue.');
+			}
+		});
+	}
+	
+	function getPlace(referentialName, idSelect) {
+		$.ajax({
+			type : 'GET',
+			headers : {"Authorization": "Basic "+$("#idToken").val()},
+			dataType : 'text',
+			url : urlServer + "common/referential/getAll?rn="+referentialName,
+			success : function(data, textStatus, jqXHR) {
+				data = $.parseJSON(data);
+				$.each(data, function(i, item) {
+					$("#"+idSelect).append($('<option>', { 
+				        value: item.id,
+				        text : item.placeName+"("+item.code+")" 
+				    }));	
+				});
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#result").val('Une erreur est survenue.');
+			}
+		});
+	}
+	
+	function getStockTicker(dType) {
+		$.ajax({
+			type : 'GET',
+			headers : {"Authorization": "Basic "+$("#idToken").val()},
+			dataType : dType,
+			url : urlServer + "finance/stockticker/getStockTicker?c="+$("#idStockTickerCode").val()+"&p="+$("#idPlaceCode").val(),
+			success : function(data, textStatus, jqXHR) {
+				$("#idResults").val(jqXHR.responseText);
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#idResults").val('Une erreur est survenue.');
+			}
+		});
+
+	}
+	
+	function findStocks(dType) {
+		$.ajax({
+			type : 'GET',
+			headers : {"Authorization": "Basic "+$("#idToken").val()},
+			dataType : dType,
+			url : urlServer + "finance/stock/findStocks?id="+$("#idStock").val()+"&i="+$("#idStockIsin").val()+"&n="+$("#idStockName").val(),
+			success : function(data, textStatus, jqXHR) {
+				$("#idResults").val(jqXHR.responseText);
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#idResults").val('Une erreur est survenue.');
+			}
+		});
+
+	}
+
+	
+	//{'Authorization : Basic '+$("#idToken")}
+
+
+
+	function disableButton(name) {
+		if (document.getElementsByName(name)[0].disabled) {
+			document.getElementsByName(name)[0].disabled = false;
+		} else {
+			document.getElementsByName(name)[0].disabled = true;
+		}
+
+	}
+
+</script>
+</head>
+<body>
+	Token
+	<input type="text" id="idToken" value="Your token">
+	<br />
+	<input type="button"
+		onclick="getReferential('stockType','idStockType')"
+		value="getStockType" />
+	<input type="button" onclick="getPlace('place','idPlace')"
+		value="getPlace" />
+	<br />
+
+	<select id="idPlace" name="p">
+	</select>
+	<br />
+	<br /> Create/update stock
+	<br />
+	</br>
+	<form name="stockForm" method="post" id="idStockForm">
+
+		<input type="text" id="idIsin" value="ISIN" name="i"> <input
+			type="text" id="idName" value="name" name="n"> <select
+			id="idStockType" name="st">
+		</select> Mystocks listed ? <input type="checkbox" id="idMystockListed"
+			name="msl" /><input type="button" onclick="postStock('text')"
+			value="create/update Stock" />
+	</form>
+
+	<br /> Create/update stock ticker
+
+	<form name="stockTickerForm" method="post" id="idStockTickerForm">
+
+		<input type="text" id="idStIsin" value="ISIN" name="i"> <input
+			type="text" id="idCode" value="code" name="c"> Main place ? <input
+			type="checkbox" id="idMainPlace" name="mp" />Bypass price
+		verification ?<input type="checkbox" id="idByPassPriceVerification"
+			name="bpv" /><input type="button" onclick="postStockTicker('text')"
+			value="create/update Stock ticker" />
+	</form>
+
+	<br /> Get stock ticker
+
+	<form name="getStockTickerForm" method="get" id="idGetStockTickerForm">
+
+		<input type="text" id="idStockTickerCode" value="code" name="c">
+		<input type="text" id="idPlaceCode" value="place code" name="p"><input
+			type="button" onclick="getStockTicker('text')"
+			value="get Stock ticker" />
+	</form>
+
+
+	<br /> Find stocks
+
+	<form name="findStocksForm" method="get" id="idfindStocksForm">
+
+		<input type="text" id="idStock" value="id" name="id"> <input
+			type="text" id="idStockIsin" value="ISIN" name="i"> <input
+			type="text" id="idStockName" value="name" name="n"><input
+			type="button" onclick="findStocks('text')"
+			value="Find Stocks" />
+	</form>
+
+
+
+	Result
+	<textarea cols="50" id="idResults">
+	</textarea>
+
+
+</body>
+
+</html>

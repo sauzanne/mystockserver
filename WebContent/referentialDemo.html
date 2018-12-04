@@ -1,0 +1,46 @@
+ <!DOCTYPE html>
+<html>
+<head>
+<script
+  src="js/jquery2.24.min.js"
+  integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+  crossorigin="anonymous"></script>
+<script type="application/javascript">
+	var urlServer = location.href.substring(0, location.href.indexOf("mystockserver") + 14)+ "api/";
+			
+	function getReferential(dType) {
+		$.ajax({
+			type : 'GET',
+			headers : {"Authorization": "Basic "+$("#idToken").val()},
+			dataType : dType,
+			url : urlServer + "common/referential/getAll?rn="+$("#idReferentialName").val(),
+			success : function(data, textStatus, jqXHR) {
+				$("#result").val(jqXHR.responseText);
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#result").val('Une erreur est survenue.');
+			}
+		});
+
+	}
+	
+</script>
+</head>
+<body>
+	<br/>
+		Get referential
+
+	<br />
+				
+	<input type="text" id="idToken" value="Your token"></br>
+	<input type="text" id="idReferentialName" value="stockType"></br>
+	<input
+			type="button" onclick="javascript:getReferential('text')" value="getJson">
+	</br>
+	<textarea cols="50" id="result">
+	</textarea>
+	
+	
+</body>
+
+</html>

@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<script
+  src="js/jquery2.24.min.js"
+  integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+  crossorigin="anonymous"></script>
+<script type="application/javascript">
+	
+	var urlServer = location.href.substring(0, location.href.indexOf("mystockserver") + 14)+ "api/";
+			
+	function getLast(dType) {
+		$.ajax({
+			type : 'GET',
+			headers : {"Authorization": "Basic "+$("#idToken").val()},
+			dataType : dType,
+			url : urlServer + "finance/stockprice/getLast?s="+$("#idStockTicker").val()+"&p="+$("#idPlace").val(),
+			success : function(data, textStatus, jqXHR) {
+				$("#idResults").val(jqXHR.responseText);
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#idResults").val('Une erreur est survenue.');
+			}
+		});
+
+	}
+	
+	function getPriceForPeriod(dType) {
+		$.ajax({
+			type : 'GET',
+			headers : {"Authorization": "Basic "+$("#idToken").val()},
+			dataType : dType,
+			url : urlServer + "finance/stockprice/getPriceForPeriod?s="+$("#idStockTicker").val()+"&p="+$("#idPlace").val()+"&ps="+$("#start").val()+"&pe="+$("#end").val(),
+			success : function(data, textStatus, jqXHR) {
+				$("#idResults").val(jqXHR.responseText);
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#idResults").val('Une erreur est survenue.');
+			}
+		});
+	}
+
+	function getCheckStock(dType) {
+		$.ajax({
+			type : 'GET',
+			headers : {"Authorization": "Basic "+$("#idToken").val()},
+			dataType : dType,
+			url : urlServer + "finance/stockprice/getCheckStock?s="+$("#idStockTicker").val()+"&p="+$("#idPlace").val(),
+			success : function(data, textStatus, jqXHR) {
+				$("#idResults").val(jqXHR.responseText);
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#idResults").val('Une erreur est survenue.');
+			}
+		});
+	}
+	
+	function getAveragePrice(dType) {
+		$.ajax({
+			type : 'GET',
+			headers : {"Authorization": "Basic "+$("#idToken").val()},
+			dataType : dType,
+			url : urlServer + "finance/stockprice/getAveragePrice?s="+$("#idStockTicker").val()+"&p="+$("#idPlace").val()+"&ps="+$("#start").val()+"&pe="+$("#end").val(),
+			success : function(data, textStatus, jqXHR) {
+				$("#idResults").val(jqXHR.responseText);
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#idResults").val('Une erreur est survenue.');
+			}
+		});
+	}
+
+
+	
+	//{'Authorization : Basic '+$("#idToken")}
+
+
+
+	function disableButton(name) {
+		if (document.getElementsByName(name)[0].disabled) {
+			document.getElementsByName(name)[0].disabled = false;
+		} else {
+			document.getElementsByName(name)[0].disabled = true;
+		}
+
+	}
+
+</script>
+</head>
+<body>
+	<input type="text" id="idToken" value="Your token">
+	<br />
+	<input type="text" id="idStockTicker" value="Stock ticker">
+	<br />
+	<input type="text" id="idPlace" value="Code place">
+	<br />
+	Date format YYYY-MM-DD ex : '2011-12-03'<br/>
+	<input type="text" id="start" value="start date">
+	<br />
+	<input type="text" id="end" value="end date">
+	<br />	
+	
+	<input type="button" onclick="getLast('text')" value="getLast">
+	<input type="button" onclick="getPriceForPeriod('text')" value="getPriceForPeriod">
+	<input type="button" onclick="getCheckStock('text')" value="getCheckStock">
+	<input type="button" onclick="getAveragePrice('text')" value="getAveragePrice">
+	
+	<br/>
+	
+	<textarea cols="50" id="idResults">
+	</textarea>
+
+
+</body>
+
+</html>

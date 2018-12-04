@@ -1,0 +1,3 @@
+La source qui a permis la configuration du projet
+
+http://blog.xebia.fr/2014/04/22/construire-une-api-rest-avec-jersey-et-spring-sans-web-xml-ni-applicationcontext-xml-ni-getterssetters/
