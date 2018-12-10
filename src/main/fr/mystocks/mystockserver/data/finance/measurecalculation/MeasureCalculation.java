@@ -3,6 +3,7 @@ package fr.mystocks.mystockserver.data.finance.measurecalculation;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,33 +17,31 @@ import fr.mystocks.mystockserver.data.finance.review.Review;
 import fr.mystocks.mystockserver.data.finance.stockticker.StockTicker;
 
 @Entity
-@Table(name="mystocks.measure_calculation")
+@Table(name = "mystocks.measure_calculation")
 public class MeasureCalculation implements Serializable {
+
 	private static final long serialVersionUID = 3464037981150236245L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	@Column(name = "code")
-	private String code;
-	
-	@Column(name="review_id")
+	@Column(name = "review_id")
 	private Review review;
-	
-	@Column(name="stock_ticker_id")
+
+	@Column(name = "stock_ticker_id")
 	private StockTicker stockTicker;
-	
-	@Column(name="measure_id")
+
+	@Column(name = "measure_id")
 	private Measure measure;
-	
-	@Column(name="value")
+
+	@Column(name = "value")
 	private BigDecimal value;
-		
-	@Column(name="first_input")
+
+	@Column(name = "first_input")
 	private LocalDateTime firstInput;
-	
-	@Column(name="last_modified")
+
+	@Column(name = "last_modified")
 	private LocalDateTime lastModified;
 
 	/**
@@ -55,17 +54,20 @@ public class MeasureCalculation implements Serializable {
 	 * @param firstInput
 	 * @param lastModified
 	 */
-	public MeasureCalculation(int id, String code, Review review, StockTicker stockTicker, Measure measure,
+	public MeasureCalculation(int id, Review review, StockTicker stockTicker, Measure measure,
 			BigDecimal value, LocalDateTime firstInput, LocalDateTime lastModified) {
 		super();
 		this.id = id;
-		this.code = code;
 		this.review = review;
 		this.stockTicker = stockTicker;
 		this.measure = measure;
 		this.value = value;
 		this.firstInput = firstInput;
 		this.lastModified = lastModified;
+	}
+
+	public MeasureCalculation() {
+		super();
 	}
 
 	/**
@@ -80,20 +82,6 @@ public class MeasureCalculation implements Serializable {
 	 */
 	public void setId(int id) {
 		this.id = id;
-	}
-
-	/**
-	 * @return the code
-	 */
-	public String getCode() {
-		return code;
-	}
-
-	/**
-	 * @param code the code to set
-	 */
-	public void setCode(String code) {
-		this.code = code;
 	}
 
 	/**
@@ -185,17 +173,7 @@ public class MeasureCalculation implements Serializable {
 	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((code == null) ? 0 : code.hashCode());
-		result = prime * result + ((firstInput == null) ? 0 : firstInput.hashCode());
-		result = prime * result + id;
-		result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
-		result = prime * result + ((measure == null) ? 0 : measure.hashCode());
-		result = prime * result + ((review == null) ? 0 : review.hashCode());
-		result = prime * result + ((stockTicker == null) ? 0 : stockTicker.hashCode());
-		result = prime * result + ((value == null) ? 0 : value.hashCode());
-		return result;
+		return Objects.hash(firstInput, id, lastModified, value);
 	}
 
 	/* (non-Javadoc)
@@ -210,44 +188,8 @@ public class MeasureCalculation implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		MeasureCalculation other = (MeasureCalculation) obj;
-		if (code == null) {
-			if (other.code != null)
-				return false;
-		} else if (!code.equals(other.code))
-			return false;
-		if (firstInput == null) {
-			if (other.firstInput != null)
-				return false;
-		} else if (!firstInput.equals(other.firstInput))
-			return false;
-		if (id != other.id)
-			return false;
-		if (lastModified == null) {
-			if (other.lastModified != null)
-				return false;
-		} else if (!lastModified.equals(other.lastModified))
-			return false;
-		if (measure == null) {
-			if (other.measure != null)
-				return false;
-		} else if (!measure.equals(other.measure))
-			return false;
-		if (review == null) {
-			if (other.review != null)
-				return false;
-		} else if (!review.equals(other.review))
-			return false;
-		if (stockTicker == null) {
-			if (other.stockTicker != null)
-				return false;
-		} else if (!stockTicker.equals(other.stockTicker))
-			return false;
-		if (value == null) {
-			if (other.value != null)
-				return false;
-		} else if (!value.equals(other.value))
-			return false;
-		return true;
+		return Objects.equals(firstInput, other.firstInput) && id == other.id
+				&& Objects.equals(lastModified, other.lastModified) && Objects.equals(value, other.value);
 	}
 
 	

@@ -9,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import fr.mystocks.mystockserver.data.finance.measure.Measure;
@@ -27,13 +29,16 @@ public class MeasureAlert implements Serializable {
 	@Column(name = "stock_ticker_id")
 	private StockTicker stockTicker;
 
-	@Column(name = "account_id")
+	@ManyToOne
+	@JoinColumn(name = "account_id", nullable = false)
 	private Account account;
 
-	@Column(name = "measure_id")
+	@ManyToOne
+	@JoinColumn(name = "measure_id", nullable = false)
 	private Measure measure;
 
-	@Column(name = "measure_id2_compared")
+	@ManyToOne
+	@JoinColumn(name = "measure_id2_compared", nullable = true)
 	private Measure measureCompared;
 
 	@Column(name = "value")
@@ -142,8 +147,7 @@ public class MeasureAlert implements Serializable {
 	}
 
 	/**
-	 * @param id
-	 *            the id to set
+	 * @param id the id to set
 	 */
 	public void setId(int id) {
 		this.id = id;
@@ -157,8 +161,7 @@ public class MeasureAlert implements Serializable {
 	}
 
 	/**
-	 * @param stockTicker
-	 *            the stockTicker to set
+	 * @param stockTicker the stockTicker to set
 	 */
 	public void setStockTicker(StockTicker stockTicker) {
 		this.stockTicker = stockTicker;
@@ -172,8 +175,7 @@ public class MeasureAlert implements Serializable {
 	}
 
 	/**
-	 * @param account
-	 *            the account to set
+	 * @param account the account to set
 	 */
 	public void setAccount(Account account) {
 		this.account = account;
@@ -187,8 +189,7 @@ public class MeasureAlert implements Serializable {
 	}
 
 	/**
-	 * @param measure
-	 *            the measure to set
+	 * @param measure the measure to set
 	 */
 	public void setMeasure(Measure measure) {
 		this.measure = measure;
@@ -202,8 +203,7 @@ public class MeasureAlert implements Serializable {
 	}
 
 	/**
-	 * @param measureCompared
-	 *            the measureCompared to set
+	 * @param measureCompared the measureCompared to set
 	 */
 	public void setMeasureCompared(Measure measureCompared) {
 		this.measureCompared = measureCompared;
@@ -217,8 +217,7 @@ public class MeasureAlert implements Serializable {
 	}
 
 	/**
-	 * @param value
-	 *            the value to set
+	 * @param value the value to set
 	 */
 	public void setValue(BigDecimal value) {
 		this.value = value;
@@ -232,8 +231,7 @@ public class MeasureAlert implements Serializable {
 	}
 
 	/**
-	 * @param firstInput
-	 *            the firstInput to set
+	 * @param firstInput the firstInput to set
 	 */
 	public void setFirstInput(LocalDateTime firstInput) {
 		this.firstInput = firstInput;
@@ -247,8 +245,7 @@ public class MeasureAlert implements Serializable {
 	}
 
 	/**
-	 * @param binaryOperator
-	 *            the binaryOperator to set
+	 * @param binaryOperator the binaryOperator to set
 	 */
 	public void setBinaryOperator(String binaryOperator) {
 		this.binaryOperator = binaryOperator;
@@ -262,8 +259,7 @@ public class MeasureAlert implements Serializable {
 	}
 
 	/**
-	 * @param triggered
-	 *            the triggered to set
+	 * @param triggered the triggered to set
 	 */
 	public void setTriggered(boolean triggered) {
 		this.triggered = triggered;
@@ -277,8 +273,7 @@ public class MeasureAlert implements Serializable {
 	}
 
 	/**
-	 * @param lastModified
-	 *            the lastModified to set
+	 * @param lastModified the lastModified to set
 	 */
 	public void setLastModified(LocalDateTime lastModified) {
 		this.lastModified = lastModified;

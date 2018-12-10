@@ -25,54 +25,54 @@ import fr.mystocks.mystockserver.technic.constant.TechnicalConstant;
 @EnableScheduling
 public class SpringConfiguration {
 
-    @Autowired
-    private Environment environment;
+	@Autowired
+	private Environment environment;
 
-    private Locale locale;
+	private Locale locale;
 
-    @Bean
-    public CacheManager cacheManager() {
-	return new EhCacheCacheManager(ehCacheCacheManager().getObject());
-    }
-
-    @Bean
-    public EhCacheManagerFactoryBean ehCacheCacheManager() {
-	EhCacheManagerFactoryBean cmfb = new EhCacheManagerFactoryBean();
-	cmfb.setConfigLocation(new ClassPathResource("ehcache.xml"));
-	cmfb.setShared(true);
-	return cmfb;
-    }
-
-    /**
-     * @return the environment
-     */
-    public Environment getEnvironment() {
-	return environment;
-    }
-
-    @Bean
-    public MessageSource messageSource() {
-	ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-	messageSource.setBasenames(new String[] { "classpath:properties/error", "classpath:properties/common" });
-	messageSource.setDefaultEncoding(TechnicalConstant.ENCODING);
-	return messageSource;
-    }
-
-    public Locale getLocale() {
-	if (locale == null) {
-	    locale = Locale.ENGLISH;
+	@Bean
+	public CacheManager cacheManager() {
+		return new EhCacheCacheManager(ehCacheCacheManager().getObject());
 	}
-	return locale;
-    }
 
-    /*
-     * @Bean public LocaleResolver localeResolver() { CookieLocaleResolver resolver
-     * = new CookieLocaleResolver(); resolver.setDefaultLocale(new Locale("en"));
-     * resolver.setCookieName("myLocaleCookie"); resolver.setCookieMaxAge(4800);
-     * return resolver; }
-     * 
-     * @Override public void addInterceptors(InterceptorRegistry registry) {
-     * LocaleChangeInterceptor interceptor = new LocaleChangeInterceptor();
-     * interceptor.setParamName("locale"); registry.addInterceptor(interceptor); }
-     */
+	@Bean
+	public EhCacheManagerFactoryBean ehCacheCacheManager() {
+		EhCacheManagerFactoryBean cmfb = new EhCacheManagerFactoryBean();
+		cmfb.setConfigLocation(new ClassPathResource("ehcache.xml"));
+		cmfb.setShared(true);
+		return cmfb;
+	}
+
+	/**
+	 * @return the environment
+	 */
+	public Environment getEnvironment() {
+		return environment;
+	}
+
+	@Bean
+	public MessageSource messageSource() {
+		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+		messageSource.setBasenames(new String[] { "classpath:properties/error", "classpath:properties/common" });
+		messageSource.setDefaultEncoding(TechnicalConstant.ENCODING);
+		return messageSource;
+	}
+
+	public Locale getLocale() {
+		if (locale == null) {
+			locale = Locale.ENGLISH;
+		}
+		return locale;
+	}
+
+	/*
+	 * @Bean public LocaleResolver localeResolver() { CookieLocaleResolver resolver
+	 * = new CookieLocaleResolver(); resolver.setDefaultLocale(new Locale("en"));
+	 * resolver.setCookieName("myLocaleCookie"); resolver.setCookieMaxAge(4800);
+	 * return resolver; }
+	 * 
+	 * @Override public void addInterceptors(InterceptorRegistry registry) {
+	 * LocaleChangeInterceptor interceptor = new LocaleChangeInterceptor();
+	 * interceptor.setParamName("locale"); registry.addInterceptor(interceptor); }
+	 */
 }
