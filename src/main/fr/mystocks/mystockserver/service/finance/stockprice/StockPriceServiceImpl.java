@@ -5,6 +5,7 @@ import java.math.MathContext;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,8 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import fr.mystocks.mystockserver.dao.finance.placeclosing.PlaceClosingDao;
 import fr.mystocks.mystockserver.dao.finance.stockprice.StockPriceDao;
 import fr.mystocks.mystockserver.dao.finance.stockticker.StockTickerDao;
+import fr.mystocks.mystockserver.data.finance.placeclosing.PlaceClosing;
 import fr.mystocks.mystockserver.data.finance.stockprice.StockPrice;
 import fr.mystocks.mystockserver.data.finance.stockprice.StockPriceComparator;
 import fr.mystocks.mystockserver.data.finance.stockticker.StockTicker;
@@ -34,12 +37,15 @@ public class StockPriceServiceImpl implements StockPriceService {
 
 	@Autowired
 	private StockTickerDao<StockTicker> stockTickerDao;
-	
+
+	@Autowired
+	private PlaceClosingDao<PlaceClosing> placeClosingDao;
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Override
-	//@Cacheable(value = "financeCacheShortTime", key = "#root.methodName+#st.getCode()+'.'+#st.getPlace().getCode()")
+	// @Cacheable(value = "financeCacheShortTime", key =
+	// "#root.methodName+#st.getCode()+'.'+#st.getPlace().getCode()")
 	public StockPrice getLast(StockTicker st) {
 		try {
 
@@ -57,7 +63,8 @@ public class StockPriceServiceImpl implements StockPriceService {
 			}
 
 			if (stockPrice != null) {
-				StockTicker stockTicker = stockTickerDao.findByCodeAndPlace(st.getCode(), st.getPlace().getCode(), false);
+				StockTicker stockTicker = stockTickerDao.findByCodeAndPlace(st.getCode(), st.getPlace().getCode(),
+						false);
 
 				if (stockTicker == null) {
 					throw new FunctionalException(this, "error.finance.stockticker.notfound");
@@ -106,10 +113,15 @@ public class StockPriceServiceImpl implements StockPriceService {
 	}
 
 	@Override
-	//@Cacheable(value = "financeCacheShortTime", key = "#root.methodName+#st.getCode()+'.'+#st.getPlace().getCode()+#start.toString()+#end.toString()")
+	// @Cacheable(value = "financeCacheShortTime", key =
+	// "#root.methodName+#st.getCode()+'.'+#st.getPlace().getCode()+#start.toString()+#end.toString()")
 	public List<StockPrice> getPriceForPeriod(StockTicker st, LocalDate start, LocalDate end, Boolean... repeat) {
 		try {
 			List<StockPrice> stockPrices = stockPriceDao.findByDateRange(st, start, end);
+
+			List<PlaceClosing> listPlaceClosing = placeClosingDao.findByCodePlace(st.getPlace().getCode());
+			List<LocalDate> listDatePlaceClosing = listPlaceClosing.stream().map(PlaceClosing::getClosing)
+					.collect(Collectors.toList());
 
 			if (stockPrices != null) {
 
@@ -120,7 +132,7 @@ public class StockPriceServiceImpl implements StockPriceService {
 				 * on recherche la première date sur laquelle on n'a pas de résultats
 				 */
 				while (dateToLoop.isBefore(end) || dateToLoop.isEqual(end)) {
-					if (DateFinancialTools.isOpenDate(dateToLoop)) {
+					if (DateFinancialTools.isOpenDateWithMarketConditions(dateToLoop, listDatePlaceClosing)) {
 						StockPrice stockPrice = DateFinancialTools.getStockPriceFromDate(stockPrices, dateToLoop);
 						if (stockPrice == null || !stockPrice.getClose()) {
 							/*
@@ -140,7 +152,8 @@ public class StockPriceServiceImpl implements StockPriceService {
 					List<StockPrice> stockPricesFromApi = yahooFinanceService.getPriceForPeriod(st, startDateToFind,
 							end);
 
-					StockTicker stockTicker = stockTickerDao.findByCodeAndPlace(st.getCode(), st.getPlace().getCode(), false);
+					StockTicker stockTicker = stockTickerDao.findByCodeAndPlace(st.getCode(), st.getPlace().getCode(),
+							false);
 
 					if (stockTicker == null) {
 						throw new FunctionalException(this, "error.finance.stockticker.notfound");
@@ -153,7 +166,10 @@ public class StockPriceServiceImpl implements StockPriceService {
 						LocalDate today = LocalDate.now();
 
 						for (StockPrice sp : stockPricesFromApi) {
-							storePriceinDB(end, stockPrices, stockTicker, today, sp);
+							StockPrice stockPrice = storePriceinDB(end, stockPrices, stockTicker, today, sp);
+							if (stockPrice != null) {
+								stockPrices.add(stockPrice);
+							}
 						}
 					}
 					/* on retrie l'ensemble fusionné par date */
@@ -171,18 +187,14 @@ public class StockPriceServiceImpl implements StockPriceService {
 	/**
 	 * Enregistre le prix en base
 	 * 
-	 * @param end
-	 *            date de butée
-	 * @param stockPricesFromDb
-	 *            prix obtenus depuis la base de donnée
-	 * @param stockTicker
-	 *            stockTicker
-	 * @param today
-	 *            la date du jour
-	 * @param stockPriceFromApi
-	 *            le prix obtenu depuis l'API
+	 * @param end               date de butée
+	 * @param stockPricesFromDb prix obtenus depuis la base de donnée
+	 * @param stockTicker       stockTicker
+	 * @param today             la date du jour
+	 * @param stockPriceFromApi le prix obtenu depuis l'API
+	 * @return stockPrice le stock price crée en base
 	 */
-	private void storePriceinDB(LocalDate end, List<StockPrice> stockPricesFromDb, StockTicker stockTicker,
+	private StockPrice storePriceinDB(LocalDate end, List<StockPrice> stockPricesFromDb, StockTicker stockTicker,
 			LocalDate today, StockPrice stockPriceFromApi) {
 		/*
 		 * en cas de problème de création en base on ne souhaite pas interrompre le
@@ -207,17 +219,17 @@ public class StockPriceServiceImpl implements StockPriceService {
 				if (stockPriceDb == null) {
 					stockPriceFromApi.getStockPriceId().setStockTicker(stockTicker);
 					stockPriceDao.create(stockPriceFromApi);
-					stockPricesFromDb.add(stockPriceFromApi);
+					return stockPriceFromApi;
 				} else {
 					stockPriceDb.setPrice(stockPriceFromApi.getPrice());
 					stockPriceDb.setClose(stockPriceFromApi.getClose());
 					stockPriceDao.update(stockPriceDb);
-					stockPricesFromDb.add(stockPriceDb);
 				}
 			}
 		} catch (RuntimeException e) {
 			ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
 		}
+		return null;
 	}
 
 	@Override
@@ -235,7 +247,8 @@ public class StockPriceServiceImpl implements StockPriceService {
 	}
 
 	@Override
-	//@Cacheable(value = "financeCacheShortTime", key = "#root.methodName+#st.getCode()+'.'+#st.getPlace().getCode()+#start.toString()+#end.toString()")
+	// @Cacheable(value = "financeCacheShortTime", key =
+	// "#root.methodName+#st.getCode()+'.'+#st.getPlace().getCode()+#start.toString()+#end.toString()")
 	public BigDecimal getAveragePrice(StockTicker st, LocalDate start, LocalDate end) {
 		try {
 			List<StockPrice> prices = getPriceForPeriod(st, start, end);
@@ -251,7 +264,5 @@ public class StockPriceServiceImpl implements StockPriceService {
 		}
 		return null;
 	}
-	
-
 
 }

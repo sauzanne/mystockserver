@@ -14,6 +14,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.mystocks.mystockserver.dao.finance.measure.MeasureDao;
@@ -22,10 +23,12 @@ import fr.mystocks.mystockserver.dao.finance.stockticker.StockTickerDao;
 import fr.mystocks.mystockserver.data.finance.measure.Measure;
 import fr.mystocks.mystockserver.data.finance.measurecalculation.MeasureCalculation;
 import fr.mystocks.mystockserver.data.finance.stockticker.StockTicker;
+import fr.mystocks.mystockserver.service.finance.measures.constant.MeasureEnum;
 import fr.mystocks.mystockserver.service.finance.performance.TechnicalAnalysisService;
 import fr.mystocks.mystockserver.service.finance.performance.ValuationService;
 import fr.mystocks.mystockserver.technic.date.DateFinancialTools;
 import fr.mystocks.mystockserver.technic.exceptions.ExceptionTools;
+import fr.mystocks.mystockserver.technic.exceptions.FunctionalException;
 import fr.mystocks.mystockserver.technic.properties.PropertiesTools;
 
 /**
@@ -61,9 +64,11 @@ public class MeasureCalculationServiceImpl implements MeasureCalculationService 
 
 	@Scheduled(cron = "${cron.measurecalculation}")
 	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void cronMeasureCalculation() {
 		logger.error("Measure calculations started at " + LocalDateTime.now());
-		LocalDate today = LocalDate.now();
+		//LocalDate today = LocalDate.now();
+		LocalDate today = LocalDate.of(2018, 12, 21);
 		if (DateFinancialTools.isOpenDate(today)) {
 			try {
 				for (StockTicker st : stockTickerDao.findAll()) {
@@ -71,18 +76,38 @@ public class MeasureCalculationServiceImpl implements MeasureCalculationService 
 					for (Measure measure : measureDao.findAll()) {
 
 						BigDecimal value = null;
-						if (measure.getCode().contains("mm10")) {
+						if (measure.getCode().contains(MeasureEnum.MM10.getProperties())) {
 							try {
 								value = technicalAnalysisService.getMovingAverage(st, 10, today);
+							} catch (FunctionalException e) {
+								logger.error("Functional error in calculation of MM10 for stock ticker" + st.getCode());
+								ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
 							} catch (RuntimeException e) {
 								logger.error("Error in calculation of MM10 for stock ticker" + st.getCode());
 								ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
 							}
-						} else if (measure.getCode().contains("mm200")) {
+						} else if (measure.getCode().contains(MeasureEnum.MM200.getProperties())) {
+//							try {
+//								value = technicalAnalysisService.getMovingAverage(st, 200, today);
+//							} catch (FunctionalException e) {
+//								logger.error("Functional error in calculation of MM200 for stock ticker" + st.getCode());
+//								ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
+//							} catch (RuntimeException e) {
+//								logger.error("Error in calculation of MM200 for stock ticker" + st.getCode());
+//								ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
+//							}
+						} else if (measure.getCode().contains(MeasureEnum.MM150.getProperties())) {
+
+							String mm150properties = MeasureEnum.MM150.getProperties();
 							try {
-								value = technicalAnalysisService.getMovingAverage(st, 200, today);
+								value = technicalAnalysisService.getMovingAverage(st, 150, today);
+							} catch (FunctionalException e) {
+								logger.error("Functional error in calculation of " + mm150properties
+										+ " for stock ticker" + st.getCode());
+								ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
 							} catch (RuntimeException e) {
-								logger.error("Error in calculation of MM200 for stock ticker" + st.getCode());
+								logger.error("Error in calculation of " + mm150properties + " for stock ticker"
+										+ st.getCode());
 								ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
 							}
 						}
@@ -98,6 +123,8 @@ public class MeasureCalculationServiceImpl implements MeasureCalculationService 
 						}
 					}
 				}
+			} catch (FunctionalException e) {
+				ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
 			} catch (RuntimeException e) {
 				ExceptionTools.processException(this, logger, e);
 			}

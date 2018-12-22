@@ -17,7 +17,7 @@ public class Measure implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Integer id;
 
 	@Column(name = "code")
 	private String code;
@@ -30,24 +30,29 @@ public class Measure implements Serializable {
 	 * @param code
 	 * @param firstInput
 	 */
-	public Measure(int id, String code, LocalDateTime firstInput) {
+	public Measure(Integer id, String code, LocalDateTime firstInput) {
 		super();
 		this.id = id;
 		this.code = code;
 		this.firstInput = firstInput;
 	}
 
+	public Measure() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	/**
 	 * @return the id
 	 */
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

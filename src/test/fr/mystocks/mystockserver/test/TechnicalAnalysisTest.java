@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import javax.inject.Inject;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ import fr.mystocks.mystockserver.data.finance.stockticker.StockTicker;
 import fr.mystocks.mystockserver.service.finance.performance.TechnicalAnalysisService;
 import fr.mystocks.mystockserver.technic.configuration.spring.SpringConfiguration;
 import fr.mystocks.mystockserver.technic.configuration.start.SpringBootWebApplication;
+import fr.mystocks.mystockserver.technic.exceptions.ExceptionTools;
 import fr.mystocks.mystockserver.technic.exceptions.FunctionalException;
 
 @RunWith(SpringRunner.class)
@@ -45,9 +47,13 @@ public class TechnicalAnalysisTest {
 		try {
 			StockTicker st = new StockTicker("ora", new Place("PA"));
 			technicalAnalysisService.getMovingAverage(st, 10, LocalDate.of(2018, 11, 13));
+			return;
 		} catch (FunctionalException e) {
 			logger.debug(messageSource.getMessage(e.getKeyError(), e.getArgs(), context.getLocale()));
+		} catch(RuntimeException e) {
+			ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
 		}
+		Assert.fail();
 	}
 
 }

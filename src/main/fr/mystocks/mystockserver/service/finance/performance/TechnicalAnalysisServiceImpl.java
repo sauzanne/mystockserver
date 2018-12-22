@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.mystocks.mystockserver.dao.finance.placeclosing.PlaceClosingDao;
@@ -39,6 +40,7 @@ public class TechnicalAnalysisServiceImpl implements TechnicalAnalysisService {
 	private PropertiesTools propertiesTools;
 
 	@Override
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
 	public BigDecimal getMovingAverage(StockTicker st, int duration, LocalDate calculationDate) {
 		try {
 			// récupération des jours de fermeture de la place
@@ -77,7 +79,8 @@ public class TechnicalAnalysisServiceImpl implements TechnicalAnalysisService {
 				throw new FunctionalException(this, "error.finance.stockprice.notall",
 						new String[] { new Integer(prices.size()).toString() });
 			}
-
+		} catch (FunctionalException e) {
+			throw e;
 		} catch (RuntimeException e) {
 			ExceptionTools.processException(this, logger, e);
 		}

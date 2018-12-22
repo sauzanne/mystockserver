@@ -10,6 +10,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import fr.mystocks.mystockserver.data.finance.measure.Measure;
@@ -24,15 +26,18 @@ public class MeasureCalculation implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Integer id;
 
-	@Column(name = "review_id")
+	@ManyToOne
+	@JoinColumn(name = "review_id", nullable = false)
 	private Review review;
 
-	@Column(name = "stock_ticker_id")
+	@ManyToOne
+	@JoinColumn(name = "stock_ticker_id", nullable = false)
 	private StockTicker stockTicker;
 
-	@Column(name = "measure_id")
+	@ManyToOne
+	@JoinColumn(name = "measure_id", nullable = false)
 	private Measure measure;
 
 	@Column(name = "value")
@@ -54,7 +59,7 @@ public class MeasureCalculation implements Serializable {
 	 * @param firstInput
 	 * @param lastModified
 	 */
-	public MeasureCalculation(int id, Review review, StockTicker stockTicker, Measure measure,
+	public MeasureCalculation(Integer id, Review review, StockTicker stockTicker, Measure measure,
 			BigDecimal value, LocalDateTime firstInput, LocalDateTime lastModified) {
 		super();
 		this.id = id;
@@ -73,14 +78,14 @@ public class MeasureCalculation implements Serializable {
 	/**
 	 * @return the id
 	 */
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

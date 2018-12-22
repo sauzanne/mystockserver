@@ -33,3 +33,97 @@ insert into place_closing(place_id, date_closing) values (10, '2018-05-01');
 
 insert into place_closing(place_id, date_closing) values (10, '2018-12-25');
 insert into place_closing(place_id, date_closing) values (10, '2018-12-26');
+
+--jour de fermeture à New york
+insert into place_closing(place_id, date_closing) values (13, '2018-01-01');
+
+insert into place_closing(place_id, date_closing) values (13, '2018-01-15');
+
+insert into place_closing(place_id, date_closing) values (13, '2018-02-19');
+
+insert into place_closing(place_id, date_closing) values (13, '2018-03-30');
+insert into place_closing(place_id, date_closing) values (13, '2018-05-28');
+
+insert into place_closing(place_id, date_closing) values (13, '2018-07-04');
+
+insert into place_closing(place_id, date_closing) values (13, '2018-09-03');
+
+insert into place_closing(place_id, date_closing) values (13, '2018-11-22');
+
+insert into place_closing(place_id, date_closing) values (13, '2018-12-25');
+
+--Nasdaq
+
+insert into place_closing(place_id, date_closing) values (5, '2018-01-01');
+
+insert into place_closing(place_id, date_closing) values (5, '2018-01-15');
+
+insert into place_closing(place_id, date_closing) values (5, '2018-02-19');
+
+insert into place_closing(place_id, date_closing) values (5, '2018-03-30');
+insert into place_closing(place_id, date_closing) values (5, '2018-05-28');
+
+insert into place_closing(place_id, date_closing) values (5, '2018-07-04');
+
+insert into place_closing(place_id, date_closing) values (5, '2018-09-03');
+
+insert into place_closing(place_id, date_closing) values (5, '2018-11-22');
+
+insert into place_closing(place_id, date_closing) values (5, '2018-12-25');
+
+--London
+
+insert into place_closing(place_id, date_closing) values (6, '2018-01-01');
+
+insert into place_closing(place_id, date_closing) values (6, '2018-03-30');
+insert into place_closing(place_id, date_closing) values (6, '2018-02-04');
+
+insert into place_closing(place_id, date_closing) values (6, '2018-05-07');
+
+insert into place_closing(place_id, date_closing) values (6, '2018-05-28');
+
+insert into place_closing(place_id, date_closing) values (6, '2018-08-27');
+
+insert into place_closing(place_id, date_closing) values (6, '2018-12-25');
+
+insert into place_closing(place_id, date_closing) values (6, '2018-12-26');
+
+--London second place
+insert into place_closing(place_id, date_closing) values (17, '2018-01-01');
+
+insert into place_closing(place_id, date_closing) values (17, '2018-03-30');
+insert into place_closing(place_id, date_closing) values (17, '2018-02-04');
+
+insert into place_closing(place_id, date_closing) values (17, '2018-05-07');
+
+insert into place_closing(place_id, date_closing) values (17, '2018-05-28');
+
+insert into place_closing(place_id, date_closing) values (17, '2018-08-27');
+
+insert into place_closing(place_id, date_closing) values (17, '2018-12-25');
+
+insert into place_closing(place_id, date_closing) values (17, '2018-12-26');
+
+--Greece
+insert into place_closing(place_id, date_closing) values (16, '2018-01-01');
+
+insert into place_closing(place_id, date_closing) values (16, '2018-02-19');
+insert into place_closing(place_id, date_closing) values (16, '2018-03-30');
+insert into place_closing(place_id, date_closing) values (16, '2018-04-02');
+insert into place_closing(place_id, date_closing) values (16, '2018-04-06');
+insert into place_closing(place_id, date_closing) values (16, '2018-04-09');
+
+insert into place_closing(place_id, date_closing) values (16, '2018-05-01');
+
+insert into place_closing(place_id, date_closing) values (16, '2018-05-28');
+
+insert into place_closing(place_id, date_closing) values (16, '2018-08-15');
+
+insert into place_closing(place_id, date_closing) values (16, '2018-12-24');
+
+insert into place_closing(place_id, date_closing) values (16, '2018-12-25');
+
+insert into place_closing(place_id, date_closing) values (16, '2018-12-26');
+
+
+
