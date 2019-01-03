@@ -1,5 +1,7 @@
 package fr.mystocks.mystockserver.dao.finance.stockticker;
 
+import java.util.List;
+
 import fr.mystocks.mystockserver.dao.Dao;
 import fr.mystocks.mystockserver.data.finance.stockticker.StockTicker;
 
@@ -13,6 +15,8 @@ public interface StockTickerDao<T> extends Dao<T> {
      * @return un StockTicker
      */
     StockTicker findByCodeAndPlace(String code, String codePlace, boolean join);
+
+	List<StockTicker> findAllEnableStockTicker();
 
 
 }

@@ -201,5 +201,63 @@ inner join stock s on s.id = ts.stock_id;
 
 drop table t_stock_ticker;
 
+ALTER TABLE `mystocks`.`stock_ticker` 
+ADD COLUMN `disabled` DATE NULL AFTER `server_user_id`;
+
+update stock_ticker set disabled = '2019-01-02' where code = 'RIA';
+update stock_ticker set disabled = '2019-01-02' where code = 'OSA';
+update stock_ticker set disabled = '2019-01-02' where code = 'RIM';
+update stock_ticker set disabled = '2019-01-02' where code = 'PIC';
+update stock_ticker set disabled = '2019-01-02' where code = 'MGIC';
+update stock_ticker set disabled = '2019-01-02' where code = 'BVD';
+
+update stock_ticker set disabled = '2019-01-02' where code = 'PCLN';
+
+update stock_ticker set disabled = '2019-01-02' where code = 'MPI';
+update stock_ticker set disabled = '2019-01-02' where code = 'LEY';
+update stock_ticker set disabled = '2019-01-02' where code = 'VIP';
+
+update stock_ticker set disabled = '2019-01-02' where code = 'AREVA';
+update stock_ticker set disabled = '2019-01-02' where code = 'NUM';
+update stock_ticker set disabled = '2019-01-02' where code = 'TEC';
+
+update stock_ticker set disabled = '2019-01-02' where code = 'NTI';
+update stock_ticker set disabled = '2019-01-02' where code = 'PGN';
+update stock_ticker set disabled = '2019-01-02' where code = 'STO';
+update stock_ticker set disabled = '2019-01-02' where code = 'ALTUT';
+update stock_ticker set disabled = '2019-01-02' where code = 'SAFT';
+update stock_ticker set disabled = '2019-01-02' where code = 'HIM';
+update stock_ticker set disabled = '2019-01-02' where code = 'TSL';
+update stock_ticker set disabled = '2019-01-02' where code = 'VLKAY';
+update stock_ticker set disabled = '2019-01-02' where code = 'NXTV';
+
+update stock_ticker set disabled = '2019-01-02' where code = 'EMBD';
+update stock_ticker set disabled = '2019-01-02' where code = 'PHPT';
+
+update stock_ticker set disabled = '2019-01-02' where code = 'ALBRS';
+update stock_ticker set disabled = '2019-01-02' where code = 'BQRE';
+update stock_ticker set disabled = '2019-01-02' where code = 'ERR';
+update stock_ticker set disabled = '2019-01-02' where code = 'ALHOM';
+update stock_ticker set disabled = '2019-01-02' where code = 'STL';
+update stock_ticker set disabled = '2019-01-02' where code = 'PARDS';
+update stock_ticker set disabled = '2019-01-02' where code = 'GFI';
+update stock_ticker set disabled = '2019-01-02' where code = 'SOLB';
+update stock_ticker set disabled = '2019-01-02' where code = 'fem';
+update stock_ticker set disabled = '2019-01-02' where code = 'YMAU';
+update stock_ticker set disabled = '2019-01-02' where code = 'ALAST';
+update stock_ticker set disabled = '2019-01-02' where code = '2017s';
+update stock_ticker set disabled = '2019-01-02' where code = 'EXP1';
+update stock_ticker set disabled = '2019-01-02' where code = 'EXP2';
+update stock_ticker set disabled = '2019-01-02' where code = 'RAN';
+update stock_ticker set disabled = '2019-01-02' where code = 'LAC';
+update stock_ticker set disabled = '2019-01-02' where code = 'ALGUI';
+update stock_ticker set disabled = '2019-01-02' where code = 'ALPRV';
+update stock_ticker set disabled = '2019-01-02' where code = 'ZC';
+update stock_ticker set disabled = '2019-01-02' where code = 'ETE';
+
+update stock_ticker set place_id = 1 where code = 'GTO';
+update stock_ticker set place_id = 4 where code = 'UHRN';
+update stock_ticker set place_id = 4 where code = 'VWS';
+insert into stock_ticker(code,stock_id, place_id,main_place,server_user_id,disabled,first_input) values('NAGF',1024,4,1,1,null,now());
 
 

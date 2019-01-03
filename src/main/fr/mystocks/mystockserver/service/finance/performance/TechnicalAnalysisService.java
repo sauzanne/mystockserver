@@ -7,6 +7,6 @@ import fr.mystocks.mystockserver.data.finance.stockticker.StockTicker;
 
 public interface TechnicalAnalysisService {
 
-	BigDecimal getMovingAverage(StockTicker st, int duration, LocalDate calculationDate);
+	BigDecimal getMovingAverage(StockTicker st, int duration, LocalDate calculationDate,Double acceptableErrorRate);
     
 }

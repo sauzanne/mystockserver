@@ -2,6 +2,7 @@ package fr.mystocks.mystockserver.data.finance.measurecalculation;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -39,6 +40,9 @@ public class MeasureCalculation implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "measure_id", nullable = false)
 	private Measure measure;
+
+	@Column(name = "calculation_date")
+	private LocalDate calculationDate;
 
 	@Column(name = "value")
 	private BigDecimal value;
@@ -173,12 +177,26 @@ public class MeasureCalculation implements Serializable {
 		this.lastModified = lastModified;
 	}
 
+	/**
+	 * @return the calculationDate
+	 */
+	public LocalDate getCalculationDate() {
+		return calculationDate;
+	}
+
+	/**
+	 * @param calculationDate the calculationDate to set
+	 */
+	public void setCalculationDate(LocalDate calculationDate) {
+		this.calculationDate = calculationDate;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
-		return Objects.hash(firstInput, id, lastModified, value);
+		return Objects.hash(calculationDate, firstInput, id, lastModified, value);
 	}
 
 	/* (non-Javadoc)
@@ -193,9 +211,11 @@ public class MeasureCalculation implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		MeasureCalculation other = (MeasureCalculation) obj;
-		return Objects.equals(firstInput, other.firstInput) && id == other.id
-				&& Objects.equals(lastModified, other.lastModified) && Objects.equals(value, other.value);
+		return Objects.equals(calculationDate, other.calculationDate) && Objects.equals(firstInput, other.firstInput)
+				&& Objects.equals(id, other.id) && Objects.equals(lastModified, other.lastModified)
+				&& Objects.equals(value, other.value);
 	}
+
 
 	
 }

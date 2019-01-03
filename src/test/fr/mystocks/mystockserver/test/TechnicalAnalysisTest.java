@@ -46,11 +46,11 @@ public class TechnicalAnalysisTest {
 	public void myFirstTest() {
 		try {
 			StockTicker st = new StockTicker("ora", new Place("PA"));
-			technicalAnalysisService.getMovingAverage(st, 10, LocalDate.of(2018, 11, 13));
+			technicalAnalysisService.getMovingAverage(st, 10, LocalDate.of(2018, 11, 13), 0.1);
 			return;
 		} catch (FunctionalException e) {
 			logger.debug(messageSource.getMessage(e.getKeyError(), e.getArgs(), context.getLocale()));
-		} catch(RuntimeException e) {
+		} catch (RuntimeException e) {
 			ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
 		}
 		Assert.fail();

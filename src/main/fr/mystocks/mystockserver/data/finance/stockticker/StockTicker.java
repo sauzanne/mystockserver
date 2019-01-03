@@ -1,6 +1,7 @@
 package fr.mystocks.mystockserver.data.finance.stockticker;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
@@ -18,7 +19,7 @@ import fr.mystocks.mystockserver.data.finance.stock.Stock;
 import fr.mystocks.mystockserver.data.security.User;
 
 @Entity
-@Table(name="mystocks.stock_ticker")
+@Table(name = "mystocks.stock_ticker")
 public class StockTicker implements Serializable {
 
 	/**
@@ -30,38 +31,38 @@ public class StockTicker implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@Column(name = "code",length=5)
+	@Column(name = "code", length = 5)
 	private String code;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "stock_id", nullable = false)
 	private Stock stock;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "place_id", nullable = false)
 	private Place place;
 
 	@Column(name = "main_place")
 	private Boolean mainPlace;
-	
-	@ManyToOne(fetch=FetchType.LAZY)
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "server_user_id", nullable = false)
 	private User user;
 
+	@Column(name = "disabled")
+	private LocalDate disabled;
 
 	@Column(name = "first_input")
 	private LocalDateTime firstInput;
 
-
 	@Column(name = "last_modified")
 	private LocalDateTime lastModified;
-
 
 	/**
 	 *
 	 */
 	public StockTicker() {
-	    super();
+		super();
 	}
 
 	/**
@@ -70,9 +71,9 @@ public class StockTicker implements Serializable {
 	 * @param place
 	 */
 	public StockTicker(String code, Place place) {
-	    super();
-	    this.code = code;
-	    this.place = place;
+		super();
+		this.code = code;
+		this.place = place;
 	}
 
 	/**
@@ -145,89 +146,93 @@ public class StockTicker implements Serializable {
 		this.mainPlace = mainPlace;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
-	    final int prime = 31;
-	    int result = 1;
-	    result = prime * result + ((code == null) ? 0 : code.hashCode());
-	    result = prime * result + ((id == null) ? 0 : id.hashCode());
-	    result = prime * result + ((mainPlace == null) ? 0 : mainPlace.hashCode());
-	    return result;
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((code == null) ? 0 : code.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((mainPlace == null) ? 0 : mainPlace.hashCode());
+		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj) {
-	    if (this == obj)
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		StockTicker other = (StockTicker) obj;
+		if (code == null) {
+			if (other.code != null)
+				return false;
+		} else if (!code.equals(other.code))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (mainPlace == null) {
+			if (other.mainPlace != null)
+				return false;
+		} else if (!mainPlace.equals(other.mainPlace))
+			return false;
 		return true;
-	    if (obj == null)
-		return false;
-	    if (getClass() != obj.getClass())
-		return false;
-	    StockTicker other = (StockTicker) obj;
-	    if (code == null) {
-		if (other.code != null)
-		    return false;
-	    } else if (!code.equals(other.code))
-		return false;
-	    if (id == null) {
-		if (other.id != null)
-		    return false;
-	    } else if (!id.equals(other.id))
-		return false;
-	    if (mainPlace == null) {
-		if (other.mainPlace != null)
-		    return false;
-	    } else if (!mainPlace.equals(other.mainPlace))
-		return false;
-	    return true;
 	}
 
 	/**
 	 * @author sauzanne @return the user
 	 */
 	public User getUser() {
-	    return user;
+		return user;
 	}
 
 	/**
 	 * @author sauzanne @param user the user to set
 	 */
 	public void setUser(User user) {
-	    this.user = user;
+		this.user = user;
 	}
 
 	/**
 	 * @author sauzanne @return the firstInput
 	 */
 	public LocalDateTime getFirstInput() {
-	    return firstInput;
+		return firstInput;
 	}
 
 	/**
 	 * @author sauzanne @param firstInput the firstInput to set
 	 */
 	public void setFirstInput(LocalDateTime firstInput) {
-	    this.firstInput = firstInput;
+		this.firstInput = firstInput;
 	}
 
 	/**
 	 * @author sauzanne @return the lastModified
 	 */
 	public LocalDateTime getLastModified() {
-	    return lastModified;
+		return lastModified;
 	}
 
 	/**
 	 * @author sauzanne @param lastModified the lastModified to set
 	 */
 	public void setLastModified(LocalDateTime lastModified) {
-	    this.lastModified = lastModified;
+		this.lastModified = lastModified;
 	}
 
 }

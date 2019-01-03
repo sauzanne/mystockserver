@@ -5,8 +5,10 @@ import java.math.MathContext;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import fr.mystocks.mystockserver.dao.finance.placeclosing.PlaceClosingDao;
 import fr.mystocks.mystockserver.data.finance.placeclosing.PlaceClosing;
 import fr.mystocks.mystockserver.data.finance.stockprice.StockPrice;
+import fr.mystocks.mystockserver.data.finance.stockprice.StockPriceId;
 import fr.mystocks.mystockserver.data.finance.stockticker.StockTicker;
 import fr.mystocks.mystockserver.service.finance.stockprice.StockPriceService;
 import fr.mystocks.mystockserver.technic.date.DateFinancialTools;
@@ -40,8 +43,9 @@ public class TechnicalAnalysisServiceImpl implements TechnicalAnalysisService {
 	private PropertiesTools propertiesTools;
 
 	@Override
-	@Transactional(propagation=Propagation.REQUIRES_NEW)
-	public BigDecimal getMovingAverage(StockTicker st, int duration, LocalDate calculationDate) {
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public BigDecimal getMovingAverage(StockTicker st, int duration, LocalDate calculationDate,
+			Double acceptableErrorRate) {
 		try {
 			// récupération des jours de fermeture de la place
 
@@ -71,11 +75,36 @@ public class TechnicalAnalysisServiceImpl implements TechnicalAnalysisService {
 					listCalculationDate.get(listCalculationDate.size() - 1),
 					listCalculationDate.stream().findFirst().get());
 
-			if (!prices.isEmpty() && prices.size() == duration) {
+			Double errorRate = (double) (1 - (new Double(prices.size()) / duration));
+			if (!prices.isEmpty() && errorRate <= acceptableErrorRate) {
 				BigDecimal sum = prices.stream().map(StockPrice::getPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
 
+				if (errorRate > 0.0) {
+					logger.error("Calcutation of moving average for stock ticker " + st.getCode()
+							+ " with an error rate of " + errorRate * 100 + " %");
+				}
 				return sum.divide(BigDecimal.valueOf(prices.size()), MathContext.DECIMAL128);
-			} else if (prices.isEmpty() || prices.size() != duration) {
+			} else if (prices.isEmpty() || errorRate > acceptableErrorRate) {
+
+			//	if (!prices.isEmpty()) {
+//					Set<String> listStringCalculationDate = 
+//						    listCalculationDate.stream()
+//						         .map(LocalDate::toString)
+//						         .collect(Collectors.toSet());
+
+					List<LocalDate> pricesDate = prices.stream().map(StockPrice::getStockPriceId)
+							.map(StockPriceId::getInputDate).collect(Collectors.toList());
+
+//					List<String> missingDate = prices.stream()
+//							.filter(p -> !listStringCalculationDate.contains(p.getStockPriceId().getInputDate().toString()))
+//							.map(p -> p.getStockPriceId().getInputDate().toString()).collect(Collectors.toList());
+
+					List<String> missingDate = listCalculationDate.stream().filter(p -> !pricesDate.contains(p))
+							.map(p -> p.toString()).collect(Collectors.toList());
+
+					logger.error("Calculation fail for moving average of stock : " + st.getCode()
+							+ " on place " + st.getPlace().getCode() + " missing dates : " + Strings.join(missingDate, ',') + " with an error rate of "+errorRate*100+" %");
+	//			}
 				throw new FunctionalException(this, "error.finance.stockprice.notall",
 						new String[] { new Integer(prices.size()).toString() });
 			}

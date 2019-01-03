@@ -3,7 +3,11 @@
  */
 package fr.mystocks.mystockserver.dao.finance.stockticker;
 
+import java.util.List;
+
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Strings;
@@ -46,5 +50,14 @@ public class StockTickerDaoImpl extends AbstractDaoImpl<StockTicker> implements 
 
 		return (StockTicker) query.uniqueResult();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<StockTicker> findAllEnableStockTicker() {
+		Criteria criteria = getSession().createCriteria(StockTicker.class);
+		criteria.add(Restrictions.eqOrIsNull("disabled", null));
+		return criteria.list();
+	}
+
 
 }
