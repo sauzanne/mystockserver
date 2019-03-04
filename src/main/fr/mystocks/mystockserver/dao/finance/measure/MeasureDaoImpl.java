@@ -26,5 +26,8 @@ public class MeasureDaoImpl extends AbstractDaoImpl<Measure> implements MeasureD
 		criteria.add(Restrictions.in("code", listCodes));
 		return criteria.list();
 	}
+	
+
+
 
 }

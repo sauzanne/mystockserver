@@ -228,3 +228,50 @@ insert into place_closing(place_id, date_closing) values (7, '2019-12-26');
 delete from place_closing where date_closing = '2019-01-01';
 
 insert into place_closing(place_id, date_closing) select place_id, '2019-01-01' from place_closing group by place_id;
+
+
+--rajout après le 26/02/2019
+
+--US
+insert into place_closing(place_id, date_closing) values (5, '2019-01-21');
+
+insert into place_closing(place_id, date_closing) values (5, '2019-02-18');
+
+insert into place_closing(place_id, date_closing) values (5, '2019-04-19');
+
+insert into place_closing(place_id, date_closing) values (5, '2019-05-27');
+insert into place_closing(place_id, date_closing) values (5, '2019-09-02');
+
+
+insert into place_closing(place_id, date_closing) values (13, '2019-01-21');
+
+insert into place_closing(place_id, date_closing) values (13, '2019-02-18');
+
+insert into place_closing(place_id, date_closing) values (13, '2019-04-19');
+
+insert into place_closing(place_id, date_closing) values (13, '2019-05-27');
+insert into place_closing(place_id, date_closing) values (13, '2019-09-02');
+
+--Paris bruxelles amsterdam (1,2,10)
+insert into place_closing(place_id, date_closing) values (1, '2019-04-19');
+insert into place_closing(place_id, date_closing) values (1, '2019-04-22');
+insert into place_closing(place_id, date_closing) values (1, '2019-05-01');
+insert into place_closing(place_id, date_closing) values (1, '2019-12-25');
+insert into place_closing(place_id, date_closing) values (1, '2019-12-26');
+
+insert into place_closing(place_id, date_closing) values (2, '2019-04-19');
+insert into place_closing(place_id, date_closing) values (2, '2019-04-22');
+insert into place_closing(place_id, date_closing) values (2, '2029-05-01');
+insert into place_closing(place_id, date_closing) values (2, '2019-12-25');
+insert into place_closing(place_id, date_closing) values (2, '2019-12-26');
+
+
+insert into place_closing(place_id, date_closing) values (10, '2019-04-19');
+insert into place_closing(place_id, date_closing) values (10, '2019-04-22');
+insert into place_closing(place_id, date_closing) values (10, '2019-05-01');
+insert into place_closing(place_id, date_closing) values (10, '2019-12-25');
+insert into place_closing(place_id, date_closing) values (10, '2019-12-26');
+
+
+
+

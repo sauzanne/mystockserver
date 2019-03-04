@@ -1,5 +1,6 @@
 package fr.mystocks.mystockserver.technic.constant;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -44,6 +45,7 @@ public final class TechnicalConstant {
 	ret.add(Double.class);
 	ret.add(Void.class);
 	ret.add(String.class);
+	ret.add(LocalDateTime.class);
 
 	return ret;
     }

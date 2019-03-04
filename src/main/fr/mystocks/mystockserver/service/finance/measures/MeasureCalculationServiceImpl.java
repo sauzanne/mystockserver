@@ -40,7 +40,7 @@ import fr.mystocks.mystockserver.technic.properties.PropertiesTools;
  * @author sauzanne
  *
  */
-@Service("MeasureCalculationService")
+@Service("measureCalculationService")
 @Transactional
 @PropertySources({ @PropertySource(value = { "classpath:/application.properties" }) })
 public class MeasureCalculationServiceImpl implements MeasureCalculationService {
@@ -84,28 +84,18 @@ public class MeasureCalculationServiceImpl implements MeasureCalculationService 
 				for (Measure measure : measureDao.findAll()) {
 
 					BigDecimal value = null;
-					if (measure.getCode().contains(MeasureEnum.MM10.getProperties())) {
+					if (measure.getCode().equals(MeasureEnum.MM10.getProperties())) {
 						try {
 							value = technicalAnalysisService.getMovingAverage(st, 10, calculationDate, 0.1);
 							addStat(measure.getCode(), stats);
 						} catch (FunctionalException e) {
-							logger.error("Functional error in calculation of MM10 for stock ticker" + st.getCode());
+							logger.error("Functional error in calculation of MM10 for stock ticker " + st.getCode());
 							ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
 						} catch (RuntimeException e) {
 							logger.error("Error in calculation of MM10 for stock ticker" + st.getCode());
 							ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
 						}
-					} else if (measure.getCode().contains(MeasureEnum.MM200.getProperties())) {
-//							try {
-//								value = technicalAnalysisService.getMovingAverage(st, 200, today);
-//							} catch (FunctionalException e) {
-//								logger.error("Functional error in calculation of MM200 for stock ticker" + st.getCode());
-//								ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
-//							} catch (RuntimeException e) {
-//								logger.error("Error in calculation of MM200 for stock ticker" + st.getCode());
-//								ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
-//							}
-					} else if (measure.getCode().contains(MeasureEnum.MM150.getProperties())) {
+					} else if (measure.getCode().equals(MeasureEnum.MM150.getProperties())) {
 
 						String mm150properties = MeasureEnum.MM150.getProperties();
 						try {
@@ -122,7 +112,24 @@ public class MeasureCalculationServiceImpl implements MeasureCalculationService 
 									"Error in calculation of " + mm150properties + " for stock ticker" + st.getCode());
 							ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
 						}
-					} else if (measure.getCode().contains(MeasureEnum.MM50.getProperties())) {
+					} else if (measure.getCode().equals(MeasureEnum.MM100.getProperties())) {
+
+						String mm100properties = MeasureEnum.MM100.getProperties();
+						try {
+							value = technicalAnalysisService.getMovingAverage(st, 100, calculationDate,
+									acceptableErrorRate);
+							addStat(measure.getCode(), stats);
+
+						} catch (FunctionalException e) {
+							logger.error("Functional error in calculation of " + mm100properties + " for stock ticker"
+									+ st.getCode());
+							ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
+						} catch (RuntimeException e) {
+							logger.error(
+									"Error in calculation of " + mm100properties + " for stock ticker" + st.getCode());
+							ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
+						}
+					} else if (measure.getCode().equals(MeasureEnum.MM50.getProperties())) {
 						String mm50properties = MeasureEnum.MM50.getProperties();
 						try {
 							value = technicalAnalysisService.getMovingAverage(st, 50, calculationDate, 0.03);
@@ -149,6 +156,17 @@ public class MeasureCalculationServiceImpl implements MeasureCalculationService 
 
 						measureCalculationDao.create(measureCalculation);
 					}
+					// else if (measure.getCode().contains(MeasureEnum.MM200.getProperties())) {
+//							try {
+//								value = technicalAnalysisService.getMovingAverage(st, 200, today);
+//							} catch (FunctionalException e) {
+//								logger.error("Functional error in calculation of MM200 for stock ticker" + st.getCode());
+//								ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
+//							} catch (RuntimeException e) {
+//								logger.error("Error in calculation of MM200 for stock ticker" + st.getCode());
+//								ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
+//							}
+
 				}
 			}
 		} catch (FunctionalException e) {

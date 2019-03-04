@@ -37,7 +37,9 @@ INSERT INTO `measure`(code, first_input) VALUES('risks.inventory.turnover',now()
 insert into measure(code, first_input) values ('technical.analysis.mm10',now());
 insert into measure(code, first_input) values ('technical.analysis.mm200',now());
 insert into measure(code, first_input) values ('technical.analysis.mm150',now());
-insert into measure(code, first_input) values ('technical.analysis.mm50',now())
+insert into measure(code, first_input) values ('technical.analysis.mm50',now());
+insert into measure(code, first_input) values ('technical.analysis.mm100',now());
+
 
 
 

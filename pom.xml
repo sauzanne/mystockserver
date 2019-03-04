@@ -46,7 +46,9 @@
 		<mail.password>postmaster</mail.password>
 		<mail.smtp.auth>true</mail.smtp.auth>
 		<mail.smtp.starttls.enable>false</mail.smtp.starttls.enable>
-		<cron.measurecalculation>0 50 9 * * 1-7</cron.measurecalculation>
+		<cron.measurecalculation>0 30 9 * * 1-7</cron.measurecalculation>
+		<cron.measurealert>0 0 */1 * * 1-7</cron.measurealert>
+		
 
 
 
@@ -60,7 +62,7 @@
 				<resource.dir>dev</resource.dir>
 				<hibernate.show_sql>true</hibernate.show_sql>
 				<hibernate.format_sql>true</hibernate.format_sql>
-				<cron.measurecalculation>0 */15 * * * *</cron.measurecalculation>				
+				<!-- <cron.measurecalculation>0 */15 * * * *</cron.measurecalculation> -->				
 			</properties>
 			<activation>
 				<activeByDefault>true</activeByDefault>

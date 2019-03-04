@@ -26,12 +26,13 @@ public class MeasureAlert implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	@Column(name = "stock_ticker_id")
-	private StockTicker stockTicker;
-
 	@ManyToOne
 	@JoinColumn(name = "account_id", nullable = false)
 	private Account account;
+	
+	@ManyToOne
+	@JoinColumn(name = "stock_ticker_id", nullable = false)
+	private StockTicker stockTicker;
 
 	@ManyToOne
 	@JoinColumn(name = "measure_id", nullable = false)
@@ -43,18 +44,21 @@ public class MeasureAlert implements Serializable {
 
 	@Column(name = "value")
 	private BigDecimal value;
-
-	@Column(name = "first_input")
-	private LocalDateTime firstInput;
-
-	@Column(name = "binaryOperator")
+	
+	@Column(name = "binary_operator")
 	private String binaryOperator;
 
 	@Column(name = "triggered")
 	private boolean triggered;
+	
+	@Column(name = "first_input")
+	private LocalDateTime firstInput;
 
-	@Column(name = "last_modified")
-	private LocalDateTime lastModified;
+
+	public MeasureAlert() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -69,7 +73,6 @@ public class MeasureAlert implements Serializable {
 		result = prime * result + ((binaryOperator == null) ? 0 : binaryOperator.hashCode());
 		result = prime * result + ((firstInput == null) ? 0 : firstInput.hashCode());
 		result = prime * result + id;
-		result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
 		result = prime * result + ((measure == null) ? 0 : measure.hashCode());
 		result = prime * result + ((measureCompared == null) ? 0 : measureCompared.hashCode());
 		result = prime * result + ((stockTicker == null) ? 0 : stockTicker.hashCode());
@@ -108,11 +111,6 @@ public class MeasureAlert implements Serializable {
 		} else if (!firstInput.equals(other.firstInput))
 			return false;
 		if (id != other.id)
-			return false;
-		if (lastModified == null) {
-			if (other.lastModified != null)
-				return false;
-		} else if (!lastModified.equals(other.lastModified))
 			return false;
 		if (measure == null) {
 			if (other.measure != null)
@@ -265,19 +263,6 @@ public class MeasureAlert implements Serializable {
 		this.triggered = triggered;
 	}
 
-	/**
-	 * @return the lastModified
-	 */
-	public LocalDateTime getLastModified() {
-		return lastModified;
-	}
-
-	/**
-	 * @param lastModified the lastModified to set
-	 */
-	public void setLastModified(LocalDateTime lastModified) {
-		this.lastModified = lastModified;
-	}
 
 	/**
 	 * @param id
@@ -292,8 +277,7 @@ public class MeasureAlert implements Serializable {
 	 * @param lastModified
 	 */
 	public MeasureAlert(int id, StockTicker stockTicker, Account account, Measure measure, Measure measureCompared,
-			BigDecimal value, LocalDateTime firstInput, String binaryOperator, boolean triggered,
-			LocalDateTime lastModified) {
+			BigDecimal value, LocalDateTime firstInput, String binaryOperator, boolean triggered) {
 		super();
 		this.id = id;
 		this.stockTicker = stockTicker;
@@ -304,7 +288,6 @@ public class MeasureAlert implements Serializable {
 		this.firstInput = firstInput;
 		this.binaryOperator = binaryOperator;
 		this.triggered = triggered;
-		this.lastModified = lastModified;
 	}
 
 }
