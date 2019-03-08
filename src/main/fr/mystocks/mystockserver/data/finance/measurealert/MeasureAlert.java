@@ -53,6 +53,10 @@ public class MeasureAlert implements Serializable {
 	
 	@Column(name = "first_input")
 	private LocalDateTime firstInput;
+	
+	@Column(name = "last_modified")
+	private LocalDateTime lastModified;
+
 
 
 	public MeasureAlert() {
@@ -288,6 +292,20 @@ public class MeasureAlert implements Serializable {
 		this.firstInput = firstInput;
 		this.binaryOperator = binaryOperator;
 		this.triggered = triggered;
+	}
+
+	/**
+	 * @return the lastModified
+	 */
+	public LocalDateTime getLastModified() {
+		return lastModified;
+	}
+
+	/**
+	 * @param lastModified the lastModified to set
+	 */
+	public void setLastModified(LocalDateTime lastModified) {
+		this.lastModified = lastModified;
 	}
 
 }

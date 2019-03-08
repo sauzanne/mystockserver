@@ -7,16 +7,16 @@ import java.util.Locale;
 
 public class NumberFinancialTools {
 
-    //public final static String NUMBER_DEFAULT_FORMAT_PATTERN = "###.###";
+	// public final static String NUMBER_DEFAULT_FORMAT_PATTERN = "###.###";
 
-    private NumberFinancialTools() {
-	super();
-    }
+	private NumberFinancialTools() {
+		super();
+	}
 
-    public static String defaultNumberFormat(BigDecimal numberToFormat, Locale locale) {
-	NumberFormat nf = NumberFormat.getNumberInstance(locale);
-	DecimalFormat df = (DecimalFormat) nf;
-	return df.format(numberToFormat);
-    }
+	public static String defaultNumberFormat(BigDecimal numberToFormat, Locale locale) {
+		NumberFormat nf = NumberFormat.getNumberInstance(locale);
+		DecimalFormat df = (DecimalFormat) nf;
+		return df.format(numberToFormat);
+	}
 
 }

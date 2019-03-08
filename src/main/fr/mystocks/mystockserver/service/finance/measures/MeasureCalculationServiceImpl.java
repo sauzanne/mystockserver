@@ -144,6 +144,23 @@ public class MeasureCalculationServiceImpl implements MeasureCalculationService 
 									"Error in calculation of " + mm50properties + " for stock ticker" + st.getCode());
 							ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
 						}
+					} else if (measure.getCode().equals(MeasureEnum.MM200.getProperties())) {
+
+						String mm200properties = MeasureEnum.MM200.getProperties();
+						try {
+							value = technicalAnalysisService.getMovingAverage(st, 200, calculationDate,
+									acceptableErrorRate);
+							addStat(measure.getCode(), stats);
+
+						} catch (FunctionalException e) {
+							logger.error("Functional error in calculation of " + mm200properties + " for stock ticker"
+									+ st.getCode());
+							ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
+						} catch (RuntimeException e) {
+							logger.error(
+									"Error in calculation of " + mm200properties + " for stock ticker" + st.getCode());
+							ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
+						}
 					}
 					if (value != null) {
 						MeasureCalculation measureCalculation = new MeasureCalculation();
@@ -156,16 +173,6 @@ public class MeasureCalculationServiceImpl implements MeasureCalculationService 
 
 						measureCalculationDao.create(measureCalculation);
 					}
-					// else if (measure.getCode().contains(MeasureEnum.MM200.getProperties())) {
-//							try {
-//								value = technicalAnalysisService.getMovingAverage(st, 200, today);
-//							} catch (FunctionalException e) {
-//								logger.error("Functional error in calculation of MM200 for stock ticker" + st.getCode());
-//								ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
-//							} catch (RuntimeException e) {
-//								logger.error("Error in calculation of MM200 for stock ticker" + st.getCode());
-//								ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
-//							}
 
 				}
 			}

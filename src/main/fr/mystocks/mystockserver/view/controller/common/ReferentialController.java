@@ -52,7 +52,7 @@ public class ReferentialController {
 
 	private final static String GETTER_METHOD = "get";
 
-	@RolesAllowed(RoleConst.ADMIN)
+	@RolesAllowed(RoleConst.USER)
 	@GET
 	@Path("getAll")
 	public Response getFindAll(@QueryParam(PARAM_REFERENTIAL_NAME) String referentialName) {

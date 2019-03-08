@@ -43,12 +43,12 @@
 		<mail.host>SSL0.OVH.NET</mail.host>
 		<!-- <mail.host>listes.basketfrance.com</mail.host> -->
 		<mail.username>postmaster@fleexy.fr</mail.username>
-		<mail.password>postmaster</mail.password>
+		<mail.password>_LoretPkzenFMK2QvOVE6I5xTTIZWz</mail.password>
 		<mail.smtp.auth>true</mail.smtp.auth>
 		<mail.smtp.starttls.enable>false</mail.smtp.starttls.enable>
-		<cron.measurecalculation>0 30 9 * * 1-7</cron.measurecalculation>
+		<cron.measurecalculation>0 40 9 * * 1-7</cron.measurecalculation>
 		<cron.measurealert>0 0 */1 * * 1-7</cron.measurealert>
-		
+
 
 
 
@@ -62,7 +62,7 @@
 				<resource.dir>dev</resource.dir>
 				<hibernate.show_sql>true</hibernate.show_sql>
 				<hibernate.format_sql>true</hibernate.format_sql>
-				<!-- <cron.measurecalculation>0 */15 * * * *</cron.measurecalculation> -->				
+				<!-- <cron.measurecalculation>0 */15 * * * *</cron.measurecalculation> -->
 			</properties>
 			<activation>
 				<activeByDefault>true</activeByDefault>
@@ -87,6 +87,7 @@
 
 		<sourceDirectory>src/main</sourceDirectory>
 		<testSourceDirectory>src/test</testSourceDirectory>
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -95,7 +96,13 @@
 				<configuration>
 					<warName>${war-name}</warName>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
+					<webResources>
+						<resource>
+							<directory>WebContent</directory>
+						</resource>
+					</webResources>
 				</configuration>
+
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -191,7 +198,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jersey</artifactId>
 			<version>${springboot.version}</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
