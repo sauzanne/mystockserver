@@ -42,12 +42,12 @@
 		<mail.port>587</mail.port>
 		<mail.host>SSL0.OVH.NET</mail.host>
 		<!-- <mail.host>listes.basketfrance.com</mail.host> -->
-		<mail.username>postmaster@fleexy.fr</mail.username>
-		<mail.password>_LoretPkzenFMK2QvOVE6I5xTTIZWz</mail.password>
+		<mail.username>fleexy@fleexy.fr</mail.username>
+		<mail.password>tEpDtikjkIWNR7BI7AZSyZ2fBsueoY</mail.password>
 		<mail.smtp.auth>true</mail.smtp.auth>
 		<mail.smtp.starttls.enable>false</mail.smtp.starttls.enable>
 		<cron.measurecalculation>0 40 9 * * 1-7</cron.measurecalculation>
-		<cron.measurealert>0 0 */1 * * 1-7</cron.measurealert>
+		<cron.measurealert>0 */30 * * * 1-7</cron.measurealert>
 
 
 

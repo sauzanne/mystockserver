@@ -40,6 +40,9 @@ insert into measure(code, first_input) values ('technical.analysis.mm150',now())
 insert into measure(code, first_input) values ('technical.analysis.mm50',now());
 insert into measure(code, first_input) values ('technical.analysis.mm100',now());
 
+insert into measure(code, first_input) values ('common.price.last',now());
+
+
 
 
 

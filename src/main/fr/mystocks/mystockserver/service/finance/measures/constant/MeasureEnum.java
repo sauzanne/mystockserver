@@ -3,7 +3,7 @@ package fr.mystocks.mystockserver.service.finance.measures.constant;
 public enum MeasureEnum {
 
 	MM10("technical.analysis.mm10"), MM150("technical.analysis.mm150"), MM100("technical.analysis.mm100"),
-	MM200("technical.analysis.mm200"), MM50("technical.analysis.mm50");
+	MM200("technical.analysis.mm200"), MM50("technical.analysis.mm50"), LASTPRICE("common.price.last");
 
 	private String properties;
 
