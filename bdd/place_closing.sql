@@ -272,6 +272,51 @@ insert into place_closing(place_id, date_closing) values (10, '2019-05-01');
 insert into place_closing(place_id, date_closing) values (10, '2019-12-25');
 insert into place_closing(place_id, date_closing) values (10, '2019-12-26');
 
+--fermeture place Tokyo
+insert into place_closing(place_id, date_closing) values (19, '2018-01-01');
+insert into place_closing(place_id, date_closing) values (19, '2018-01-02');
+insert into place_closing(place_id, date_closing) values (19, '2018-01-03');
+insert into place_closing(place_id, date_closing) values (19, '2018-01-08');
+insert into place_closing(place_id, date_closing) values (19, '2018-02-11');
+insert into place_closing(place_id, date_closing) values (19, '2018-02-12');
+insert into place_closing(place_id, date_closing) values (19, '2018-03-21');
+insert into place_closing(place_id, date_closing) values (19, '2018-04-29');
+insert into place_closing(place_id, date_closing) values (19, '2018-04-30');
+insert into place_closing(place_id, date_closing) values (19, '2018-05-03');
+insert into place_closing(place_id, date_closing) values (19, '2018-05-04');
+insert into place_closing(place_id, date_closing) values (19, '2018-07-16');
+insert into place_closing(place_id, date_closing) values (19, '2018-08-11');
+insert into place_closing(place_id, date_closing) values (19, '2018-09-17');
+insert into place_closing(place_id, date_closing) values (19, '2018-09-23');
+insert into place_closing(place_id, date_closing) values (19, '2018-09-24');
+insert into place_closing(place_id, date_closing) values (19, '2018-10-08');
+insert into place_closing(place_id, date_closing) values (19, '2018-11-03');
+insert into place_closing(place_id, date_closing) values (19, '2018-11-23');
+insert into place_closing(place_id, date_closing) values (19, '2018-12-23');
+insert into place_closing(place_id, date_closing) values (19, '2018-12-24');
+insert into place_closing(place_id, date_closing) values (19, '2018-12-31');
 
 
+insert into place_closing(place_id, date_closing) values (19, '2019-01-01');
+insert into place_closing(place_id, date_closing) values (19, '2019-01-02');
+insert into place_closing(place_id, date_closing) values (19, '2019-01-03');
+insert into place_closing(place_id, date_closing) values (19, '2019-01-14');
+insert into place_closing(place_id, date_closing) values (19, '2019-02-11');
+insert into place_closing(place_id, date_closing) values (19, '2019-03-21');
+insert into place_closing(place_id, date_closing) values (19, '2019-04-29');
+insert into place_closing(place_id, date_closing) values (19, '2019-04-30');
+insert into place_closing(place_id, date_closing) values (19, '2019-05-01');
+insert into place_closing(place_id, date_closing) values (19, '2019-05-02');
+insert into place_closing(place_id, date_closing) values (19, '2019-05-03');
+insert into place_closing(place_id, date_closing) values (19, '2019-05-04');
+insert into place_closing(place_id, date_closing) values (19, '2019-05-06');
 
+insert into place_closing(place_id, date_closing) values (19, '2019-07-15');
+insert into place_closing(place_id, date_closing) values (19, '2019-08-12');
+insert into place_closing(place_id, date_closing) values (19, '2019-09-16');
+insert into place_closing(place_id, date_closing) values (19, '2019-09-23');
+insert into place_closing(place_id, date_closing) values (19, '2019-10-14');
+insert into place_closing(place_id, date_closing) values (19, '2019-10-22');
+insert into place_closing(place_id, date_closing) values (19, '2019-11-04');
+insert into place_closing(place_id, date_closing) values (19, '2019-11-23');
+insert into place_closing(place_id, date_closing) values (19, '2019-12-31');

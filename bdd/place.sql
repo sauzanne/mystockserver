@@ -16,3 +16,5 @@ INSERT INTO place(`id`, `code`,`place_name`, `currency_id`, `country_name`) VALU
 
 INSERT INTO place(`id`, `code`,`place_name`, `currency_id`, `country_name`) VALUES
 (18,'HK', 'Honk Kong Stock Exchange', 344, 'Hong Kong');
+
+insert into place(code,place_name,currency_id,country_name) values ('T','Tokyo Stock Exchange', 392,'Japan');

@@ -2,7 +2,6 @@ package fr.mystocks.mystockserver.technic.configuration.rest;
 
 import javax.ws.rs.ApplicationPath;
 
-
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.server.spring.scope.RequestContextFilter;

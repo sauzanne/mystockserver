@@ -4,14 +4,17 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.net.URLEncoder;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.validator.routines.UrlValidator;
@@ -28,6 +31,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import fr.mystocks.mystockserver.data.finance.place.Place;
+import fr.mystocks.mystockserver.data.finance.stock.Stock;
 import fr.mystocks.mystockserver.data.finance.stockprice.StockPrice;
 import fr.mystocks.mystockserver.data.finance.stockprice.StockPriceId;
 import fr.mystocks.mystockserver.data.finance.stockticker.StockTicker;
@@ -223,11 +227,22 @@ public class YahooFinanceServiceImpl implements StockPriceService {
 
 		url = YahooFinanceEnum.URL.label;
 
+		Stock stock = Optional.ofNullable(st.getStock()).orElse(null);
+
 		// pour les marchés US yahoo ne nécessite pas l'extension pays
-		if (!st.getPlace().getCode().equals(NASDAQ_PLACE) && !st.getPlace().getCode().equals(US_PLACE)) {
-			url += st.getCode() + "." + st.getPlace().getCode();
+		if (!st.getPlace().getCode().equals(NASDAQ_PLACE) && !st.getPlace().getCode().equals(US_PLACE) && stock != null
+				&& !stock.getStockType().getCode().equals("stocks.type.index")) {
+			try {
+				url += URLEncoder.encode(st.getCode() + "." + st.getPlace().getCode(), TechnicalConstant.ENCODING);
+			} catch (UnsupportedEncodingException e) {
+				ExceptionTools.processException(this, logger, e);
+			}
 		} else {
-			url += st.getCode();
+			try {
+				url += URLEncoder.encode(st.getCode(), TechnicalConstant.ENCODING);
+			} catch (UnsupportedEncodingException e) {
+				ExceptionTools.processException(this, logger, e);
+			}
 		}
 		url += TechnicalConstant.QUESTION;
 		url += YahooFinanceEnum.PERIOD1.label + "="

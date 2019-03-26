@@ -6,6 +6,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,13 +18,15 @@ public abstract class AbstractDaoImpl<T> implements Dao<T> {
 	@Autowired
 	private SessionFactory sessionFactory;
 
+	private final static String ID_COLUMN = "id";
+
 	protected Session getSession() {
 		return sessionFactory.getCurrentSession();
 	}
 
 	/**
-	 * Constructeur par d�faut permettant de définir la class et le nom de la
-	 * classe de la classe fille
+	 * Constructeur par d�faut permettant de définir la class et le nom de la classe
+	 * de la classe fille
 	 */
 	@SuppressWarnings("unchecked")
 	public AbstractDaoImpl() {
@@ -53,7 +56,7 @@ public abstract class AbstractDaoImpl<T> implements Dao<T> {
 	@Override
 	public T findById(Integer id) {
 		Criteria criteria = getSession().createCriteria(persistentClass);
-		criteria.add(Restrictions.eq("id", id));
+		criteria.add(Restrictions.eq(ID_COLUMN, id));
 		return (T) criteria.uniqueResult();
 	}
 
@@ -62,5 +65,14 @@ public abstract class AbstractDaoImpl<T> implements Dao<T> {
 		Criteria criteria = getSession().createCriteria(persistentClass);
 		return (List<T>) criteria.list();
 	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public List<T> findReferentialItems() {
+		Criteria criteria = getSession().createCriteria(persistentClass);
+		criteria.addOrder(Order.asc(ID_COLUMN));
+		return (List<T>) criteria.list();
+	}
+
 
 }

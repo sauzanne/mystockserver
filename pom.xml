@@ -46,7 +46,7 @@
 		<mail.password>tEpDtikjkIWNR7BI7AZSyZ2fBsueoY</mail.password>
 		<mail.smtp.auth>true</mail.smtp.auth>
 		<mail.smtp.starttls.enable>false</mail.smtp.starttls.enable>
-		<cron.measurecalculation>0 40 9 * * 1-7</cron.measurecalculation>
+		<cron.measurecalculation>0 15 0 * * 1-7</cron.measurecalculation>
 		<cron.measurealert>0 */30 * * * 1-7</cron.measurealert>
 
 
@@ -62,7 +62,7 @@
 				<resource.dir>dev</resource.dir>
 				<hibernate.show_sql>true</hibernate.show_sql>
 				<hibernate.format_sql>true</hibernate.format_sql>
-				<!-- <cron.measurecalculation>0 */15 * * * *</cron.measurecalculation> -->
+				<cron.measurecalculation>0 */5 * * * *</cron.measurecalculation>
 			</properties>
 			<activation>
 				<activeByDefault>true</activeByDefault>
@@ -125,6 +125,11 @@
 				<filtering>true</filtering>
 			</resource>
 		</resources>
+		<testResources>
+			<testResource>
+				<directory>src/test</directory>
+			</testResource>
+		</testResources>
 	</build>
 
 	<!-- <dependencyManagement> <dependencies> <dependency> <groupId>org.glassfish.jersey</groupId> 
@@ -225,6 +230,7 @@
 			<artifactId>jackson-jaxrs-json-provider</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
+
 
 		<!-- Hibernate -->
 		<dependency>

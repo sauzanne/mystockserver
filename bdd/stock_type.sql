@@ -5,3 +5,6 @@ INSERT INTO `stock_type`(id, code) VALUES
 (4,'stocks.type.etf'),
 (5,'stocks.type.warrant'),
 (6,'stocks.type.turbo');
+
+
+INSERT INTO `stock_type`(id, code) VALUES (7,'stocks.type.index');

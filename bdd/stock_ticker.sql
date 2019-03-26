@@ -261,3 +261,5 @@ update stock_ticker set place_id = 4 where code = 'VWS';
 insert into stock_ticker(code,stock_id, place_id,main_place,server_user_id,disabled,first_input) values('NAGF',1024,4,1,1,null,now());
 
 
+ALTER TABLE `mystocks`.`stock_ticker` 
+MODIFY `code` varchar(6) not NULL;

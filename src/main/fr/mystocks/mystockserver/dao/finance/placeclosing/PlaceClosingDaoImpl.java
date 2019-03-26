@@ -20,6 +20,7 @@ public class PlaceClosingDaoImpl extends AbstractDaoImpl<PlaceClosing> implement
 
 	private static final String BIND_CODE_PLACE = "codePlace";
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<PlaceClosing> findByCodePlace(String code) {
 		StringBuilder request = new StringBuilder();

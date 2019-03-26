@@ -5,7 +5,6 @@ import java.math.MathContext;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.util.Strings;
@@ -86,25 +85,26 @@ public class TechnicalAnalysisServiceImpl implements TechnicalAnalysisService {
 				return sum.divide(BigDecimal.valueOf(prices.size()), MathContext.DECIMAL128);
 			} else if (prices.isEmpty() || errorRate > acceptableErrorRate) {
 
-			//	if (!prices.isEmpty()) {
+				// if (!prices.isEmpty()) {
 //					Set<String> listStringCalculationDate = 
 //						    listCalculationDate.stream()
 //						         .map(LocalDate::toString)
 //						         .collect(Collectors.toSet());
 
-					List<LocalDate> pricesDate = prices.stream().map(StockPrice::getStockPriceId)
-							.map(StockPriceId::getInputDate).collect(Collectors.toList());
+				List<LocalDate> pricesDate = prices.stream().map(StockPrice::getStockPriceId)
+						.map(StockPriceId::getInputDate).collect(Collectors.toList());
 
 //					List<String> missingDate = prices.stream()
 //							.filter(p -> !listStringCalculationDate.contains(p.getStockPriceId().getInputDate().toString()))
 //							.map(p -> p.getStockPriceId().getInputDate().toString()).collect(Collectors.toList());
 
-					List<String> missingDate = listCalculationDate.stream().filter(p -> !pricesDate.contains(p))
-							.map(p -> p.toString()).collect(Collectors.toList());
+				List<String> missingDate = listCalculationDate.stream().filter(p -> !pricesDate.contains(p))
+						.map(p -> p.toString()).collect(Collectors.toList());
 
-					logger.error("Calculation fail for moving average of stock : " + st.getCode()
-							+ " on place " + st.getPlace().getCode() + " missing dates : " + Strings.join(missingDate, ',') + " with an error rate of "+errorRate*100+" %");
-	//			}
+				logger.error("Calculation fail for moving average of stock : " + st.getCode() + " on place "
+						+ st.getPlace().getCode() + " missing dates : " + Strings.join(missingDate, ',')
+						+ " with an error rate of " + errorRate * 100 + " %");
+				// }
 				throw new FunctionalException(this, "error.finance.stockprice.notall",
 						new String[] { new Integer(prices.size()).toString() });
 			}

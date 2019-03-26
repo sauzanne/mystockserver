@@ -30,7 +30,7 @@ public class ReferentialServiceImpl implements ReferentialService, ApplicationCo
 
 			Object dao = (Object) applicationContext.getBean(dataName + DAO_EXTENSION);
 
-			Method findAll = dao.getClass().getMethod("findAll");
+			Method findAll = dao.getClass().getMethod("findReferentialItems");
 
 			return (List<Object>) findAll.invoke(dao);
 		} catch (NoSuchMethodException e) {
