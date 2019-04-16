@@ -27,6 +27,15 @@ public class MeasureDaoImpl extends AbstractDaoImpl<Measure> implements MeasureD
 		return criteria.list();
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Measure> getAvailableMeasures() {
+		Criteria criteria = getSession().createCriteria(Measure.class);
+		criteria.add(Restrictions.eq("available", true));
+		return criteria.list();
+	}
+
+	
 
 
 

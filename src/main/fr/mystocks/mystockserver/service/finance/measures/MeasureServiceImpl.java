@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -83,6 +84,7 @@ public class MeasureServiceImpl implements MeasureService {
 	@Override
 	public Integer createMeasureAlert(String login, String codeStockTicker, String codePlace, Integer measureId1,
 			Integer measureId2, BigDecimal value, BinaryOperatorEnum binaryOperator) {
+
 		try {
 			StockTicker stockTicker = stockTickerDao.findByCodeAndPlace(codeStockTicker, codePlace, false);
 
@@ -96,14 +98,22 @@ public class MeasureServiceImpl implements MeasureService {
 			}
 
 			Measure measure1 = measureDao.findById(measureId1);
+			if (!measure1.isAvailable()) {
+				throw new FunctionalException(this, "error.finance.measure.notavailable",
+						new String[] { measure1.getCode() });
+			}
 			Measure measure2 = null;
 			if (measureId2 != null) {
 				measure2 = measureDao.findById(measureId2);
+				if (!measure2.isAvailable()) {
+					throw new FunctionalException(this, "error.finance.measure.notavailable",
+							new String[] { measure1.getCode() });
+				}
 			}
 
 			List<MeasureAlert> allreadyDefinedAlerts = measureAlertDao.findMeasureAlert(account.getId(),
-					stockTicker.getId(), measureId1, measure2 != null ? measure2.getId() : null, binaryOperator.name(),
-					false);
+					stockTicker.getId(), measureId1, measure2 != null ? measure2.getId() : null, value,
+					binaryOperator.name(), false);
 
 			if (allreadyDefinedAlerts != null && !allreadyDefinedAlerts.isEmpty()) {
 				throw new FunctionalException(this, "error.finance.measurealert.exist");
@@ -153,8 +163,10 @@ public class MeasureServiceImpl implements MeasureService {
 						}
 
 						/* vérification du déclenchement de l'alerte */
-						if (measureCalculation != null && measureCalculationCompared != null) {
-							triggerAlert(ma, measureEnum, measureCalculation, measureCalculationCompared);
+						if (measureCalculation != null
+								&& (measureCalculationCompared != null || ma.getValue() != null)) {
+							triggerAlert(ma, measureEnum, measureCalculation, measureCalculationCompared,
+									ma.getValue());
 
 						}
 					} catch (FunctionalException e) {
@@ -220,44 +232,62 @@ public class MeasureServiceImpl implements MeasureService {
 	 * @param ma                         l'alerte mesurée
 	 * @param measureEnum                le type de mesure
 	 * @param measureCalculation         le calcul de la mesure
-	 * @param measureCalculationCompared le calcul comparé
+	 * @param measureCalculationCompared le calcul comparé (nullable)
+	 * @param value                      la valeur comparée (nullable)
 	 */
 	private void triggerAlert(MeasureAlert ma, MeasureEnum measureEnum, MeasureCalculation measureCalculation,
-			MeasureCalculation measureCalculationCompared) {
+			MeasureCalculation measureCalculationCompared, BigDecimal value) {
 		BinaryOperatorEnum binaryOperator = BinaryOperatorEnum.valueOf(ma.getBinaryOperator());
+		BigDecimal valueToCompare = measureCalculationCompared != null ? measureCalculationCompared.getValue() : value;
 
-		if ((binaryOperator == BinaryOperatorEnum.GE
-				&& measureCalculation.getValue().compareTo(measureCalculationCompared.getValue()) >= 0)
+		if ((binaryOperator == BinaryOperatorEnum.GE && measureCalculation.getValue().compareTo(valueToCompare) >= 0)
 				|| (binaryOperator == BinaryOperatorEnum.LE
-						&& measureCalculation.getValue().compareTo(measureCalculationCompared.getValue()) <= 0))
+						&& measureCalculation.getValue().compareTo(valueToCompare) <= 0))
 
 		{
 			String differentCalculationDate = null;
 			/* les 2 dates de calcul des mesures sont différentes */
-			if (!measureCalculation.getCalculationDate().isEqual(measureCalculationCompared.getCalculationDate())) {
+			if (measureCalculationCompared != null && !measureCalculation.getCalculationDate()
+					.isEqual(measureCalculationCompared.getCalculationDate())) {
 				differentCalculationDate = propertiesTools.getProperty("measure.mail.alert.calculationdate",
 						new String[] { ma.getMeasure().getCode(), measureCalculation.getCalculationDate().toString(),
 								ma.getMeasureCompared().getCode(),
 								measureCalculationCompared.getCalculationDate().toString() });
 			}
-			MeasureEnum measureEnumCompared = MeasureEnum.getMeasureEnumByProperties(ma.getMeasureCompared().getCode());
+			MeasureEnum measureEnumCompared = MeasureEnum.getMeasureEnumByProperties(
+					Optional.ofNullable(ma.getMeasureCompared()).orElse(new Measure()).getCode());
 
 			// ma.getStockTicker().
-			String subject = propertiesTools.getProperty("measure.mail.alert.subject", new String[] {
-					ma.getStockTicker().getStock().getName() + "(" + ma.getStockTicker().getCode().toUpperCase() + "."
-							+ ma.getStockTicker().getPlace().getCode().toUpperCase() + ")",
-					measureEnum.name(), propertiesTools.getProperty(binaryOperator.getProperties()),
-					measureEnumCompared.name() });
+			String subject = propertiesTools.getProperty("measure.mail.alert.subject",
+					new String[] {
+							ma.getStockTicker().getStock().getName() + "(" + ma.getStockTicker().getCode().toUpperCase()
+									+ "." + ma.getStockTicker().getPlace().getCode().toUpperCase() + ")",
+							measureEnum.name(), propertiesTools.getProperty(binaryOperator.getProperties()),
+							measureEnumCompared != null ? measureEnumCompared.name()
+									: NumberFinancialTools.defaultNumberFormat(valueToCompare, context.getLocale()) });
+			String body = null;
+			if (measureEnumCompared != null) {
+				body = propertiesTools.getProperty("measure.mail.alert.body",
+						new String[] { ma.getAccount().getFirstName(), ma.getStockTicker().getStock().getName() + "("
+								+ ma.getStockTicker().getCode() + "." + ma.getStockTicker().getPlace().getCode() + ")",
+								measureEnum.name(),
+								NumberFinancialTools.defaultNumberFormat(measureCalculation.getValue(),
+										context.getLocale()),
+								propertiesTools.getProperty(binaryOperator.getProperties()), measureEnumCompared.name(),
+								NumberFinancialTools.defaultNumberFormat(measureCalculationCompared.getValue(),
+										context.getLocale()) });
+			} else {
+				body = propertiesTools.getProperty("measure.mail.alert.body",
+						new String[] { ma.getAccount().getFirstName(), ma.getStockTicker().getStock().getName() + "("
+								+ ma.getStockTicker().getCode() + "." + ma.getStockTicker().getPlace().getCode() + ")",
+								measureEnum.name(),
+								NumberFinancialTools.defaultNumberFormat(measureCalculation.getValue(),
+										context.getLocale()),
+								propertiesTools.getProperty(binaryOperator.getProperties()),
+								propertiesTools.getProperty("common.value"),
+								NumberFinancialTools.defaultNumberFormat(valueToCompare, context.getLocale()) });
 
-			String body = propertiesTools.getProperty("measure.mail.alert.body",
-					new String[] { ma.getAccount().getFirstName(), ma.getStockTicker().getStock().getName() + "("
-							+ ma.getStockTicker().getCode() + "." + ma.getStockTicker().getPlace().getCode() + ")",
-							measureEnum.name(),
-							NumberFinancialTools.defaultNumberFormat(measureCalculation.getValue(),
-									context.getLocale()),
-							propertiesTools.getProperty(binaryOperator.getProperties()), measureEnumCompared.name(),
-							NumberFinancialTools.defaultNumberFormat(measureCalculationCompared.getValue(),
-									context.getLocale()) });
+			}
 
 			try {
 				mailTools.sendMessage(ma.getAccount().getMail(), subject,
@@ -287,7 +317,7 @@ public class MeasureServiceImpl implements MeasureService {
 			}
 
 			List<MeasureAlert> listMeasureAlert = measureAlertDao.findMeasureAlert(account.getId(), null, null, null,
-					null, triggered);
+					null, null, triggered);
 
 			for (MeasureAlert ma : listMeasureAlert) {
 
@@ -300,7 +330,7 @@ public class MeasureServiceImpl implements MeasureService {
 					mam.setComparator(ma.getBinaryOperator());
 					mam.setMeasureCompared(ma.getMeasureCompared() != null
 							? MeasureEnum.getMeasureEnumByProperties(ma.getMeasureCompared().getCode()).name()
-							: null);
+							: propertiesTools.getProperty("common.value").toUpperCase());
 					mam.setStockName(ma.getStockTicker().getStock().getName());
 					mam.setStockTicker(ma.getStockTicker().getCode());
 
@@ -314,6 +344,8 @@ public class MeasureServiceImpl implements MeasureService {
 						if (measureCalculationCompared != null) {
 							mam.setMeasureCalculationCompared(measureCalculationCompared.getValue().doubleValue());
 						}
+					} else {
+						mam.setMeasureCalculationCompared(ma.getValue().doubleValue());
 
 					}
 					mam.setTriggered(ma.isTriggered());

@@ -230,8 +230,8 @@ public class YahooFinanceServiceImpl implements StockPriceService {
 		Stock stock = Optional.ofNullable(st.getStock()).orElse(null);
 
 		// pour les marchés US yahoo ne nécessite pas l'extension pays
-		if (!st.getPlace().getCode().equals(NASDAQ_PLACE) && !st.getPlace().getCode().equals(US_PLACE) && stock != null
-				&& !stock.getStockType().getCode().equals("stocks.type.index")) {
+		if (!st.getPlace().getCode().equals(NASDAQ_PLACE) && !st.getPlace().getCode().equals(US_PLACE) && (stock == null
+				|| !stock.getStockType().getCode().equals("stocks.type.index"))) {
 			try {
 				url += URLEncoder.encode(st.getCode() + "." + st.getPlace().getCode(), TechnicalConstant.ENCODING);
 			} catch (UnsupportedEncodingException e) {

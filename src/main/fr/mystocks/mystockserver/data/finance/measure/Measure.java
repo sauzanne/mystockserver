@@ -19,8 +19,12 @@ public class Measure implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
+
 	@Column(name = "code")
 	private String code;
+	
+	@Column(name="available")
+	private boolean available;
 		
 	@Column(name="first_input")
 	private LocalDateTime firstInput;
@@ -124,7 +128,20 @@ public class Measure implements Serializable {
 		return true;
 	}	
 	
-	
+	/**
+	 * @return the available
+	 */
+	public boolean isAvailable() {
+		return available;
+	}
+
+	/**
+	 * @param available the available to set
+	 */
+	public void setAvailable(boolean available) {
+		this.available = available;
+	}
+
 	
 
 }

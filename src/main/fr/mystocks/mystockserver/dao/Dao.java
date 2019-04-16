@@ -2,6 +2,8 @@ package fr.mystocks.mystockserver.dao;
 
 import java.util.List;
 
+import fr.mystocks.mystockserver.data.finance.measure.Measure;
+
 public interface Dao<T> {
 
 	void delete(T entity);
@@ -13,5 +15,6 @@ public interface Dao<T> {
 	T findById(Integer id);
 	
 	List<T> findAll();
+
 
 }

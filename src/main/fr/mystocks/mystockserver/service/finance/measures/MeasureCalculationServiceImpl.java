@@ -81,7 +81,7 @@ public class MeasureCalculationServiceImpl implements MeasureCalculationService 
 		try {
 			for (StockTicker st : listStockerTicker) {
 
-				for (Measure measure : measureDao.findAll()) {
+				for (Measure measure : measureDao.getAvailableMeasures()) {
 
 					BigDecimal value = null;
 					if (measure.getCode().equals(MeasureEnum.MM10.getProperties())) {

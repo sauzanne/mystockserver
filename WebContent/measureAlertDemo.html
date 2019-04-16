@@ -1,0 +1,309 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>MystockServer - Measure Alert</title>
+<meta charset="UTF-8">
+<script type="text/javascript" src="js/jquery2.24.min.js"></script>
+<script type="text/javascript" src="js/commonDemo.js"></script>
+<link rel="stylesheet" href="css/commonDemo.css" type="text/css" />
+<script type="application/javascript">
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	var urlServer = location.href.substring(0, location.href.indexOf("mystockserver") + 14)+ "api/";
+				
+	function postCreateMeasureAlert(dType) {
+		$.ajax({
+			type : 'POST',
+			headers : {"Authorization": "Basic "+$("#idToken").val()},
+			contentType : "application/x-www-form-urlencoded",
+			data : $("#idCreateMeasureForm").serialize(),
+			dataType : dType,
+			url : urlServer + "finance/measure/postCreateMeasureAlert",
+			success : function(data, textStatus, jqXHR) {
+				$("#idResults").val(jqXHR.responseText);
+				$("#codeCreateMeasureAlert").text(jqXHR.status);
+				$("#dateCreateMeasureAlert").text(getCurrentDate);
+				$("#divCreateMeasureAlert").show();
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#idResults").val(jqXHR.responseText);
+				$("#codeCreateMeasureAlert").text(jqXHR.status);
+				$("#dateCreateMeasureAlert").text(getCurrentDate);
+				$("#divCreateMeasureAlert").show();
+			}
+		});
+	}
+	
+	function getAllMeasureAlert(dType) {
+		$.ajax({
+			type : 'GET',
+			headers : {"Authorization": "Basic "+$("#idToken").val()},
+			dataType : dType,
+			url : urlServer + "finance/measure/getAllMeasureAlert?l="+$("#idLogin").val()+"&t="+$("#idTriggered")[0].checked,
+			success : function(data, textStatus, jqXHR) {
+				$("#resultAllMeasureAlertForm").val(jqXHR.responseText);
+				$("#codeAllMeasureAlertForm").text(jqXHR.status);
+				$("#dateAllMeasureAlertForm").text(getCurrentDate);
+				$("#divAllMeasureAlertForm").show();
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#resultAllMeasureAlertForm").val(jqXHR.responseText);
+				$("#codeAllMeasureAlertForm").text(jqXHR.status);
+				$("#dateAllMeasureAlertForm").text(getCurrentDate);
+				$("#divAllMeasureAlertForm").show();
+			}
+		});
+
+	}
+
+
+	
+	function getLists() {
+		$.ajax({
+			type : 'GET',
+			headers : {"Authorization": "Basic "+$("#idToken").val()},
+			dataType : 'text',
+			url : urlServer + "common/referential/getAll?rn=place",
+			success : function(data, textStatus, jqXHR) {
+				data = $.parseJSON(data);
+				$.each(data, function(i, item) {
+					$("#p").append($('<option>', { 
+				        value: item.code,
+				        text : item.placeName+"("+item.code+")" 
+				    }));	
+				});
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#idResults").val(jqXHR.responseText);
+				$("#codeCreateMeasureAlert").text(jqXHR.status);
+				$("#dateCreateMeasureAlert").text(getCurrentDate);
+				$("#divCreateMeasureAlert").show();
+			}
+		});
+		
+		$.ajax({
+			type : 'GET',
+			headers : {"Authorization": "Basic "+$("#idToken").val()},
+			dataType : 'text',
+			url : urlServer + "common/referential/getAll?rn=measure",
+			success : function(data, textStatus, jqXHR) {
+				data = $.parseJSON(data);
+				$("#m2").append($('<option>', { 
+			        value: "",
+			        text :  "Choose something or provide a value"
+			    }));
+
+				$.each(data, function(i, item) {
+					$("#m1").append($('<option>', { 
+				        value: item.id,
+				        text : item.code 
+				    }));	
+					$("#m2").append($('<option>', { 
+				        value: item.id,
+				        text : item.code 
+				    }));
+					
+
+				});
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#idResults").val(jqXHR.responseText);
+				$("#codeCreateMeasureAlert").text(jqXHR.status);
+				$("#dateCreateMeasureAlert").text(getCurrentDate);
+				$("#divCreateMeasureAlert").show();
+			}
+		});
+	}
+
+	function disableButton(name) {
+		if (document.getElementsByName(name)[0].disabled) {
+			document.getElementsByName(name)[0].disabled = false;
+		} else {
+			document.getElementsByName(name)[0].disabled = true;
+		}
+
+	}
+
+ 	function getFile(dType) {
+		$.ajax({
+			type : 'GET',
+			headers : {"Authorization": "Basic "+$("#idToken").val()},
+			dataType : "application/octet-stream",
+			url : urlServer + "finance/measure/getFile",
+			success : function(){
+				window.location = "result.csv";
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#resultAllMeasureAlertForm").val(jqXHR.responseText);
+				$("#codeAllMeasureAlertForm").text(jqXHR.status);
+				$("#dateAllMeasureAlertForm").text(getCurrentDate);
+				$("#divAllMeasureAlertForm").show();
+			}
+		/* 	success : function(data, textStatus, jqXHR) {
+				$("#resultAllMeasureAlertForm").val(jqXHR.responseText);
+				$("#codeAllMeasureAlertForm").text(jqXHR.status);
+				$("#dateAllMeasureAlertForm").text(getCurrentDate);
+				$("#divAllMeasureAlertForm").show();
+			},*/
+			
+		});
+
+	} 
+ 	
+ 	function convertArrayOfObjectsToCSV(args) {  
+        var result, ctr, keys, columnDelimiter, lineDelimiter, data;
+
+        data = args.data || null;
+        //data = jQuery.parseJSON(args) || null;
+        if (data == null || !data.length) {
+            return null;
+        }
+        
+        data = jQuery.parseJSON(data);
+
+        columnDelimiter = args.columnDelimiter || ';';
+        lineDelimiter = args.lineDelimiter || '\n';
+
+        keys = Object.keys(data[0]);
+
+        result = '';
+        result += keys.join(columnDelimiter);
+        result += lineDelimiter;
+
+        data.forEach(function(item) {
+            ctr = 0;
+            keys.forEach(function(key) {
+                if (ctr > 0) result += columnDelimiter;
+
+                result += item[key];
+                ctr++;
+            });
+            result += lineDelimiter;
+        });
+
+        return result;
+    }
+
+ 	function downloadCSV(stockData) {  
+        var data, filename, link;
+        var csv = convertArrayOfObjectsToCSV({
+            data: stockData
+        });
+        if (csv == null) return;
+
+        filename = 'export.csv';
+
+        if (!csv.match(/^data:text\/csv/i)) {
+            csv = 'data:text/csv;charset=utf-8,' + csv;
+        }
+        data = encodeURI(csv);
+
+        link = document.createElement('a');
+        link.setAttribute('href', data);
+        link.setAttribute('download', filename);
+        link.click();
+    }
+
+
+
+
+
+
+
+
+</script>
+</head>
+<body>
+	<br />
+	<div style="height: 100px; vertical-align: middle;">
+		<h1>MystockServer - Measure Alert</h1>
+	</div>
+
+	<br /> Token
+	<input type="text" id="idToken" placeholder="Input your token">
+	<br />
+
+
+
+	<br />
+	<br />
+	<h3>Create measure alert</h3>
+	<br /> Instructions : define an alert to compare a measure with
+	another one or to compare measure with a value
+	<br /> Each hour mystockserver run a batch and alert you by mail if
+	one of your alert is triggered
+	<br />
+	<br />
+
+	<input type="button" onclick="getLists()" value="get lists" />
+	<br />
+	<br />
+	<form name="createMeasureForm" method="post" id="idCreateMeasureForm">
+
+		<input type="text" id="l" placeholder="login" name="l"> <input
+			type="text" id="st" placeholder="stock ticker" name="st">
+		Place <select id="p" name="p">
+		</select> Measure 1 <select id="m1" name="m1">
+		</select> Measure to compare(optional) <select id="m2" name="m2">
+		</select> Value(optional) <input type="text" id="v" placeholder="value"
+			name="v"> Binary operator <select id="bo" name="bo">
+			<option value="LE">LE (less or equals)</option>
+			<option value="GE">GE (greater or equals)</option>
+		</select> <br> <input type="button"
+			onclick="postCreateMeasureAlert('text')" value="create Measure/Alert" />
+	</form>
+	<div id="divCreateMeasureAlert" style="display: none;">
+		<span style="font-weight: bold">Code : </span> <span
+			id="codeCreateMeasureAlert"></span> <span style="font-weight: bold">Date
+			: </span> <span id="dateCreateMeasureAlert"></span>
+	</div>
+	<br /> Result
+	<br />
+
+
+	<textarea cols="50" id="idResults">
+	</textarea>
+
+	<br>
+	<br>
+	<br>
+
+	<form name="allMeasureAlertForm" method="get"
+		id="idAllMeasureAlertForm"">
+
+		<input type="text" id="idLogin" placeholder="login" name="l">
+
+		Triggered ? <input type="checkbox" id="idTriggered" name="t" /><input
+			type="button" onclick="getAllMeasureAlert('text')"
+			value="get all measure alert" />
+	</form>
+
+	<div id="divAllMeasureAlertForm" style="display: none;">
+		<span style="font-weight: bold">Code : </span> <span
+			id="codeAllMeasureAlertForm"></span> <span style="font-weight: bold">Date
+			: </span> <span id="dateAllMeasureAlertForm"></span>
+	</div>
+	</br> Result
+	</br>
+
+	<textarea cols="50" id="resultAllMeasureAlertForm">
+	</textarea>
+	<br>
+	<input type="button" onclick="downloadCSV($('#resultAllMeasureAlertForm').val())" value="convert to CSV file" />	<div style="width: 100%; text-align: center;">
+		<b>Mystocks - Copyright 2019</b>
+	</div>
+
+
+</body>
+
+</html>

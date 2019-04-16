@@ -42,7 +42,10 @@ insert into measure(code, first_input) values ('technical.analysis.mm100',now())
 
 insert into measure(code, first_input) values ('common.price.last',now());
 
+ALTER TABLE `mystocks`.`measure` 
+ADD COLUMN `available` tinyint not NULL default 0 AFTER `code`
 
+update measure set available = 1 where code in ('technical.analysis.mm10','technical.analysis.mm100','technical.analysis.mm150','technical.analysis.mm200','technical.analysis.mm50','common.price.last')
 
 
 
