@@ -33,6 +33,7 @@ import fr.mystocks.mystockserver.data.finance.measurecalculation.MeasureCalculat
 import fr.mystocks.mystockserver.data.finance.stockprice.StockPrice;
 import fr.mystocks.mystockserver.data.finance.stockticker.StockTicker;
 import fr.mystocks.mystockserver.data.security.Account;
+import fr.mystocks.mystockserver.service.finance.constant.PeriodEnum;
 import fr.mystocks.mystockserver.service.finance.measures.constant.BinaryOperatorEnum;
 import fr.mystocks.mystockserver.service.finance.measures.constant.MeasureEnum;
 import fr.mystocks.mystockserver.service.finance.stockprice.StockPriceService;
@@ -43,6 +44,7 @@ import fr.mystocks.mystockserver.technic.mail.MailTools;
 import fr.mystocks.mystockserver.technic.number.NumberFinancialTools;
 import fr.mystocks.mystockserver.technic.properties.PropertiesTools;
 import fr.mystocks.mystockserver.view.model.finance.measure.MeasureAlertModel;
+import jersey.repackaged.com.google.common.base.Joiner;
 
 /**
  * @author sauzanne
@@ -246,6 +248,7 @@ public class MeasureServiceImpl implements MeasureService {
 
 		{
 			String differentCalculationDate = null;
+			String basedOnReview = null;
 			/* les 2 dates de calcul des mesures sont différentes */
 			if (measureCalculationCompared != null && !measureCalculation.getCalculationDate()
 					.isEqual(measureCalculationCompared.getCalculationDate())) {
@@ -253,6 +256,16 @@ public class MeasureServiceImpl implements MeasureService {
 						new String[] { ma.getMeasure().getCode(), measureCalculation.getCalculationDate().toString(),
 								ma.getMeasureCompared().getCode(),
 								measureCalculationCompared.getCalculationDate().toString() });
+			}
+			if (measureCalculation.getReview() != null) {
+				boolean startYearsEqualsToEndYear = (Optional.ofNullable(measureCalculation.getReview().getEndYear())
+						.orElse(0)).equals(measureCalculation.getReview().getStartYear());
+				basedOnReview = propertiesTools.getProperty("measure.mail.alert.review",
+						new String[] { ma.getMeasure().getCode(), propertiesTools.getProperty(PeriodEnum.valueOf(measureCalculation.getReview().getPeriod().toUpperCase()).getKeyDescription()),
+								measureCalculation.getReview().getStartYear().toString() + (!startYearsEqualsToEndYear
+										? ("-" + measureCalculation.getReview().getEndYear().toString())
+										: "") });
+
 			}
 			MeasureEnum measureEnumCompared = MeasureEnum.getMeasureEnumByProperties(
 					Optional.ofNullable(ma.getMeasureCompared()).orElse(new Measure()).getCode());
@@ -291,7 +304,7 @@ public class MeasureServiceImpl implements MeasureService {
 
 			try {
 				mailTools.sendMessage(ma.getAccount().getMail(), subject,
-						body + Strings.nullToEmpty(differentCalculationDate));
+						body + Strings.nullToEmpty(differentCalculationDate) + Strings.nullToEmpty(basedOnReview));
 			} catch (RuntimeException e) {
 				logger.error("Impossible to send email for measureAlert id : " + ma.getId() + " to "
 						+ ma.getAccount().getMail());

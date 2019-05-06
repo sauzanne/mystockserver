@@ -9,6 +9,8 @@ import fr.mystocks.mystockserver.service.finance.constant.PeriodEnum;
 public interface ReviewDao<T> extends Dao<T> {
 
 	List<Review> findReview(Integer stockId, String token, Integer startYear, Integer endYear, PeriodEnum period);
+
+	List<Review> findLastReview(Integer stockId);
     
 	
 }

@@ -61,7 +61,7 @@
 				<resource.dir>dev</resource.dir>
 				<hibernate.show_sql>true</hibernate.show_sql>
 				<hibernate.format_sql>true</hibernate.format_sql>
-				<cron.measurecalculation>0 */12 * * * *</cron.measurecalculation>
+				<cron.measurecalculation>0 */30 * * * *</cron.measurecalculation>
 				<cron.measurealert>0 */5 * * * 1-7</cron.measurealert>
 
 			</properties>

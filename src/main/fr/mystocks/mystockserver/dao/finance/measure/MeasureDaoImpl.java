@@ -3,14 +3,19 @@
  */
 package fr.mystocks.mystockserver.dao.finance.measure;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
+import com.google.common.base.Strings;
+
 import fr.mystocks.mystockserver.dao.AbstractDaoImpl;
 import fr.mystocks.mystockserver.data.finance.measure.Measure;
+import fr.mystocks.mystockserver.data.finance.measurealert.MeasureAlert;
 
 /**
  * @author sauzanne
@@ -34,6 +39,7 @@ public class MeasureDaoImpl extends AbstractDaoImpl<Measure> implements MeasureD
 		criteria.add(Restrictions.eq("available", true));
 		return criteria.list();
 	}
+	
 
 	
 

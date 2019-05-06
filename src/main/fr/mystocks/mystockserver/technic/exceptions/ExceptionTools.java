@@ -51,6 +51,14 @@ public final class ExceptionTools {
 	 * @param initException
 	 */
 	public static void processExceptionOnlyWithLogging(Object source, Logger logger, Exception initException) {
+		if (initException != null && initException instanceof FunctionalException) {
+			FunctionalException f = (FunctionalException) initException;
+
+			if (f.getKeyError() != null) {
+				logger.error(propertiesTools.getProperty(f.getKeyError(), f.getArgs()));
+				return;
+			}
+		}
 		BaseException b = new BaseException(source, initException);
 		logger.error(propertiesTools.getProperty("error.technical",
 				new String[] { source.getClass().getCanonicalName(), propertiesTools.getProperty("common.unknown") }),
@@ -60,8 +68,7 @@ public final class ExceptionTools {
 	/**
 	 * Parse la trace.
 	 * 
-	 * @param exception
-	 *            L'exception à parses
+	 * @param exception L'exception à parses
 	 * @return Le nom de l'exception
 	 */
 	public static String parseTrace(Exception exception) {

@@ -5,11 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum PeriodEnum {
-	Q1(0, 4, 90), Q2(1, 4, 90), Q3(2, 4, 90), Q4(3, 4, 90), HY1(4, 2, 182), HY2(5, 2, 183), Y(6, 1, 365); // on
-																											// met
-																											// un
-																											// poids
-																											// au
+	Q1(0, 4, 90, "common.firstquarter"), Q2(1, 4, 90, "common.secondquarter"), Q3(2, 4, 90, "common.thirdquarter"),
+	Q4(3, 4, 90, "common.fourthquarter"), HY1(4, 2, 182, "common.halfyear"), HY2(5, 2, 183, "common.secondhalfyear"),
+	Y(6, 1, 365, "common.year"); // on
+	// met
+	// un
+	// poids
+	// au
 	// différentes périodes
 	// (pour les tris) +
 
@@ -20,14 +22,17 @@ public enum PeriodEnum {
 
 	private int nbDays;
 
+	private String keyDescription;
+
 	public int getValue() {
 		return value;
 	}
 
-	PeriodEnum(int value, int divideFactor, int nbDays) {
+	PeriodEnum(int value, int divideFactor, int nbDays, String keyDescription) {
 		this.value = value;
 		this.divideFactor = divideFactor;
 		this.nbDays = nbDays;
+		this.keyDescription = keyDescription;
 	}
 
 	public static PeriodEnum getFatherPeriod(PeriodEnum period) {
@@ -84,6 +89,20 @@ public enum PeriodEnum {
 
 	public void setNbDays(int nbDays) {
 		this.nbDays = nbDays;
+	}
+
+	/**
+	 * @return the keyDescription
+	 */
+	public String getKeyDescription() {
+		return keyDescription;
+	}
+
+	/**
+	 * @param keyDescription the keyDescription to set
+	 */
+	public void setKeyDescription(String keyDescription) {
+		this.keyDescription = keyDescription;
 	}
 
 }

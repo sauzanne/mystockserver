@@ -8,8 +8,6 @@ import java.util.List;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.base.Strings;
-
 import fr.mystocks.mystockserver.dao.AbstractDaoImpl;
 import fr.mystocks.mystockserver.data.finance.review.Review;
 import fr.mystocks.mystockserver.service.finance.constant.PeriodEnum;
@@ -71,4 +69,24 @@ public class ReviewDaoImpl extends AbstractDaoImpl<Review> implements ReviewDao<
 		}
 		return query.list();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Review> findLastReview(Integer stockId) {
+		StringBuilder request = new StringBuilder();
+
+		request.append("select r from Review r ");
+		request.append(" join fetch r.stock s ");
+		request.append(" join fetch r.account a ");
+		request.append("where s.id =:" + BIND_STOCK_ID);
+		request.append(" order by r.startYear desc, r.endYear desc");
+
+
+
+		Query query = getSession().createQuery(request.toString());
+
+		query.setParameter(BIND_STOCK_ID, stockId);
+		return query.list();
+	}
+
 }
