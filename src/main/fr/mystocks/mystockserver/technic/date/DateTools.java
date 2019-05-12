@@ -2,12 +2,15 @@ package fr.mystocks.mystockserver.technic.date;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.GregorianCalendar;
 
 public final class DateTools {
+	
+	private final static DateTimeFormatter JSON_DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 	private DateTools() {
 		super();
@@ -99,6 +102,24 @@ public final class DateTools {
 			return null;
 		}
 	}
+	
+	/**
+	 * Convert a String in ISO Local Date Time in a LocalDateTime
+	 * 
+	 * @param isoLocalDateTime
+	 *            a String with ISO Local Date Time format
+	 * @param zone optional parameter to specify zone of the input    
+	 * @return LocalDateTime or null if conversion fails
+	 */
+	public static LocalDateTime convertIsoLocalDateTime(String isoLocalDateTime, String zone) {
+		try {
+			
+			return LocalDateTime.parse(isoLocalDateTime, JSON_DATETIME_FORMATTER).atZone(zone!=null ? ZoneId.of(zone) : ZoneId.systemDefault()).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+		} catch (DateTimeParseException e) {
+			return null;
+		}
+	}
+
 	
 	/**
 	 * Convertir une gregorianCalendar en localDate

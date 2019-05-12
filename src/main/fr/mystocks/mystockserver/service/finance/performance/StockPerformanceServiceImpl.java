@@ -86,7 +86,7 @@ public class StockPerformanceServiceImpl implements StockPerformanceService {
 
 			StockPrice last = stockPriceService.getLast(st);
 			List<StockPerformance> listStockPerformanceReview = getPerformanceForReview(reviews.getValue1(),
-					listMeasureToExecute, last);
+					listMeasureToExecute, last, st);
 
 			if (reviews.getValue2() != null) {
 				LocalDate oneYearBefore = last.getStockPriceId().getInputDate().minusYears(1);
@@ -98,7 +98,7 @@ public class StockPerformanceServiceImpl implements StockPerformanceService {
 						listMeasureToExecute,
 						stockPriceOneYearBefore != null && !stockPriceOneYearBefore.isEmpty()
 								? stockPriceOneYearBefore.get(0)
-								: null);
+								: null, st);
 			}
 
 		} catch (FunctionalException e) {
@@ -112,7 +112,7 @@ public class StockPerformanceServiceImpl implements StockPerformanceService {
 	}
 
 	private List<StockPerformance> getPerformanceForReview(Review review, List<Measure> listMeasureToExecute,
-			StockPrice stockPrice) {
+			StockPrice stockPrice, StockTicker st) {
 		List<StockPerformance> listPerformances = new ArrayList<>();
 		for (Measure m : listMeasureToExecute) {
 			StockPerformance spm = new StockPerformance();
@@ -131,7 +131,7 @@ public class StockPerformanceServiceImpl implements StockPerformanceService {
 											new String[] { getProperty("error.finance.performance.operations"),
 													getProperty("error.finance.performance.pe") }))
 									.getShareownersEarnings(),
-							PeriodEnum.valueOf(review.getPeriod())));
+							PeriodEnum.valueOf(review.getPeriod()), st.getPlace().getCurrency(), review.getCurrency() ));
 					break;
 				}
 

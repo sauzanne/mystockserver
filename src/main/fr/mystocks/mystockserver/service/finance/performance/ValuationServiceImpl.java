@@ -15,12 +15,14 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.mystocks.mystockserver.dao.finance.review.ReviewDao;
+import fr.mystocks.mystockserver.data.finance.currency.Currency;
 import fr.mystocks.mystockserver.data.finance.operations.Operations;
 import fr.mystocks.mystockserver.data.finance.review.Review;
 import fr.mystocks.mystockserver.data.finance.stockprice.StockPrice;
 import fr.mystocks.mystockserver.data.finance.stockticker.StockTicker;
-import fr.mystocks.mystockserver.data.security.Account;
 import fr.mystocks.mystockserver.service.finance.constant.PeriodEnum;
+import fr.mystocks.mystockserver.service.finance.currency.CurrencyService;
+import fr.mystocks.mystockserver.service.finance.currency.Price;
 import fr.mystocks.mystockserver.service.finance.stockprice.StockPriceService;
 import fr.mystocks.mystockserver.technic.exceptions.ExceptionTools;
 import fr.mystocks.mystockserver.technic.exceptions.FunctionalException;
@@ -42,24 +44,56 @@ public class ValuationServiceImpl implements ValuationService {
 	@Autowired
 	private StockPriceService stockPriceService;
 
+	@Autowired
+	private CurrencyService currencyService;
+
+	/**
+	 * Récupère le taux de change entre le rapport et la capitalisation
+	 * 
+	 * @param currencyMarketPlace la monnaie de la place de capitalisation
+	 * @param currencyReview      la monnaie du rapport
+	 * @return le taux de change si il peut être calculé
+	 */
+	private BigDecimal getExchangeRate(Currency currencyMarketPlace, Currency currencyReview) {
+		BigDecimal exchangeRate = BigDecimal.ONE;
+		if (!currencyMarketPlace.getAlpha3().equals(currencyReview.getAlpha3())) {
+
+			Price priceExchangeRate = null;
+			try {
+				priceExchangeRate = currencyService.getCurrentFxRate(currencyMarketPlace.getAlpha3(),
+						currencyReview.getAlpha3());
+
+				exchangeRate = priceExchangeRate.getPrice();
+
+			} catch (Exception e) {
+				ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
+			}
+		}
+		return exchangeRate;
+	}
+
 	@Override
-	public BigDecimal getMarketCap(StockPrice price, BigInteger numberShares) {
+	public BigDecimal getMarketCap(StockPrice price, BigInteger numberShares, Currency currencyMarketPlace,
+			Currency currencyReview) {
 		Optional<BigDecimal> optionalPrice = Optional.ofNullable(price.getPrice());
 		BigInteger nbShares = Optional.ofNullable(numberShares)
 				.orElseThrow(() -> new FunctionalException(this, "error.finance.performance.numbershares",
 						new String[] { propertiesTools.getProperty("error.finance.performance.capitalization") }));
 
+		BigDecimal exchangeRate = getExchangeRate(currencyMarketPlace, currencyReview);
+
 		return optionalPrice
 				.orElseThrow(() -> new FunctionalException(this, "error.finance.performance.price",
 						new String[] { propertiesTools.getProperty("error.finance.performance.capitalization") }))
-				.multiply(new BigDecimal(nbShares), DEFAULT_PRECISION);
+				.multiply(new BigDecimal(nbShares), DEFAULT_PRECISION)
+				.multiply(Optional.ofNullable(exchangeRate).orElse(BigDecimal.ONE), DEFAULT_PRECISION);
 
 	}
 
 	@Override
-	public BigDecimal getPriceEarning(StockPrice price, BigInteger numberShares, BigDecimal earnings,
-			PeriodEnum period) {
-		BigDecimal marketCap = getMarketCap(price, numberShares);
+	public BigDecimal getPriceEarning(StockPrice price, BigInteger numberShares, BigDecimal earnings, PeriodEnum period,
+			Currency currencyMarketPlace, Currency currencyReview) {
+		BigDecimal marketCap = getMarketCap(price, numberShares, currencyMarketPlace, currencyReview);
 
 		Optional<BigDecimal> optionalEarnings = Optional.ofNullable(earnings);
 
@@ -118,7 +152,7 @@ public class ValuationServiceImpl implements ValuationService {
 							new String[] { getProperty("error.finance.performance.earnings"),
 									getProperty("error.finance.performance.pe") });
 				}
-				
+
 				Review myReview = findMostRelevantReview(setReview);
 
 //				Operations operations = Optional.ofNullable(myReview.getOperations())
@@ -133,7 +167,7 @@ public class ValuationServiceImpl implements ValuationService {
 						myReview.getNbSharesEndPeriod(),
 						Optional.ofNullable(myReview.getOperations().getAdjustedEarnings())
 								.orElse(myReview.getOperations().getShareownersEarnings()),
-						PeriodEnum.valueOf(myReview.getPeriod()));
+						PeriodEnum.valueOf(myReview.getPeriod()), st.getPlace().getCurrency(), myReview.getCurrency());
 				return new DoubleReturnValue<BigDecimal, Review>(pe, myReview);
 
 			} else {
