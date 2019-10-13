@@ -19,13 +19,15 @@ public class MeasureAlertModel {
 	private Double measureCalculation;
 
 	private Double measureCalculationCompared;
+	
+	private String comment;
 
 	private Boolean triggered;
 
 
 
 	public MeasureAlertModel(String stockTicker, String stockName, String measure, String comparator,
-			String measureCompared, Double measureCalculation, Double measureCalculationCompared, Boolean triggered) {
+			String measureCompared, Double measureCalculation, Double measureCalculationCompared, String comment, Boolean triggered) {
 		super();
 		this.stockTicker = stockTicker;
 		this.stockName = stockName;
@@ -34,7 +36,22 @@ public class MeasureAlertModel {
 		this.measureCompared = measureCompared;
 		this.measureCalculation = measureCalculation;
 		this.measureCalculationCompared = measureCalculationCompared;
+		this.comment = comment;
 		this.triggered = triggered;
+	}
+
+	/**
+	 * @return the comment
+	 */
+	public String getComment() {
+		return comment;
+	}
+
+	/**
+	 * @param comment the comment to set
+	 */
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
 	public MeasureAlertModel() {

@@ -9,7 +9,7 @@ import fr.mystocks.mystockserver.view.model.finance.measure.MeasureAlertModel;
 public interface MeasureService {
 
 	Integer createMeasureAlert(String login, String codeStockTicker, String codePlace, Integer measureId1,
-			Integer MeasureId2, BigDecimal value, BinaryOperatorEnum binaryOperator);
+			Integer MeasureId2, BigDecimal value, BinaryOperatorEnum binaryOperator, String comment);
 
 	void cronMeasureAlert();
 

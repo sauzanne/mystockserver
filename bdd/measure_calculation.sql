@@ -8,7 +8,7 @@ CREATE TABLE mystocks.measure_calculation (
    first_input DATETIME NOT NULL,
    last_modified DATETIME,
    PRIMARY KEY (id),
-   UNIQUE(stock_ticker_id, measure_id, calculation_date)
+   UNIQUE(stock_ticker_id, review_id, measure_id, calculation_date)
 ) ENGINE = InnoDB CHARSET=UTF8 ROW_FORMAT = DEFAULT;
 
 create index measure_calculation_ix_review_id on measure_calculation(review_id);

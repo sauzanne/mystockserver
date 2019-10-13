@@ -4,7 +4,7 @@ public enum MeasureEnum {
 
 	MM10("technical.analysis.mm10", 10), MM150("technical.analysis.mm150", 150), MM100("technical.analysis.mm100", 100),
 	MM200("technical.analysis.mm200", 200), MM50("technical.analysis.mm50", 50), LASTPRICE("common.price.last", 1),
-	VALUATION_PE("valuation.pe", null);
+	VALUATION_PE("valuation.pe", null), VALUATION_PB("valuation.pb",null);
 
 	private String properties;
 

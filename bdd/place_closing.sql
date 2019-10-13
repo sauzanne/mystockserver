@@ -320,3 +320,16 @@ insert into place_closing(place_id, date_closing) values (19, '2019-10-22');
 insert into place_closing(place_id, date_closing) values (19, '2019-11-04');
 insert into place_closing(place_id, date_closing) values (19, '2019-11-23');
 insert into place_closing(place_id, date_closing) values (19, '2019-12-31');
+
+--Helsinki stock exchange
+insert into place_closing(place_id, date_closing) values (20, '2019-01-01');
+insert into place_closing(place_id, date_closing) values (20, '2019-04-19');
+insert into place_closing(place_id, date_closing) values (20, '2019-04-22');
+insert into place_closing(place_id, date_closing) values (20, '2019-05-01');
+insert into place_closing(place_id, date_closing) values (20, '2019-05-30');
+insert into place_closing(place_id, date_closing) values (20, '2019-06-21');
+insert into place_closing(place_id, date_closing) values (20, '2019-12-06');
+insert into place_closing(place_id, date_closing) values (20, '2019-12-24');
+insert into place_closing(place_id, date_closing) values (20, '2019-12-25');
+insert into place_closing(place_id, date_closing) values (20, '2019-12-26');
+insert into place_closing(place_id, date_closing) values (20, '2019-12-31');

@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.mystocks.mystockserver.dao.finance.review.ReviewDao;
+import fr.mystocks.mystockserver.data.finance.Equities;
+import fr.mystocks.mystockserver.data.finance.balancesheets.BalanceSheets;
 import fr.mystocks.mystockserver.data.finance.currency.Currency;
 import fr.mystocks.mystockserver.data.finance.operations.Operations;
 import fr.mystocks.mystockserver.data.finance.review.Review;
@@ -39,13 +41,13 @@ public class ValuationServiceImpl implements ValuationService {
 	private PropertiesTools propertiesTools;
 
 	@Autowired
-	private ReviewDao reviewDao;
-
-	@Autowired
-	private StockPriceService stockPriceService;
+	private ReviewDao<Review> reviewDao;
 
 	@Autowired
 	private CurrencyService currencyService;
+	
+	@Autowired
+	private StockPriceService stockPriceService;
 
 	/**
 	 * Récupère le taux de change entre le rapport et la capitalisation
@@ -114,10 +116,9 @@ public class ValuationServiceImpl implements ValuationService {
 						DEFAULT_PRECISION);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public DoubleReturnValue<BigDecimal, Review> getPriceEarnings(StockTicker st) {
+	public DoubleReturnValue<BigDecimal, Review> getPriceEarnings(StockTicker st, StockPrice last) {
 		try {
 			List<Review> listReview = reviewDao.findReview(st.getStock().getId(), null, null, null, null);
 
@@ -138,13 +139,7 @@ public class ValuationServiceImpl implements ValuationService {
 					BigDecimal earnings = Optional.ofNullable(operations.getAdjustedEarnings())
 							.orElse(operations.getShareownersEarnings());
 
-					if ((maxStartYear == null || startYear > maxStartYear) && earnings != null) {
-						maxStartYear = startYear;
-						setReview.clear();
-						setReview.add(r);
-					} else if (startYear == maxStartYear && earnings != null) {
-						setReview.add(r);
-					}
+					maxStartYear = selectMaxReview(setReview, maxStartYear, r, startYear, earnings);
 				}
 
 				if (setReview.isEmpty()) {
@@ -182,6 +177,18 @@ public class ValuationServiceImpl implements ValuationService {
 		return null;
 	}
 
+	private Integer selectMaxReview(Set<Review> setReview, Integer maxStartYear, Review r, Integer startYear,
+			BigDecimal notNullableValue) {
+		if ((maxStartYear == null || startYear > maxStartYear) && notNullableValue != null) {
+			maxStartYear = startYear;
+			setReview.clear();
+			setReview.add(r);
+		} else if (startYear == maxStartYear && notNullableValue != null) {
+			setReview.add(r);
+		}
+		return maxStartYear;
+	}
+
 	private Review findMostRelevantReview(Set<Review> setReview) {
 		Review mostRelevantReview = null;
 		for (Review r : setReview) {
@@ -203,6 +210,81 @@ public class ValuationServiceImpl implements ValuationService {
 	 */
 	private String getProperty(String key) {
 		return propertiesTools.getProperty(key);
+	}
+
+	/**
+	 * Calcul du price to book
+	 * 
+	 * @param price               le prix de l'action
+	 * @param numberShares        le nombre d'actions en circulation
+	 * @param shareholderEquity   les fonds propres
+	 * @param currencyMarketPlace la monnaie sur la place de cotation
+	 * @param currencyReview      la monnaie des comptes
+	 * @return le price to book en pourcentage (on donne 100.0 pour un rapport de
+	 *         1.0 sur market cap / shareholderequity
+	 */
+	private BigDecimal getPriceToBook(StockPrice price, BigInteger numberShares, BigDecimal shareholderEquity,
+			Currency currencyMarketPlace, Currency currencyReview) {
+		BigDecimal marketCap = getMarketCap(price, numberShares, currencyMarketPlace, currencyReview);
+
+		return marketCap.divide(shareholderEquity, DEFAULT_PRECISION).multiply(BigDecimal.valueOf(100L));
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public DoubleReturnValue<BigDecimal, Review> getPriceToBook(StockTicker st, StockPrice last) {
+		try {
+
+			List<Review> listReview = reviewDao.findReview(st.getStock().getId(), null, null, null, null);
+
+			Set<Review> setReview = new HashSet<>();
+
+			if (listReview != null && !listReview.isEmpty()) {
+
+				Integer maxStartYear = null;
+
+				/*
+				 * on ne sélectionne que la période la plus proche avec au moins un résultat de
+				 * fourni
+				 */
+				for (Review r : listReview) {
+					Integer startYear = r.getStartYear();
+					BalanceSheets balanceSheets = Optional.ofNullable(r.getBalanceSheets()).orElse(new BalanceSheets());
+
+					Equities equities = Optional.ofNullable(balanceSheets.getEquities()).orElse(new Equities());
+
+					BigDecimal shareholderEquity = equities.getShareholderEquity();
+
+					maxStartYear = selectMaxReview(setReview, maxStartYear, r, startYear, shareholderEquity);
+				}
+
+				if (setReview.isEmpty()) {
+					throw new FunctionalException(this, "error.finance.performance.required",
+							new String[] { getProperty("error.finance.performance.shareholderequity"),
+									getProperty("error.finance.performance.pricetobook") });
+				}
+
+				Review myReview = findMostRelevantReview(setReview);
+
+				BigDecimal priceToBook = getPriceToBook(
+						Optional.ofNullable(stockPriceService.getLast(st))
+								.orElseThrow(() -> new FunctionalException(this, "error.finance.performance.price",
+										new String[] { getProperty("error.finance.performance.pricetobook") })),
+						myReview.getNbSharesEndPeriod(),
+						myReview.getBalanceSheets().getEquities().getShareholderEquity(), st.getPlace().getCurrency(),
+						myReview.getCurrency());
+				return new DoubleReturnValue<BigDecimal, Review>(priceToBook, myReview);
+
+			} else {
+				throw new FunctionalException(this, "error.finance.review.notexist");
+			}
+
+		} catch (FunctionalException e) {
+			ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
+		} catch (RuntimeException e) {
+			ExceptionTools.processException(this, logger, e);
+		}
+		return null;
 	}
 
 }

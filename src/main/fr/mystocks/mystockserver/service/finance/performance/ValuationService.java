@@ -20,6 +20,8 @@ public interface ValuationService {
 	BigDecimal getPriceEarning(StockPrice price, BigInteger numberShares, BigDecimal earnings,
 			PeriodEnum period, Currency currencyMarketPlace, Currency currencyReview);
 
-	DoubleReturnValue<BigDecimal, Review> getPriceEarnings(StockTicker st);
+	DoubleReturnValue<BigDecimal, Review> getPriceEarnings(StockTicker st, StockPrice last);
+
+	DoubleReturnValue<BigDecimal, Review> getPriceToBook(StockTicker st, StockPrice last);
     
 }

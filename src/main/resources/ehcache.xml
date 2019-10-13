@@ -7,7 +7,7 @@
 	<diskStore path="${ehcache.diskstore.path}" />
 
 	<cache name="financeCacheShortTime" eternal="false"
-		timeToLiveSeconds="300" memoryStoreEvictionPolicy="LFU"
+		timeToLiveSeconds="180" memoryStoreEvictionPolicy="LFU"
 		transactionalMode="off">
 		<persistence strategy="localTempSwap" />
 	</cache>

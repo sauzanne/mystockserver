@@ -29,7 +29,7 @@ public class MeasureAlert implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "account_id", nullable = false)
 	private Account account;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "stock_ticker_id", nullable = false)
 	private StockTicker stockTicker;
@@ -44,20 +44,21 @@ public class MeasureAlert implements Serializable {
 
 	@Column(name = "value")
 	private BigDecimal value;
-	
+
 	@Column(name = "binary_operator")
 	private String binaryOperator;
 
+	@Column(name = "comment", nullable = true)
+	private String comment;
+
 	@Column(name = "triggered")
 	private boolean triggered;
-	
+
 	@Column(name = "first_input")
 	private LocalDateTime firstInput;
-	
+
 	@Column(name = "last_modified")
 	private LocalDateTime lastModified;
-
-
 
 	public MeasureAlert() {
 		super();
@@ -267,7 +268,6 @@ public class MeasureAlert implements Serializable {
 		this.triggered = triggered;
 	}
 
-
 	/**
 	 * @param id
 	 * @param stockTicker
@@ -306,6 +306,20 @@ public class MeasureAlert implements Serializable {
 	 */
 	public void setLastModified(LocalDateTime lastModified) {
 		this.lastModified = lastModified;
+	}
+
+	/**
+	 * @return the comment
+	 */
+	public String getComment() {
+		return comment;
+	}
+
+	/**
+	 * @param comment the comment to set
+	 */
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
 }

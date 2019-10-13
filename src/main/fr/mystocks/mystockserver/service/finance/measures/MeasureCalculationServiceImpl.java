@@ -29,11 +29,13 @@ import fr.mystocks.mystockserver.dao.security.account.AccountDao;
 import fr.mystocks.mystockserver.data.finance.measure.Measure;
 import fr.mystocks.mystockserver.data.finance.measurecalculation.MeasureCalculation;
 import fr.mystocks.mystockserver.data.finance.review.Review;
+import fr.mystocks.mystockserver.data.finance.stockprice.StockPrice;
 import fr.mystocks.mystockserver.data.finance.stockticker.StockTicker;
 import fr.mystocks.mystockserver.data.security.Account;
 import fr.mystocks.mystockserver.service.finance.measures.constant.MeasureEnum;
 import fr.mystocks.mystockserver.service.finance.performance.TechnicalAnalysisService;
 import fr.mystocks.mystockserver.service.finance.performance.ValuationService;
+import fr.mystocks.mystockserver.service.finance.stockprice.StockPriceService;
 import fr.mystocks.mystockserver.technic.date.DateTools;
 import fr.mystocks.mystockserver.technic.exceptions.ExceptionTools;
 import fr.mystocks.mystockserver.technic.exceptions.FunctionalException;
@@ -70,6 +72,9 @@ public class MeasureCalculationServiceImpl implements MeasureCalculationService 
 	private LocalDate lastMetricsCalculation;
 
 	@Autowired
+	private StockPriceService stockPriceService;
+
+	@Autowired
 	private ValuationService valuationService;
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -91,6 +96,12 @@ public class MeasureCalculationServiceImpl implements MeasureCalculationService 
 				for (Measure measure : measureDao.getAvailableMeasures()) {
 
 					DoubleReturnValue<BigDecimal, Review> value = null;
+//					StockPrice last = null;
+//					try {
+//						last = stockPriceService.getLast(st);
+//					} catch (RuntimeException e) {
+//						ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
+//					}
 					if (measure.getCode().equals(MeasureEnum.MM10.getProperties())) {
 						value = getMovingAverage(calculationDate, stats, st, measure, 0.1);
 					} else if (measure.getCode().equals(MeasureEnum.MM150.getProperties())) {
@@ -102,7 +113,15 @@ public class MeasureCalculationServiceImpl implements MeasureCalculationService 
 					} else if (measure.getCode().equals(MeasureEnum.MM200.getProperties())) {
 						value = getMovingAverage(calculationDate, stats, st, measure, acceptableErrorRate);
 					} else if (measure.getCode().equals(MeasureEnum.VALUATION_PE.getProperties())) {
-						value = valuationService.getPriceEarnings(st);
+						value = valuationService.getPriceEarnings(st, null);
+						if (value != null) {
+							addStat(measure.getCode(), stats);
+						}
+					} else if (measure.getCode().equals(MeasureEnum.VALUATION_PB.getProperties())) {
+						value = valuationService.getPriceToBook(st, null);
+						if (value != null) {
+							addStat(measure.getCode(), stats);
+						}
 					}
 					if (value != null) {
 						MeasureCalculation measureCalculation = measureCalculationDao.findMeasureCalculation(st,
@@ -125,6 +144,9 @@ public class MeasureCalculationServiceImpl implements MeasureCalculationService 
 							measureCalculation.setLastModified(LocalDateTime.now());
 							measureCalculationDao.update(measureCalculation);
 						}
+//						} catch (Exception e) {
+//							ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
+//						}
 					}
 
 				}

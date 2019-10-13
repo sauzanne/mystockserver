@@ -44,8 +44,7 @@ public class StockPriceServiceImpl implements StockPriceService {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Override
-	// @Cacheable(value = "financeCacheShortTime", key =
-	// "#root.methodName+#st.getCode()+'.'+#st.getPlace().getCode()")
+	//@Cacheable(value = "financeCacheShortTime", key = "#root.targetClass+#root.methodName+#st.getId()")
 	public StockPrice getLast(StockTicker st) {
 		try {
 
@@ -106,15 +105,14 @@ public class StockPriceServiceImpl implements StockPriceService {
 			}
 			/* dans tous les cas on retourne la donnée éventuelle en base */
 			return stockPriceDB;
-		} catch (RuntimeException e) {
+		} catch (Exception e) {
 			ExceptionTools.processException(this, logger, e);
 		}
 		return null;
 	}
 
 	@Override
-	// @Cacheable(value = "financeCacheShortTime", key =
-	// "#root.methodName+#st.getCode()+'.'+#st.getPlace().getCode()+#start.toString()+#end.toString()")
+	//@Cacheable(value = "financeCacheShortTime", key = "#root.methodName+#st.getId()+#start.toString()+#end.toString()")
 	public List<StockPrice> getPriceForPeriod(StockTicker st, LocalDate start, LocalDate end, Boolean... repeat) {
 		try {
 			List<StockPrice> stockPrices = stockPriceDao.findByDateRange(st, start, end);
@@ -247,8 +245,7 @@ public class StockPriceServiceImpl implements StockPriceService {
 	}
 
 	@Override
-	// @Cacheable(value = "financeCacheShortTime", key =
-	// "#root.methodName+#st.getCode()+'.'+#st.getPlace().getCode()+#start.toString()+#end.toString()")
+	//@Cacheable(value = "financeCacheShortTime", key = "#root.methodName+#st.getId()+#start.toString()+#end.toString()")
 	public BigDecimal getAveragePrice(StockTicker st, LocalDate start, LocalDate end) {
 		try {
 			List<StockPrice> prices = getPriceForPeriod(st, start, end);

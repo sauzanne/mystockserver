@@ -85,7 +85,7 @@ public class MeasureServiceImpl implements MeasureService {
 
 	@Override
 	public Integer createMeasureAlert(String login, String codeStockTicker, String codePlace, Integer measureId1,
-			Integer measureId2, BigDecimal value, BinaryOperatorEnum binaryOperator) {
+			Integer measureId2, BigDecimal value, BinaryOperatorEnum binaryOperator, String comment) {
 
 		try {
 			StockTicker stockTicker = stockTickerDao.findByCodeAndPlace(codeStockTicker, codePlace, false);
@@ -132,6 +132,7 @@ public class MeasureServiceImpl implements MeasureService {
 			ma.setStockTicker(stockTicker);
 			ma.setTriggered(false);
 			ma.setValue(value);
+			ma.setComment(Strings.emptyToNull(Strings.nullToEmpty(comment).trim()));
 
 			measureAlertDao.create(ma);
 			return ma.getId();
@@ -261,7 +262,8 @@ public class MeasureServiceImpl implements MeasureService {
 				boolean startYearsEqualsToEndYear = (Optional.ofNullable(measureCalculation.getReview().getEndYear())
 						.orElse(0)).equals(measureCalculation.getReview().getStartYear());
 				basedOnReview = propertiesTools.getProperty("measure.mail.alert.review",
-						new String[] { ma.getMeasure().getCode(), propertiesTools.getProperty(PeriodEnum.valueOf(measureCalculation.getReview().getPeriod().toUpperCase()).getKeyDescription()),
+						new String[] { ma.getMeasure().getCode(), propertiesTools.getProperty(PeriodEnum
+								.valueOf(measureCalculation.getReview().getPeriod().toUpperCase()).getKeyDescription()),
 								measureCalculation.getReview().getStartYear().toString() + (!startYearsEqualsToEndYear
 										? ("-" + measureCalculation.getReview().getEndYear().toString())
 										: "") });
@@ -279,6 +281,12 @@ public class MeasureServiceImpl implements MeasureService {
 							measureEnumCompared != null ? measureEnumCompared.name()
 									: NumberFinancialTools.defaultNumberFormat(valueToCompare, context.getLocale()) });
 			String body = null;
+
+			String comment = null;
+
+			if (ma.getComment() != null) {
+				comment = propertiesTools.getProperty("measure.mail.alert.comment", new String[] { ma.getComment() });
+			}
 			if (measureEnumCompared != null) {
 				body = propertiesTools.getProperty("measure.mail.alert.body",
 						new String[] { ma.getAccount().getFirstName(), ma.getStockTicker().getStock().getName() + "("
@@ -288,7 +296,8 @@ public class MeasureServiceImpl implements MeasureService {
 										context.getLocale()),
 								propertiesTools.getProperty(binaryOperator.getProperties()), measureEnumCompared.name(),
 								NumberFinancialTools.defaultNumberFormat(measureCalculationCompared.getValue(),
-										context.getLocale()) });
+										context.getLocale()),
+								Strings.nullToEmpty(comment) });
 			} else {
 				body = propertiesTools.getProperty("measure.mail.alert.body",
 						new String[] { ma.getAccount().getFirstName(), ma.getStockTicker().getStock().getName() + "("
@@ -298,7 +307,8 @@ public class MeasureServiceImpl implements MeasureService {
 										context.getLocale()),
 								propertiesTools.getProperty(binaryOperator.getProperties()),
 								propertiesTools.getProperty("common.value"),
-								NumberFinancialTools.defaultNumberFormat(valueToCompare, context.getLocale()) });
+								NumberFinancialTools.defaultNumberFormat(valueToCompare, context.getLocale()),
+								Strings.nullToEmpty(comment) });
 
 			}
 
@@ -346,6 +356,8 @@ public class MeasureServiceImpl implements MeasureService {
 							: propertiesTools.getProperty("common.value").toUpperCase());
 					mam.setStockName(ma.getStockTicker().getStock().getName());
 					mam.setStockTicker(ma.getStockTicker().getCode());
+
+					mam.setComment(Strings.nullToEmpty(ma.getComment()));
 
 					MeasureCalculation measureCalculation = getMeasureCalculationFromMeasureAlert(ma, measureEnum);
 					if (measureCalculation != null) {

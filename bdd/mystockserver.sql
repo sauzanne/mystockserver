@@ -52,9 +52,9 @@ alter table mystockserver.application_user add CONSTRAINT application_user_fk_ap
 create index session_ix_server_user_id on session(server_user_id);
 alter table mystockserver.session add CONSTRAINT session_fk_server_user_id foreign key session_ix_server_user_id(server_user_id) references mystockserver.server_user(id);
  
-insert into application(name,app_type,os) values ('mystocks','software','win')
+insert into application(name,app_type,os) values ('mystocks','software','win');
 
-insert into server_user(login, password, role) values ('sauzanne',sha2('S0dGqk9dBRUz4CY2STIp',512),'admin')
+insert into server_user(login, password, role) values ('sauzanne',sha2('S0dGqk9dBRUz4CY2STIp',512),'admin');
 
 insert into application_user (server_user_id, application_id)
 select su.id, app.id FROM server_user su, application app 

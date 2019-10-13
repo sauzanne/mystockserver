@@ -31,3 +31,6 @@ create index measure_alert_ix_measure_id2_compared on measure_alert(measure_id2_
 
 alter table measure_alert add CONSTRAINT measure_alert_fk_measure_id2_compared foreign key measure_alert_ix_measure_id2_compared(measure_id2_compared) references measure(id);
 
+ALTER TABLE mystocks.measure_alert  
+ADD COLUMN comment TEXT NULL AFTER binary_operator;
+

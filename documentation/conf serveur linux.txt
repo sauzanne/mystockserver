@@ -1,0 +1,10 @@
+Tomcat 9
+MySQL 8
+SSH
+Apache ?
+Java => open jdk 11.0.3 / JPS
+
+IP config
+Adresses 10.0.0.58 / 255.255.255.0 / 10.0.0.1
+
+DNS 194.158.122.10 194.158.122.15

@@ -15,8 +15,8 @@
 		<failOnMissingWebXml>false</failOnMissingWebXml>
 
 		<springframework.version>4.3.13.RELEASE</springframework.version> <!-- previous 4.2.7 -->
-		<hibernate.version>5.1.15.Final</hibernate.version>
-		<mysql.version>5.1.39</mysql.version>
+		<hibernate.version>5.1.17.Final</hibernate.version>
+		<mysql.version>8.0.17</mysql.version>
 		<!-- ><jersey.version>2.22.2</jersey.version> -->
 		<jersey.version>2.26</jersey.version>
 
@@ -31,7 +31,7 @@
 		<!-- 1.5.1 BEFORE -->
 		<springboot.version>1.5.10.RELEASE</springboot.version>
 		<log.dir>${catalina.home}/logs</log.dir>
-		<jdbc.url>jdbc:mysql://localhost:3306</jdbc.url>
+		<jdbc.url>jdbc:mysql://localhost:3306?useUnicode=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=Europe/Amsterdam</jdbc.url>
 		<jdbc.username>root</jdbc.username>
 		<jdbc.password>1VcpppumFsGzfIstQhsp</jdbc.password>
 		<hibernate.show_sql>false</hibernate.show_sql>
@@ -61,7 +61,7 @@
 				<resource.dir>dev</resource.dir>
 				<hibernate.show_sql>true</hibernate.show_sql>
 				<hibernate.format_sql>true</hibernate.format_sql>
-				<cron.measurecalculation>0 40 16 * * 1-7</cron.measurecalculation>
+				<cron.measurecalculation>0 41 21 * * 1-7</cron.measurecalculation>
 				<cron.measurealert>0 */5 * * * 1-7</cron.measurealert>
 
 			</properties>
@@ -76,9 +76,9 @@
 				<resource.dir>prod</resource.dir>
 				<ehcache.diskstore.path>/mystockserver/ehcache</ehcache.diskstore.path>
 				<log.dir>/mystockserver/logs</log.dir>
-				<jdbc.url>jdbc:mysql://localhost:2415?useSSL=false</jdbc.url>
-				<jdbc.username>rucp</jdbc.username>
-				<jdbc.password>N4-K9_3GyWo-v5ZjLyjBlh3OfuYsk73X</jdbc.password>
+				<jdbc.url>jdbc:mysql://localhost:3306?useLegacyDatetimeCode=false&amp;serverTimezone=Europe/Amsterdam</jdbc.url>
+				<jdbc.username>ellebasi</jdbc.username>
+				<jdbc.password>21e4dWFrlHXoQtWz$vDFoClEJky8fd8w</jdbc.password>
 			</properties>
 		</profile>
 	</profiles>
