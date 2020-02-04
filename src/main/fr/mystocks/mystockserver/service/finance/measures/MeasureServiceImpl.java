@@ -44,7 +44,6 @@ import fr.mystocks.mystockserver.technic.mail.MailTools;
 import fr.mystocks.mystockserver.technic.number.NumberFinancialTools;
 import fr.mystocks.mystockserver.technic.properties.PropertiesTools;
 import fr.mystocks.mystockserver.view.model.finance.measure.MeasureAlertModel;
-import jersey.repackaged.com.google.common.base.Joiner;
 
 /**
  * @author sauzanne
