@@ -36,4 +36,6 @@ public interface StockPriceService {
     BigDecimal getAveragePrice(StockTicker sq, LocalDate start,
 	    LocalDate end);
 
+	List<StockPrice> getLastForList(List<StockTicker> listOfStockTickers);
+
 }

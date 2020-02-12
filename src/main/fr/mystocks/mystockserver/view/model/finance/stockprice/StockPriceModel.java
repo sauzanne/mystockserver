@@ -11,7 +11,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import fr.mystocks.mystockserver.data.finance.stockprice.StockPrice;
+import fr.mystocks.mystockserver.data.finance.stockticker.StockTicker;
 import fr.mystocks.mystockserver.technic.serializer.LocalDateSerializer;
+import fr.mystocks.mystockserver.view.model.finance.stockticker.StockTickerModel;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY // mandatory for serialization
 )
@@ -27,6 +29,9 @@ public class StockPriceModel {
 	@JsonProperty("close")
 	private Boolean close;
 
+	@JsonProperty
+	private StockTickerModel stockTicker;
+
 	/**
 	 *
 	 * @param price
@@ -39,6 +44,16 @@ public class StockPriceModel {
 		this.price = price;
 		this.date = LocalDate;
 		this.close = close;
+	}
+
+	@JsonCreator
+	public StockPriceModel(BigDecimal price, LocalDate date, Boolean close, StockTicker stockTicker) {
+		super();
+		this.price = price;
+		this.date = date;
+		this.close = close;
+		this.stockTicker = new StockTickerModel();
+		this.stockTicker.convertFromStockTicker(stockTicker, false);
 	}
 
 	/**
@@ -96,6 +111,12 @@ public class StockPriceModel {
 		// this.setDate(new
 		// Date(sp.getStockPriceId().getInputDate().atStartOfDay().toEpochSecond(ZoneOffset.UTC)));
 		this.setDate(sp.getStockPriceId().getInputDate());
+
+		if (sp.getStockPriceId() != null && sp.getStockPriceId().getStockTicker() != null) {
+			this.stockTicker = new StockTickerModel();
+			this.stockTicker.convertFromStockTicker(sp.getStockPriceId().getStockTicker(), false);
+
+		}
 
 	}
 

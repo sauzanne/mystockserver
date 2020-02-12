@@ -30,10 +30,10 @@ public class StockTickerDaoImpl extends AbstractDaoImpl<StockTicker> implements 
 		StringBuilder request = new StringBuilder();
 
 		request.append("select st from StockTicker st");
+		request.append(" join fetch st.place p ");
 
 		if (join) {
 			request.append(" join fetch st.stock s ");
-			request.append(" join fetch st.place p ");
 		}
 
 		request.append(" where st.code=:" + BIND_CODE);

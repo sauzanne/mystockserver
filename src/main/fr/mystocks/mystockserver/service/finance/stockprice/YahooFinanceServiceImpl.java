@@ -394,4 +394,10 @@ public class YahooFinanceServiceImpl implements StockPriceService {
 		}
 	}
 
+	@Override
+	public List<StockPrice> getLastForList(List<StockTicker> listOfStockTickers) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

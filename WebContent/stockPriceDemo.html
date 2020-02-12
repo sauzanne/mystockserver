@@ -2,11 +2,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script
-  src="js/jquery2.24.min.js"
-  integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
-  crossorigin="anonymous"></script>
-<script type="application/javascript">
+<meta charset="UTF-8">
+<script type="text/javascript" src="js/jquery2.24.min.js"></script>
+<script type="text/javascript" src="js/commonDemo.js"></script>
+<link rel="stylesheet" href="css/commonDemo.css" type="text/css" />
+<script type="text/javascript">
+	
 	
 	var urlServer = location.href.substring(0, location.href.indexOf("mystockserver") + 14)+ "api/";
 			
@@ -25,6 +26,24 @@
 		});
 
 	}
+	
+	
+	function getLastForList(dType) {
+		$.ajax({
+			type : 'GET',
+			headers : {"Authorization": "Basic "+$("#idToken").val()},
+			dataType : dType,
+			url : urlServer + "finance/stockprice/getLastForList?s="+$("#idStockTicker").val()+"&p="+$("#idPlace").val(),
+			success : function(data, textStatus, jqXHR) {
+				$("#idResults").val(jqXHR.responseText);
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#idResults").val('Une erreur est survenue.');
+			}
+		});
+
+	}
+
 	
 	function getPriceForPeriod(dType) {
 		$.ajax({
@@ -86,28 +105,35 @@
 
 	}
 
+
 </script>
 </head>
 <body>
-	<input type="text" id="idToken" value="Your token">
+	<input type="text" id="idToken" placeHolder="Your token">
 	<br />
-	<input type="text" id="idStockTicker" value="Stock ticker">
+	<input type="text" id="idStockTicker" placeHolder="Stock ticker">
 	<br />
-	<input type="text" id="idPlace" value="Code place">
+	<input type="text" id="idPlace" placeHolder="Code place">
+	<br /> Date format YYYY-MM-DD ex : '2011-12-03'
 	<br />
-	Date format YYYY-MM-DD ex : '2011-12-03'<br/>
-	<input type="text" id="start" value="start date">
+	<input type="text" id="start" placeHolder="start date">
 	<br />
-	<input type="text" id="end" value="end date">
-	<br />	
-	
+	<input type="text" id="end" placeHolder="end date">
+	<br />
+
 	<input type="button" onclick="getLast('text')" value="getLast">
-	<input type="button" onclick="getPriceForPeriod('text')" value="getPriceForPeriod">
-	<input type="button" onclick="getCheckStock('text')" value="getCheckStock">
-	<input type="button" onclick="getAveragePrice('text')" value="getAveragePrice">
-	
-	<br/>
-	
+	<input type="button" onclick="getPriceForPeriod('text')"
+		value="getPriceForPeriod">
+	<input type="button" onclick="getCheckStock('text')"
+		value="getCheckStock">
+	<input type="button" onclick="getAveragePrice('text')"
+		value="getAveragePrice">
+	<input type="button" onclick="getLastForList('text')"
+		value="getLastForList">
+
+
+	<br />
+
 	<textarea cols="50" id="idResults">
 	</textarea>
 

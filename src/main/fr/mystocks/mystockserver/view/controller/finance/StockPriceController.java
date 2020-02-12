@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -98,6 +99,56 @@ public class StockPriceController {
 				spm.convertFromStockPrice(sp);
 			}
 			return Response.ok(spm, MediaType.APPLICATION_JSON).build();
+		} catch (FunctionalException e) {
+			responseForError.entity(messageSource.getMessage(e.getKeyError(), null, context.getLocale()));
+			return responseForError.build();
+		} catch (BaseException e) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@RolesAllowed(RoleConst.READONLY_USER)
+	@Application(type = Type.SOFTWARE, os = OS.WIN, name = ApplicationEnum.MYSTOCKS)
+	@GET
+	@Path("getLastForList")
+	public Response getLastForList(@QueryParam(PARAM_STOCK_TICKER) String stockTickers,
+			@QueryParam(PARAM_PLACE) String placeCode) {
+
+		ResponseBuilder responseForError = Response.status(Status.BAD_REQUEST);
+		List<String> errorMessages = new ArrayList<>();
+		if (Strings.isNullOrEmpty(stockTickers)) {
+			errorMessages.add(messageSource.getMessage("error.param.empty", new String[] { PARAM_STOCK_TICKER },
+					context.getLocale()));
+		}
+		if (Strings.isNullOrEmpty(placeCode)) {
+			errorMessages.add(
+					messageSource.getMessage("error.param.empty", new String[] { PARAM_PLACE }, context.getLocale()));
+		}
+
+		if (!errorMessages.isEmpty()) {
+			responseForError.entity(Joiner.on(TechnicalConstant.LINE_SEPARATOR).join(errorMessages));
+
+			return responseForError.build();
+		}
+
+		try {
+			String[] listOfTickers = stockTickers.split(",");
+			List<StockTicker> listOfStockTickers = new ArrayList<>();
+
+			Place p = new Place();
+			p.setCode(placeCode);
+
+			for (String stockTicker : listOfTickers) {
+				StockTicker st = new StockTicker();
+				st.setCode(stockTicker.trim());
+				st.setPlace(p);
+				listOfStockTickers.add(st);
+			}
+			List<StockPriceModel> lspm = stockPriceService.getLastForList(listOfStockTickers).stream()
+					.map(lsp -> new StockPriceModel(lsp.getPrice(), lsp.getStockPriceId().getInputDate(),
+							lsp.getClose(), lsp.getStockPriceId().getStockTicker()))
+					.collect(Collectors.toList());
+			return Response.ok(lspm, MediaType.APPLICATION_JSON).build();
 		} catch (FunctionalException e) {
 			responseForError.entity(messageSource.getMessage(e.getKeyError(), null, context.getLocale()));
 			return responseForError.build();
