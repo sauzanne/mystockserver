@@ -381,7 +381,7 @@ public class YahooFinanceServiceImpl implements StockPriceService {
 		UrlValidator urlValidator = new UrlValidator();
 		logger.debug("Yahoo cookie " + cookie + " Yahoo crumb " + crumb);
 
-		/* si l'url n'est pas vaide on relance la validation */
+		/* si l'url n'est pas valide on relance la validation */
 		if (!urlValidator.isValid(DEFAULT_URL + TechnicalConstant.QUESTION + crumb)) {
 			initYahooService();
 		}
@@ -399,5 +399,18 @@ public class YahooFinanceServiceImpl implements StockPriceService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public List<StockPrice> getPreviousForList(List<StockTicker> listOfStockTickers) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public StockPrice getPrevious(StockTicker st) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

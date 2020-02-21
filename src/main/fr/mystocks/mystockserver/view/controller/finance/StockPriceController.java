@@ -241,6 +241,66 @@ public class StockPriceController {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	
+	
+	@RolesAllowed(RoleConst.READONLY_USER)
+	@Application(type = Type.SOFTWARE, os = OS.WIN, name = ApplicationEnum.MYSTOCKS)
+	@GET
+	@Path("getPreviousForList")
+	public Response getPreviousForList(@QueryParam(PARAM_STOCK_TICKER) String stockTickers,
+			@QueryParam(PARAM_PLACE) String placeCode) {
+
+		ResponseBuilder responseForError = Response.status(Status.BAD_REQUEST);
+		List<String> errorMessages = new ArrayList<>();
+
+		if (Strings.isNullOrEmpty(stockTickers)) {
+			errorMessages.add(messageSource.getMessage("error.param.empty", new String[] { PARAM_STOCK_TICKER },
+					context.getLocale()));
+		}
+		if (Strings.isNullOrEmpty(placeCode)) {
+			errorMessages.add(
+					messageSource.getMessage("error.param.empty", new String[] { PARAM_PLACE }, context.getLocale()));
+		}
+
+
+		if (!errorMessages.isEmpty()) {
+			responseForError.entity(Joiner.on(TechnicalConstant.LINE_SEPARATOR).join(errorMessages));
+
+			return responseForError.build();
+		}
+
+		try {
+			
+			String[] listOfTickers = stockTickers.split(",");
+			List<StockTicker> listOfStockTickers = new ArrayList<>();
+
+			Place p = new Place();
+			p.setCode(placeCode);
+
+			for (String stockTicker : listOfTickers) {
+				StockTicker st = new StockTicker();
+				st.setCode(stockTicker.trim());
+				st.setPlace(p);
+				listOfStockTickers.add(st);
+			}
+
+			List<StockPrice> listStockPrice = stockPriceService.getPreviousForList(listOfStockTickers);
+
+			List<StockPriceModel> result = new ArrayList<>();
+			for (StockPrice sp : listStockPrice) {
+				StockPriceModel spm = new StockPriceModel();
+				spm.convertFromStockPrice(sp);
+				result.add(spm);
+			}
+			return Response.ok(result, MediaType.APPLICATION_JSON).build();
+		} catch (FunctionalException e) {
+			responseForError.entity(messageSource.getMessage(e.getKeyError(), null, context.getLocale()));
+			return responseForError.build();
+		} catch (BaseException e) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
 
 	@RolesAllowed(RoleConst.READONLY_USER)
 	@Application(type = Type.SOFTWARE, os = OS.WIN, name = ApplicationEnum.MYSTOCKS)

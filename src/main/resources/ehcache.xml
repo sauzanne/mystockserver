@@ -1,22 +1,44 @@
-<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="ehcache.xsd" updateCheck="true"
-	monitoring="autodetect" dynamicConfig="true"
-	maxBytesLocalHeap="${ehcache.maxbyteslocalheap}"
-	maxBytesLocalDisk="${ehcache.maxbyteslocaldisk}">
+<?xml version="1.0" encoding="UTF-8"?>
 
-	<diskStore path="${ehcache.diskstore.path}" />
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.ehcache.org/v3"
+	xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.6.xsd">
 
-	<cache name="financeCacheShortTime" eternal="false"
-		timeToLiveSeconds="180" memoryStoreEvictionPolicy="LFU"
-		transactionalMode="off">
-		<persistence strategy="localTempSwap" />
+	<cache-template name="string-key-template">
+		<key-type>java.lang.String</key-type>
+		<value-type>java.lang.Object</value-type>
+		<heap unit="entries">100</heap>
+	</cache-template>
+
+	<cache-template name="generic-key-template">
+		<key-type>java.lang.String</key-type>
+		<value-type>java.lang.Object</value-type>
+		<heap unit="entries">100</heap>
+	</cache-template>
+
+
+	<cache alias="oneHour" uses-template="generic-key-template">
+		<expiry>
+			<ttl unit="hours">1</ttl>
+		</expiry>
 	</cache>
 
-	<cache name="financeCacheOneHour" eternal="false"
-		timeToIdleSeconds="3600" timeToLiveSeconds="7200"
-		memoryStoreEvictionPolicy="LFU" transactionalMode="off">
-		<persistence strategy="localTempSwap" />
+	<cache alias="oneDay" uses-template="string-key-template">
+		<expiry>
+			<ttl unit="days">1</ttl>
+		</expiry>
 	</cache>
 
+	<cache alias="eightHour" uses-template="generic-key-template">
+		<expiry>
+			<ttl unit="hours">8</ttl>
+		</expiry>
+	</cache>
+	
+	<cache alias="tenMinutes" uses-template="generic-key-template">
+		<expiry>
+			<ttl unit="minutes">10</ttl>
+		</expiry>
+	</cache>
 
-</ehcache>
+</config>

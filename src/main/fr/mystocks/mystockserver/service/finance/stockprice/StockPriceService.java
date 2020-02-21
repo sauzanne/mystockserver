@@ -38,4 +38,8 @@ public interface StockPriceService {
 
 	List<StockPrice> getLastForList(List<StockTicker> listOfStockTickers);
 
+	List<StockPrice> getPreviousForList(List<StockTicker> listOfStockTickers);
+
+	StockPrice getPrevious(StockTicker st);
+
 }
