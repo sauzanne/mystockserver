@@ -5,7 +5,9 @@ import java.math.MathContext;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -23,7 +25,6 @@ import fr.mystocks.mystockserver.data.finance.stockprice.StockPrice;
 import fr.mystocks.mystockserver.data.finance.stockprice.StockPriceComparator;
 import fr.mystocks.mystockserver.data.finance.stockticker.StockTicker;
 import fr.mystocks.mystockserver.technic.date.DateFinancialTools;
-import fr.mystocks.mystockserver.technic.date.DateTools;
 import fr.mystocks.mystockserver.technic.exceptions.ExceptionTools;
 import fr.mystocks.mystockserver.technic.exceptions.FunctionalException;
 
@@ -43,6 +44,8 @@ public class StockPriceServiceImpl implements StockPriceService {
 	@Autowired
 	private PlaceClosingDao<PlaceClosing> placeClosingDao;
 
+	private Map<String, List<PlaceClosing>> mapPlaceClosing = new HashMap<>();
+
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Override
@@ -50,7 +53,7 @@ public class StockPriceServiceImpl implements StockPriceService {
 	// "#root.targetClass+#root.methodName+#st.getId()")
 	public StockPrice getLast(StockTicker st) {
 		try {
-			List<PlaceClosing> listPlaceClosing = placeClosingDao.findByCodePlace(st.getPlace().getCode());
+			List<PlaceClosing> listPlaceClosing = getListPlaceClosing(st.getPlace().getCode());
 			List<LocalDate> listDatePlaceClosing = listPlaceClosing.stream().map(PlaceClosing::getClosing)
 					.collect(Collectors.toList());
 
@@ -64,7 +67,7 @@ public class StockPriceServiceImpl implements StockPriceService {
 			 * on fait pas une requête que si on considère que la journée n'est pas cloturée
 			 * ou si on a aucun cours d'enregistré
 			 */
-			if (stockPriceDB == null || (today && !stockPriceDB.getClose())) {
+			if (stockPriceDB == null || (today || !stockPriceDB.getClose())) {
 				stockPrice = yahooFinanceService.getLast(st);
 			}
 
@@ -118,6 +121,14 @@ public class StockPriceServiceImpl implements StockPriceService {
 		return null;
 	}
 
+	private List<PlaceClosing> getListPlaceClosing(String codePlace) {
+		if (!mapPlaceClosing.containsKey(codePlace)) {
+
+			mapPlaceClosing.put(codePlace, placeClosingDao.findByCodePlace(codePlace));
+		}
+		return mapPlaceClosing.get(codePlace);
+	}
+
 	@Override
 	// @Cacheable(value = "financeCacheShortTime", key =
 	// "#root.methodName+#st.getId()+#start.toString()+#end.toString()")
@@ -125,7 +136,7 @@ public class StockPriceServiceImpl implements StockPriceService {
 		try {
 			List<StockPrice> stockPrices = stockPriceDao.findByDateRange(st, start, end);
 
-			List<PlaceClosing> listPlaceClosing = placeClosingDao.findByCodePlace(st.getPlace().getCode());
+			List<PlaceClosing> listPlaceClosing = getListPlaceClosing(st.getPlace().getCode());
 			List<LocalDate> listDatePlaceClosing = listPlaceClosing.stream().map(PlaceClosing::getClosing)
 					.collect(Collectors.toList());
 
@@ -193,7 +204,7 @@ public class StockPriceServiceImpl implements StockPriceService {
 	@Override
 	public StockPrice getPrevious(StockTicker st) {
 		try {
-			List<PlaceClosing> listPlaceClosing = placeClosingDao.findByCodePlace(st.getPlace().getCode());
+			List<PlaceClosing> listPlaceClosing = getListPlaceClosing(st.getPlace().getCode());
 			List<LocalDate> listDatePlaceClosing = listPlaceClosing.stream().map(PlaceClosing::getClosing)
 					.collect(Collectors.toList());
 
@@ -211,9 +222,10 @@ public class StockPriceServiceImpl implements StockPriceService {
 			if (stockPriceDB == null || !stockPriceDB.getClose()) {
 				listStockPrice = yahooFinanceService.getPriceForPeriod(st, previousDate, previousDate);
 
-				StockPrice stockPrice = listStockPrice!=null && listStockPrice.size() > 0 ? listStockPrice.get(0) : null;
+				StockPrice stockPrice = listStockPrice != null && listStockPrice.size() > 0 ? listStockPrice.get(0)
+						: null;
 
-				if (stockPrice != null && stockPriceDB==null) {
+				if (stockPrice != null && stockPriceDB == null) {
 					StockTicker stockTicker = stockTickerDao.findByCodeAndPlace(st.getCode(), st.getPlace().getCode(),
 							false);
 
@@ -223,9 +235,7 @@ public class StockPriceServiceImpl implements StockPriceService {
 					stockPrice.setPrice(stockPrice.getPrice());
 					stockPriceDao.create(stockPrice);
 					return stockPrice;
-				}
-				else if(stockPrice!=null && stockPriceDB!=null)
-				{
+				} else if (stockPrice != null && stockPriceDB != null) {
 					stockPriceDB.setClose(Boolean.TRUE);
 					stockPriceDB.setPrice(stockPrice.getPrice());
 					stockPriceDao.update(stockPriceDB);
@@ -341,7 +351,8 @@ public class StockPriceServiceImpl implements StockPriceService {
 	}
 
 	@Override
-	//@Cacheable(value = "oneHour", key = "#root.targetClass+#root.methodName+#st.getCode()+#st.getPlace().getCode()")
+	// @Cacheable(value = "oneHour", key =
+	// "#root.targetClass+#root.methodName+#st.getCode()+#st.getPlace().getCode()")
 	@Cacheable(value = "oneHour", keyGenerator = "customKeyGenerator")
 	public List<StockPrice> getPreviousForList(List<StockTicker> listOfStockTickers) {
 		List<StockPrice> result = new ArrayList<>();
