@@ -77,6 +77,7 @@ public class ValuationServiceImpl implements ValuationService {
 	@Override
 	public BigDecimal getMarketCap(StockPrice price, BigInteger numberShares, Currency currencyMarketPlace,
 			Currency currencyReview) {
+		try {
 		Optional<BigDecimal> optionalPrice = Optional.ofNullable(price.getPrice());
 		BigInteger nbShares = Optional.ofNullable(numberShares)
 				.orElseThrow(() -> new FunctionalException(this, "error.finance.performance.numbershares",
@@ -89,6 +90,11 @@ public class ValuationServiceImpl implements ValuationService {
 						new String[] { propertiesTools.getProperty("error.finance.performance.capitalization") }))
 				.multiply(new BigDecimal(nbShares), DEFAULT_PRECISION)
 				.multiply(Optional.ofNullable(exchangeRate).orElse(BigDecimal.ONE), DEFAULT_PRECISION);
+		}
+		catch(Exception e) {
+			logger.error(e.getMessage());
+		}
+		return null;
 
 	}
 

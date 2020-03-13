@@ -80,36 +80,38 @@ public class StockPriceServiceImpl implements StockPriceService {
 				}
 				stockPrice.getStockPriceId().setStockTicker(stockTicker);
 
-				if (stockPrice.getStockPriceId().getInputDate().equals(lastOpenDate)) {
-					/* cas 1 : la donnée existe déjà en base */
-					if (stockPriceDB != null) {
-						stockPriceDB.setClose(today ? false : true);
-						stockPriceDB.setPrice(stockPrice.getPrice());
-						stockPriceDao.update(stockPriceDB);
-					} else /* cas 2 : la donnée n'existe pas */
-					{
-						stockPriceDao.create(stockPrice);
-						return stockPrice;
-					}
-				} else if (!stockPrice.getStockPriceId().getInputDate().equals(lastOpenDate)) {
-					/*
-					 * cas 3 : si le prix retourné n'est pas à la date attendue, on vérifie si le
-					 * prix n'est pas déjà présent en base
-					 */
-					stockPriceDB = stockPriceDao.findAtDate(stockPrice.getStockPriceId().getStockTicker(),
-							stockPrice.getStockPriceId().getInputDate());
+				if (stockPrice.getPrice() != null) {
+					if (stockPrice.getStockPriceId().getInputDate().equals(lastOpenDate)) {
+						/* cas 1 : la donnée existe déjà en base */
+						if (stockPriceDB != null) {
+							stockPriceDB.setClose(today ? false : true);
+							stockPriceDB.setPrice(stockPrice.getPrice());
+							stockPriceDao.update(stockPriceDB);
+						} else /* cas 2 : la donnée n'existe pas */
+						{
+							stockPriceDao.create(stockPrice);
+							return stockPrice;
+						}
+					} else if (!stockPrice.getStockPriceId().getInputDate().equals(lastOpenDate)) {
+						/*
+						 * cas 3 : si le prix retourné n'est pas à la date attendue, on vérifie si le
+						 * prix n'est pas déjà présent en base
+						 */
+						stockPriceDB = stockPriceDao.findAtDate(stockPrice.getStockPriceId().getStockTicker(),
+								stockPrice.getStockPriceId().getInputDate());
 
-					if (stockPriceDB == null) {
-						stockPrice.setClose(true);
-						stockPriceDao.create(stockPrice);
-						return stockPrice;
-					} else if (!stockPriceDB.getClose()) { /*
-															 * cas 4 : on met à jour le prix en base de donnée seulement
-															 * si ce n'est pas déjà un prix de cloture
-															 */
-						stockPriceDB.setClose(true);
-						stockPriceDB.setPrice(stockPrice.getPrice());
-						stockPriceDao.update(stockPriceDB);
+						if (stockPriceDB == null) {
+							stockPrice.setClose(true);
+							stockPriceDao.create(stockPrice);
+							return stockPrice;
+						} else if (!stockPriceDB.getClose()) { /*
+																 * cas 4 : on met à jour le prix en base de donnée
+																 * seulement si ce n'est pas déjà un prix de cloture
+																 */
+							stockPriceDB.setClose(true);
+							stockPriceDB.setPrice(stockPrice.getPrice());
+							stockPriceDao.update(stockPriceDB);
+						}
 					}
 				}
 			}

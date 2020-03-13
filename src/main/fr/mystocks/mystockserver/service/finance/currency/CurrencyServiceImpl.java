@@ -2,12 +2,14 @@ package fr.mystocks.mystockserver.service.finance.currency;
 
 import java.lang.reflect.Type;
 import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.ehcache.UserManagedCache;
+import org.ehcache.config.builders.ExpiryPolicyBuilder;
+import org.ehcache.config.builders.ResourcePoolsBuilder;
+import org.ehcache.config.builders.UserManagedCacheBuilder;
+import org.ehcache.config.units.EntryUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +44,12 @@ public class CurrencyServiceImpl implements CurrencyService {
 	@Autowired
 	private PropertiesTools propertiesTools;
 
-	private Map<String, Price> fxCache = new HashMap<>();
+	
+    private UserManagedCache<String, Price> fxCache = UserManagedCacheBuilder
+    	    .newUserManagedCacheBuilder(String.class, Price.class)
+    	    .withResourcePools(ResourcePoolsBuilder.newResourcePoolsBuilder().heap(1000L, EntryUnit.ENTRIES))
+    	    .withExpiry(ExpiryPolicyBuilder.timeToLiveExpiration(Duration.ofDays(1))).build(true);
+
 
 	@Override
 	public final Price getCurrentFxRate(String base, String counterPart) {
@@ -51,12 +58,10 @@ public class CurrencyServiceImpl implements CurrencyService {
 			Price priceInCache = fxCache.get(pair);
 
 			if (priceInCache != null) {
-				Duration d = Duration.between(priceInCache.getInputDate(), LocalDateTime.now());
-
-				if (d.toHours() <= 1) {
-					return priceInCache;
-				}
+				return priceInCache;
 			}
+
+			logger.error("Call alphavantage.co for pair" + base + "/" + counterPart);
 
 			String jsonResponse = HttpTools
 					.getURLWithHeaders(ALPHA_VANTAGE_URL + FUNCTION_CURRENCY + "&" + FROM_CURRENCY + "=" + base + "&"
@@ -98,7 +103,8 @@ public class CurrencyServiceImpl implements CurrencyService {
 						if (entryRates.getKey().equals("5. Exchange Rate")) {
 							response.setPrice(entryRates.getValue().getAsBigDecimal());
 						} else if (entryRates.getKey().equals("6. Last Refreshed")) {
-							response.setInputDate(DateTools.convertIsoLocalDateTime(entryRates.getValue().getAsString(),"UTC"));
+							response.setInputDate(
+									DateTools.convertIsoLocalDateTime(entryRates.getValue().getAsString(), "UTC"));
 
 						}
 					}

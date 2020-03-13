@@ -29,7 +29,6 @@ import fr.mystocks.mystockserver.dao.security.account.AccountDao;
 import fr.mystocks.mystockserver.data.finance.measure.Measure;
 import fr.mystocks.mystockserver.data.finance.measurecalculation.MeasureCalculation;
 import fr.mystocks.mystockserver.data.finance.review.Review;
-import fr.mystocks.mystockserver.data.finance.stockprice.StockPrice;
 import fr.mystocks.mystockserver.data.finance.stockticker.StockTicker;
 import fr.mystocks.mystockserver.data.security.Account;
 import fr.mystocks.mystockserver.service.finance.measures.constant.MeasureEnum;
@@ -39,6 +38,7 @@ import fr.mystocks.mystockserver.service.finance.stockprice.StockPriceService;
 import fr.mystocks.mystockserver.technic.date.DateTools;
 import fr.mystocks.mystockserver.technic.exceptions.ExceptionTools;
 import fr.mystocks.mystockserver.technic.exceptions.FunctionalException;
+import fr.mystocks.mystockserver.technic.mail.MailTools;
 import fr.mystocks.mystockserver.technic.properties.PropertiesTools;
 import fr.mystocks.mystockserver.technic.util.DoubleReturnValue;
 
@@ -77,7 +77,12 @@ public class MeasureCalculationServiceImpl implements MeasureCalculationService 
 	@Autowired
 	private ValuationService valuationService;
 
+	@Autowired
+	private MailTools mailTools;
+
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	
+	private final static String MAIL_ADMIN = "sauzanne@gmail.com";
 
 	@Scheduled(cron = "${cron.measurecalculation}")
 	@Override
@@ -96,73 +101,79 @@ public class MeasureCalculationServiceImpl implements MeasureCalculationService 
 				for (Measure measure : measureDao.getAvailableMeasures()) {
 
 					DoubleReturnValue<BigDecimal, Review> value = null;
-//					StockPrice last = null;
-//					try {
-//						last = stockPriceService.getLast(st);
-//					} catch (RuntimeException e) {
-//						ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
-//					}
-					if (measure.getCode().equals(MeasureEnum.MM10.getProperties())) {
-						value = getMovingAverage(calculationDate, stats, st, measure, 0.1);
-					} else if (measure.getCode().equals(MeasureEnum.MM150.getProperties())) {
-						value = getMovingAverage(calculationDate, stats, st, measure, acceptableErrorRate);
-					} else if (measure.getCode().equals(MeasureEnum.MM100.getProperties())) {
-						value = getMovingAverage(calculationDate, stats, st, measure, acceptableErrorRate);
-					} else if (measure.getCode().equals(MeasureEnum.MM50.getProperties())) {
-						value = getMovingAverage(calculationDate, stats, st, measure, 0.03);
-					} else if (measure.getCode().equals(MeasureEnum.MM200.getProperties())) {
-						value = getMovingAverage(calculationDate, stats, st, measure, acceptableErrorRate);
-					} else if (measure.getCode().equals(MeasureEnum.VALUATION_PE.getProperties())) {
-						value = valuationService.getPriceEarnings(st, null);
+
+					try {
+						if (measure.getCode().equals(MeasureEnum.MM10.getProperties())) {
+							value = getMovingAverage(calculationDate, stats, st, measure, 0.1);
+						} else if (measure.getCode().equals(MeasureEnum.MM150.getProperties())) {
+							value = getMovingAverage(calculationDate, stats, st, measure, acceptableErrorRate);
+						} else if (measure.getCode().equals(MeasureEnum.MM100.getProperties())) {
+							value = getMovingAverage(calculationDate, stats, st, measure, acceptableErrorRate);
+						} else if (measure.getCode().equals(MeasureEnum.MM50.getProperties())) {
+							value = getMovingAverage(calculationDate, stats, st, measure, 0.03);
+						} else if (measure.getCode().equals(MeasureEnum.MM200.getProperties())) {
+							value = getMovingAverage(calculationDate, stats, st, measure, acceptableErrorRate);
+						} else if (measure.getCode().equals(MeasureEnum.VALUATION_PE.getProperties())) {
+							value = valuationService.getPriceEarnings(st, null);
+							if (value != null) {
+								addStat(measure.getCode(), stats);
+							}
+						} else if (measure.getCode().equals(MeasureEnum.VALUATION_PB.getProperties())) {
+							value = valuationService.getPriceToBook(st, null);
+							if (value != null) {
+								addStat(measure.getCode(), stats);
+							}
+						}
 						if (value != null) {
-							addStat(measure.getCode(), stats);
-						}
-					} else if (measure.getCode().equals(MeasureEnum.VALUATION_PB.getProperties())) {
-						value = valuationService.getPriceToBook(st, null);
-						if (value != null) {
-							addStat(measure.getCode(), stats);
-						}
-					}
-					if (value != null) {
-						MeasureCalculation measureCalculation = measureCalculationDao.findMeasureCalculation(st,
-								measure, calculationDate, value.getValue2());
+							MeasureCalculation measureCalculation = measureCalculationDao.findMeasureCalculation(st,
+									measure, calculationDate, value.getValue2());
 
-						if (measureCalculation == null) {
-							measureCalculation = new MeasureCalculation();
-							measureCalculation.setFirstInput(LocalDateTime.now());
-						}
+							if (measureCalculation == null) {
+								measureCalculation = new MeasureCalculation();
+								measureCalculation.setFirstInput(LocalDateTime.now());
+							}
 
-						measureCalculation.setCalculationDate(calculationDate);
-						measureCalculation.setMeasure(measure);
-						measureCalculation.setStockTicker(st);
-						measureCalculation.setValue(value.getValue1());
-						measureCalculation.setReview(value.getValue2());
+							measureCalculation.setCalculationDate(calculationDate);
+							measureCalculation.setMeasure(measure);
+							measureCalculation.setStockTicker(st);
+							measureCalculation.setValue(value.getValue1());
+							measureCalculation.setReview(value.getValue2());
 
-						if (measureCalculation.getId() == null) {
-							measureCalculationDao.create(measureCalculation);
-						} else {
-							measureCalculation.setLastModified(LocalDateTime.now());
-							measureCalculationDao.update(measureCalculation);
+							if (measureCalculation.getId() == null) {
+								measureCalculationDao.create(measureCalculation);
+							} else {
+								measureCalculation.setLastModified(LocalDateTime.now());
+								measureCalculationDao.update(measureCalculation);
+							}
+
 						}
-//						} catch (Exception e) {
-//							ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
-//						}
+					} catch (FunctionalException e) {
+						ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
 					}
 
 				}
 			}
-		} catch (FunctionalException e) {
-			ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
 		} catch (Exception e) {
+			mailTools.sendMessage(MAIL_ADMIN,
+					"measure calculations ended at " + LocalDateTime.now() + " with error",
+					propertiesTools.getProperty("error.technical.details",
+							new String[] { this.getClass().getCanonicalName(), "cronMeasureCalculation",
+									ExceptionTools.parseTrace(e) }));
 			ExceptionTools.processException(this, logger, e);
 		}
 		lastMetricsCalculation = calculationDate;
+		String calculationStats = "";
 		for (Entry<String, Integer> entry : stats.entrySet()) {
-			logger.error("Calculations stats for " + entry.getKey() + " : "
-					+ (new Double(entry.getValue()) / new Double(listStockerTicker.size()) * 100) + " %");
+			calculationStats += "Calculations stats for " + entry.getKey() + " : "
+					+ (new Double(entry.getValue()) / new Double(listStockerTicker.size()) * 100) + " %\n";
 		}
+		calculationStats += "\nMeasures calculations ended at " + LocalDateTime.now();
 
-		logger.error("Measures calculations ended at " + LocalDateTime.now());
+		mailTools.sendMessage(MAIL_ADMIN,
+				"measure calculations ended at " + LocalDateTime.now() + " with success", calculationStats);
+
+		logger.error(calculationStats);
+
 	}
 
 	/**
