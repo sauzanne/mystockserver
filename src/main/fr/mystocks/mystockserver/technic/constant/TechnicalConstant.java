@@ -24,6 +24,7 @@ public final class TechnicalConstant {
     public static final String BRACE_RIGHT = "}";
     public static final String CHECKBOX_ON = "on";
     private static final Set<Class<?>> WRAPPER_TYPES = getWrapperTypes();
+    private static final String LOCALHOST = "localhost";
 
     private TechnicalConstant() {
 	super();
