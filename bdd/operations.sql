@@ -534,3 +534,7 @@ insert into operations(id, revenues, ebit,current_ebit,ebitda, cost_of_revenues,
 insert into operations(id, revenues, ebit,current_ebit,ebitda, cost_of_revenues, financial_expenses, shareowners_earnings, operational_cash_flow, free_cash_flow, exceptional_items, first_input, last_modified) values (666,7448200000.00,216800000.00,270100000.00,370000000.00,5187300000.00,NULL,37200000.00,NULL,NULL,NULL,now(),null);
 insert into operations(id, revenues, ebit,current_ebit,ebitda, cost_of_revenues, financial_expenses, shareowners_earnings, operational_cash_flow, free_cash_flow, exceptional_items, first_input, last_modified) values (667,436100000.00,19800000.00,19800000.00,29600000.00,NULL,-9000000.00,8200000.00,NULL,NULL,NULL,now(),null);
 insert into operations(id, revenues, ebit,current_ebit,ebitda, cost_of_revenues, financial_expenses, shareowners_earnings, operational_cash_flow, free_cash_flow, exceptional_items, first_input, last_modified) values (668,19470000.00,680000.00,680000.00,1890000.00,NULL,NULL,690000.00,NULL,NULL,NULL,now(),null);
+
+
+
+

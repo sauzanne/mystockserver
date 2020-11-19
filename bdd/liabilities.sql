@@ -540,3 +540,7 @@ INSERT INTO liabilities(id, current_liabilities,short_term_borrowings,long_term_
 INSERT INTO liabilities(id, current_liabilities,short_term_borrowings,long_term_borrowings,first_input, last_modified) values(678,2739700000.00,7200000.00,853800000.00,now(),null);
 INSERT INTO liabilities(id, current_liabilities,short_term_borrowings,long_term_borrowings,first_input, last_modified) values(679,NULL,NULL,112100000.00,now(),null);
 INSERT INTO liabilities(id, current_liabilities,short_term_borrowings,long_term_borrowings,first_input, last_modified) values(680,NULL,NULL,7560000.00,now(),null);
+
+--rajout des locations financières IFRS16
+ALTER TABLE mystocks.liabilities 
+ADD COLUMN capital_leases DECIMAL(18,2) UNSIGNED NULL AFTER `long_term_borrowings`;

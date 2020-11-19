@@ -555,3 +555,13 @@ INSERT INTO review(id, stock_id,period,start_year,end_year,operations_id, balanc
 INSERT INTO review(id, stock_id,period,start_year,end_year,operations_id, balance_sheets_id, nb_shares_end_period, account_id, currency_id, last_modified, first_input) values(242,78,'HY1',2014,2014,282,251,71660000,80,978,null,now());
 INSERT INTO review(id, stock_id,period,start_year,end_year,operations_id, balance_sheets_id, nb_shares_end_period, account_id, currency_id, last_modified, first_input) values(201,78,'Y',2013,2013,244,214,66100000,1000,978,null,now());
 INSERT INTO review(id, stock_id,period,start_year,end_year,operations_id, balance_sheets_id, nb_shares_end_period, account_id, currency_id, last_modified, first_input) values(199,76,'Y',2013,2013,242,212,815550000,1000,978,null,now());
+
+--rajout de valuation_id
+ALTER TABLE mystocks.review 
+ADD COLUMN valuation_id INT UNSIGNED NULL AFTER `balance_sheets_id`;
+
+create index review_ix_valuation_id on review(valuation_id);
+
+
+alter table mystocks.review  add CONSTRAINT review_fk_valuation_id foreign key review_ix_valuation_id(valuation_id) references valuation(id);
+
