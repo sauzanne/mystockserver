@@ -3,6 +3,7 @@ package fr.mystocks.mystockserver.data.finance.operations;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -56,6 +57,7 @@ public class Operations implements Serializable {
 
 	@Column(name = "exceptional_items")
 	private BigDecimal exceptionalItems;
+	
 
 	@Column(name = "first_input")
 	private LocalDateTime firstInput;
@@ -250,6 +252,7 @@ public class Operations implements Serializable {
 	    this.exceptionalItems = exceptionalItems;
 	}
 
+
 	/**
 	 * @author sauzanne @return the firstInput
 	 */
@@ -278,28 +281,14 @@ public class Operations implements Serializable {
 	    this.lastModified = lastModified;
 	}
 
-
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
-	    final int prime = 31;
-	    int result = 1;
-	    result = prime * result + ((costOfRevenues == null) ? 0 : costOfRevenues.hashCode());
-	    result = prime * result + ((currentEbit == null) ? 0 : currentEbit.hashCode());
-	    result = prime * result + ((ebit == null) ? 0 : ebit.hashCode());
-	    result = prime * result + ((ebitda == null) ? 0 : ebitda.hashCode());
-	    result = prime * result + ((exceptionalItems == null) ? 0 : exceptionalItems.hashCode());
-	    result = prime * result + ((financialExpenses == null) ? 0 : financialExpenses.hashCode());
-	    result = prime * result + ((firstInput == null) ? 0 : firstInput.hashCode());
-	    result = prime * result + ((freeCashFlow == null) ? 0 : freeCashFlow.hashCode());
-	    result = prime * result + id;
-	    result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
-	    result = prime * result + ((operationalCashFlow == null) ? 0 : operationalCashFlow.hashCode());
-	    result = prime * result + ((revenues == null) ? 0 : revenues.hashCode());
-	    result = prime * result + ((shareownersEarnings == null) ? 0 : shareownersEarnings.hashCode());
-	    return result;
+		return Objects.hash(adjustedEarnings, costOfRevenues, currentEbit, ebit, ebitda, exceptionalItems,
+				financialExpenses, firstInput, freeCashFlow, id, lastModified, operationalCashFlow, revenues,
+				shareownersEarnings);
 	}
 
 	/* (non-Javadoc)
@@ -307,77 +296,28 @@ public class Operations implements Serializable {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-	    if (this == obj)
-		return true;
-	    if (obj == null)
-		return false;
-	    if (getClass() != obj.getClass())
-		return false;
-	    Operations other = (Operations) obj;
-	    if (costOfRevenues == null) {
-		if (other.costOfRevenues != null)
-		    return false;
-	    } else if (!costOfRevenues.equals(other.costOfRevenues))
-		return false;
-	    if (currentEbit == null) {
-		if (other.currentEbit != null)
-		    return false;
-	    } else if (!currentEbit.equals(other.currentEbit))
-		return false;
-	    if (ebit == null) {
-		if (other.ebit != null)
-		    return false;
-	    } else if (!ebit.equals(other.ebit))
-		return false;
-	    if (ebitda == null) {
-		if (other.ebitda != null)
-		    return false;
-	    } else if (!ebitda.equals(other.ebitda))
-		return false;
-	    if (exceptionalItems == null) {
-		if (other.exceptionalItems != null)
-		    return false;
-	    } else if (!exceptionalItems.equals(other.exceptionalItems))
-		return false;
-	    if (financialExpenses == null) {
-		if (other.financialExpenses != null)
-		    return false;
-	    } else if (!financialExpenses.equals(other.financialExpenses))
-		return false;
-	    if (firstInput == null) {
-		if (other.firstInput != null)
-		    return false;
-	    } else if (!firstInput.equals(other.firstInput))
-		return false;
-	    if (freeCashFlow == null) {
-		if (other.freeCashFlow != null)
-		    return false;
-	    } else if (!freeCashFlow.equals(other.freeCashFlow))
-		return false;
-	    if (id != other.id)
-		return false;
-	    if (lastModified == null) {
-		if (other.lastModified != null)
-		    return false;
-	    } else if (!lastModified.equals(other.lastModified))
-		return false;
-	    if (operationalCashFlow == null) {
-		if (other.operationalCashFlow != null)
-		    return false;
-	    } else if (!operationalCashFlow.equals(other.operationalCashFlow))
-		return false;
-	    if (revenues == null) {
-		if (other.revenues != null)
-		    return false;
-	    } else if (!revenues.equals(other.revenues))
-		return false;
-	    if (shareownersEarnings == null) {
-		if (other.shareownersEarnings != null)
-		    return false;
-	    } else if (!shareownersEarnings.equals(other.shareownersEarnings))
-		return false;
-	    return true;
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Operations other = (Operations) obj;
+		return Objects.equals(adjustedEarnings, other.adjustedEarnings)
+				&& Objects.equals(costOfRevenues, other.costOfRevenues)
+				&& Objects.equals(currentEbit, other.currentEbit) && Objects.equals(ebit, other.ebit)
+				&& Objects.equals(ebitda, other.ebitda) && Objects.equals(exceptionalItems, other.exceptionalItems)
+				&& Objects.equals(financialExpenses, other.financialExpenses)
+				&& Objects.equals(firstInput, other.firstInput) && Objects.equals(freeCashFlow, other.freeCashFlow)
+				&& Objects.equals(id, other.id) && Objects.equals(lastModified, other.lastModified)
+				&& Objects.equals(operationalCashFlow, other.operationalCashFlow)
+				&& Objects.equals(revenues, other.revenues)
+				&& Objects.equals(shareownersEarnings, other.shareownersEarnings);
 	}
+
+
+
+
 
 
 

@@ -3,6 +3,7 @@ package fr.mystocks.mystockserver.data.finance.liabilities;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,6 +35,10 @@ public class Liabilities implements Serializable {
     
     @Column(name = "long_term_borrowings")
     private BigDecimal longTermBorrowings;
+    
+    @Column(name = "capital_leases")
+    private BigDecimal capitalLeases;
+
 
         @Column(name = "first_input")
     private LocalDateTime firstInput;
@@ -80,6 +85,20 @@ public class Liabilities implements Serializable {
 		this.longTermBorrowings = longTermBorrowings;
 	}
 
+	/**
+	 * @return the capitalLeases
+	 */
+	public BigDecimal getCapitalLeases() {
+		return capitalLeases;
+	}
+
+	/**
+	 * @param capitalLeases the capitalLeases to set
+	 */
+	public void setCapitalLeases(BigDecimal capitalLeases) {
+		this.capitalLeases = capitalLeases;
+	}
+
 	public LocalDateTime getFirstInput() {
 		return firstInput;
 	}
@@ -96,15 +115,34 @@ public class Liabilities implements Serializable {
 		this.lastModified = lastModified;
 	}
 
-	public Liabilities(int id, BigDecimal currentLiabilities, BigDecimal shortTermBorrowings,
-			BigDecimal longTermBorrowings, LocalDateTime firstInput, LocalDateTime lastModified) {
-		super();
-		this.id = id;
-		this.currentLiabilities = currentLiabilities;
-		this.shortTermBorrowings = shortTermBorrowings;
-		this.longTermBorrowings = longTermBorrowings;
-		this.firstInput = firstInput;
-		this.lastModified = lastModified;
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return Objects.hash(capitalLeases, currentLiabilities, firstInput, id, lastModified, longTermBorrowings,
+				shortTermBorrowings);
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Liabilities other = (Liabilities) obj;
+		return Objects.equals(capitalLeases, other.capitalLeases)
+				&& Objects.equals(currentLiabilities, other.currentLiabilities)
+				&& Objects.equals(firstInput, other.firstInput) && id == other.id
+				&& Objects.equals(lastModified, other.lastModified)
+				&& Objects.equals(longTermBorrowings, other.longTermBorrowings)
+				&& Objects.equals(shortTermBorrowings, other.shortTermBorrowings);
 	}
 
 	public Liabilities() {
@@ -120,57 +158,6 @@ public class Liabilities implements Serializable {
 		this.id = id;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((currentLiabilities == null) ? 0 : currentLiabilities.hashCode());
-		result = prime * result + ((firstInput == null) ? 0 : firstInput.hashCode());
-		result = prime * result + id;
-		result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
-		result = prime * result + ((longTermBorrowings == null) ? 0 : longTermBorrowings.hashCode());
-		result = prime * result + ((shortTermBorrowings == null) ? 0 : shortTermBorrowings.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Liabilities other = (Liabilities) obj;
-		if (currentLiabilities == null) {
-			if (other.currentLiabilities != null)
-				return false;
-		} else if (!currentLiabilities.equals(other.currentLiabilities))
-			return false;
-		if (firstInput == null) {
-			if (other.firstInput != null)
-				return false;
-		} else if (!firstInput.equals(other.firstInput))
-			return false;
-		if (id != other.id)
-			return false;
-		if (lastModified == null) {
-			if (other.lastModified != null)
-				return false;
-		} else if (!lastModified.equals(other.lastModified))
-			return false;
-		if (longTermBorrowings == null) {
-			if (other.longTermBorrowings != null)
-				return false;
-		} else if (!longTermBorrowings.equals(other.longTermBorrowings))
-			return false;
-		if (shortTermBorrowings == null) {
-			if (other.shortTermBorrowings != null)
-				return false;
-		} else if (!shortTermBorrowings.equals(other.shortTermBorrowings))
-			return false;
-		return true;
-	}
 
    
 }

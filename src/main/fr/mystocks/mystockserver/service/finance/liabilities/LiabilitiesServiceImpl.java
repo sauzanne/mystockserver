@@ -29,7 +29,7 @@ public class LiabilitiesServiceImpl implements LiabilitiesService {
 
 	@Override
 	public Integer storeLiabilities(String token, Integer id, BigDecimal currentLiabilities,
-			BigDecimal shortTermBorrowings, BigDecimal longTermBorrowings) {
+			BigDecimal shortTermBorrowings, BigDecimal longTermBorrowings, BigDecimal capitalLeases) {
 		LocalDateTime now = LocalDateTime.now();
 		try {
 
@@ -50,6 +50,7 @@ public class LiabilitiesServiceImpl implements LiabilitiesService {
 			liabilities.setCurrentLiabilities(currentLiabilities);
 			liabilities.setShortTermBorrowings(shortTermBorrowings);
 			liabilities.setLongTermBorrowings(longTermBorrowings);
+			liabilities.setCapitalLeases(capitalLeases);
 
 			if (id == null || id == 0) {
 				liabilities.setFirstInput(now);

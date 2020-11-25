@@ -101,6 +101,7 @@ public class OperationsController {
 				PARAM_FREE_CASH_FLOW);
 		BigDecimal exceptionalItems = controllerMessageTools.validateBigDecimalParameter(paramExceptionalItems,
 				PARAM_EXCEPTIONAL_ITEMS);
+
 		BigDecimal ebitda = controllerMessageTools.validateBigDecimalParameter(paramEbitda, PARAM_EBITDA);
 
 		controllerMessageTools.checkEmptyParameter(token, PARAM_TOKEN);

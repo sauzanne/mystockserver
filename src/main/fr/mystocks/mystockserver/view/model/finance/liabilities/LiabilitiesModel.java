@@ -24,6 +24,8 @@ public class LiabilitiesModel {
 	private BigDecimal shortTermBorrowings;
 
 	private BigDecimal longTermBorrowings;
+	
+	private BigDecimal capitalLeases;
 
 	@JsonProperty("lastModified")
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
@@ -88,6 +90,22 @@ public class LiabilitiesModel {
 	 */
 	public void setLongTermBorrowings(BigDecimal longTermBorrowings) {
 		this.longTermBorrowings = longTermBorrowings;
+	}
+
+
+	/**
+	 * @return the capitalLeases
+	 */
+	public BigDecimal getCapitalLeases() {
+		return capitalLeases;
+	}
+
+
+	/**
+	 * @param capitalLeases the capitalLeases to set
+	 */
+	public void setCapitalLeases(BigDecimal capitalLeases) {
+		this.capitalLeases = capitalLeases;
 	}
 
 

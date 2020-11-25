@@ -53,6 +53,8 @@ public class LiabilitiesController {
 	private final static String PARAM_CURRENT_LIABILITIES = "cl";
 	private final static String PARAM_SHORT_TERM_BORROWINGS = "sb";
 	private final static String PARAM_LONG_TERM_BORROWINGS = "lb";
+	private final static String PARAM_CAPITAL_LEASES = "cle";
+
 
 	@RolesAllowed(RoleConst.READONLY_USER)
 	@Application(type = Type.SOFTWARE, os = OS.WIN, name = ApplicationEnum.MYSTOCKS)
@@ -60,7 +62,7 @@ public class LiabilitiesController {
 	@Path("postLiabilities")
 	public Response postOperations(@FormParam(PARAM_TOKEN) String token, @FormParam(PARAM_ID) Integer id,
 			@FormParam(PARAM_CURRENT_LIABILITIES) String paramCurrentLiabilities, @FormParam(PARAM_SHORT_TERM_BORROWINGS) String paramShortTermBorrowings,
-			@FormParam(PARAM_LONG_TERM_BORROWINGS) String paramLongTermBorrowings, @Context SecurityContext securityContext) {
+			@FormParam(PARAM_LONG_TERM_BORROWINGS) String paramLongTermBorrowings,@FormParam(PARAM_CAPITAL_LEASES) String paramCapitalLeases, @Context SecurityContext securityContext) {
 
 		ResponseBuilder responseForError = Response.status(Status.BAD_REQUEST);
 
@@ -71,6 +73,10 @@ public class LiabilitiesController {
 				PARAM_SHORT_TERM_BORROWINGS);
 		BigDecimal longTermBorrowings = controllerMessageTools.validateBigDecimalParameter(paramLongTermBorrowings,
 				PARAM_LONG_TERM_BORROWINGS);
+		
+		BigDecimal capitalLeases = controllerMessageTools.validateBigDecimalParameter(paramCapitalLeases,
+				PARAM_CAPITAL_LEASES);
+
 
 
 		controllerMessageTools.checkEmptyParameter(token, PARAM_TOKEN);
@@ -84,7 +90,7 @@ public class LiabilitiesController {
 
 		try {
 			return Response
-					.ok(liabilitiesService.storeLiabilities(token, id, currentLiabilities, shortTermBorrowings, longTermBorrowings),
+					.ok(liabilitiesService.storeLiabilities(token, id, currentLiabilities, shortTermBorrowings, longTermBorrowings, capitalLeases),
 							MediaType.APPLICATION_JSON)
 					.build();
 		} catch (FunctionalException e) {
