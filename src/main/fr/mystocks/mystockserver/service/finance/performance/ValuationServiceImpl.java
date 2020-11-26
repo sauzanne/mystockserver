@@ -2,6 +2,7 @@ package fr.mystocks.mystockserver.service.finance.performance;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +16,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.mystocks.mystockserver.dao.finance.review.ReviewDao;
+import fr.mystocks.mystockserver.dao.finance.valuation.ValuationDao;
+import fr.mystocks.mystockserver.dao.security.account.AccountDao;
 import fr.mystocks.mystockserver.data.finance.Equities;
 import fr.mystocks.mystockserver.data.finance.balancesheets.BalanceSheets;
 import fr.mystocks.mystockserver.data.finance.currency.Currency;
@@ -22,6 +25,8 @@ import fr.mystocks.mystockserver.data.finance.operations.Operations;
 import fr.mystocks.mystockserver.data.finance.review.Review;
 import fr.mystocks.mystockserver.data.finance.stockprice.StockPrice;
 import fr.mystocks.mystockserver.data.finance.stockticker.StockTicker;
+import fr.mystocks.mystockserver.data.finance.valuation.Valuation;
+import fr.mystocks.mystockserver.data.security.Account;
 import fr.mystocks.mystockserver.service.finance.constant.PeriodEnum;
 import fr.mystocks.mystockserver.service.finance.currency.CurrencyService;
 import fr.mystocks.mystockserver.service.finance.currency.Price;
@@ -48,6 +53,13 @@ public class ValuationServiceImpl implements ValuationService {
 	
 	@Autowired
 	private StockPriceService stockPriceService;
+	
+	@Autowired
+	private ValuationDao<Valuation> valuationDao;
+
+	@Autowired
+	private AccountDao<Account> accountDao;
+
 
 	/**
 	 * Récupère le taux de change entre le rapport et la capitalisation
@@ -292,5 +304,43 @@ public class ValuationServiceImpl implements ValuationService {
 		}
 		return null;
 	}
+	
+	@Override
+	public Integer storeValuation(String token, Integer id, BigDecimal expectedGrowth) {
+		LocalDateTime now = LocalDateTime.now();
+		try {
+
+			Account account = accountDao.getAccountByToken(token);
+
+			// si le compte n'est pas identifié on sort de la fonction
+			if (account == null) {
+				return null;
+			}
+
+			Valuation valuation;
+			if (id == null || id == 0) {
+				valuation = new Valuation();
+			} else {
+				valuation = valuationDao.findById(id);
+			}
+
+
+			valuation.setExpectedGrowth(expectedGrowth);
+			
+			if (id == null || id == 0) {
+				valuation.setFirstInput(now);
+				valuationDao.create(valuation);
+			} else {
+				valuation.setLastModified(now);
+				valuationDao.update(valuation);
+			}
+			return valuation.getId();
+		} catch (RuntimeException e) {
+
+			ExceptionTools.processException(this, logger, e);
+		}
+		return null;
+	}
+
 
 }

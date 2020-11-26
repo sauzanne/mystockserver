@@ -23,5 +23,7 @@ public interface ValuationService {
 	DoubleReturnValue<BigDecimal, Review> getPriceEarnings(StockTicker st, StockPrice last);
 
 	DoubleReturnValue<BigDecimal, Review> getPriceToBook(StockTicker st, StockPrice last);
+
+	Integer storeValuation(String token, Integer id, BigDecimal expectedGrowth);
     
 }
