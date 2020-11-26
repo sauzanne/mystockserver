@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,6 +20,7 @@ import fr.mystocks.mystockserver.data.finance.balancesheets.BalanceSheets;
 import fr.mystocks.mystockserver.data.finance.currency.Currency;
 import fr.mystocks.mystockserver.data.finance.operations.Operations;
 import fr.mystocks.mystockserver.data.finance.stock.Stock;
+import fr.mystocks.mystockserver.data.finance.valuation.Valuation;
 import fr.mystocks.mystockserver.data.security.Account;
 
 @Entity
@@ -62,6 +64,11 @@ public class Review implements Serializable {
 	@JoinColumn(name = "balance_sheets_id", nullable = true)
 	private BalanceSheets balanceSheets;
 	
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "valuation_id", nullable = true)
+	private Valuation valuation;
+
+	
 
 	@Column(name = "nb_shares_end_period")
 	private BigInteger nbSharesEndPeriod;
@@ -98,37 +105,6 @@ public class Review implements Serializable {
 		this.id = id;
 	}
 
-	/**
-	 * @param id
-	 * @param stock
-	 * @param period
-	 * @param startYear
-	 * @param endYear
-	 * @param operations
-	 * @param balanceSheets
-	 * @param nbSharesEndPeriod
-	 * @param account
-	 * @param currency
-	 * @param firstInput
-	 * @param lastModified
-	 */
-	public Review(int id, Stock stock, String period, Integer startYear, Integer endYear, Operations operations,
-			BalanceSheets balanceSheets, BigInteger nbSharesEndPeriod, Account account, Currency currency,
-			LocalDateTime firstInput, LocalDateTime lastModified) {
-		super();
-		this.id = id;
-		this.stock = stock;
-		this.period = period;
-		this.startYear = startYear;
-		this.endYear = endYear;
-		this.operations = operations;
-		this.balanceSheets = balanceSheets;
-		this.nbSharesEndPeriod = nbSharesEndPeriod;
-		this.account = account;
-		this.currency = currency;
-		this.firstInput = firstInput;
-		this.lastModified = lastModified;
-	}
 
 	/**
 	 * 
@@ -220,6 +196,20 @@ public class Review implements Serializable {
 	 */
 	public void setBalanceSheets(BalanceSheets balanceSheets) {
 		this.balanceSheets = balanceSheets;
+	}
+
+	/**
+	 * @return the valuation
+	 */
+	public Valuation getValuation() {
+		return valuation;
+	}
+
+	/**
+	 * @param valuation the valuation to set
+	 */
+	public void setValuation(Valuation valuation) {
+		this.valuation = valuation;
 	}
 
 	/**
@@ -341,15 +331,8 @@ public class Review implements Serializable {
 	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((endYear == null) ? 0 : endYear.hashCode());
-		result = prime * result + ((firstInput == null) ? 0 : firstInput.hashCode());
-		result = prime * result + id;
-		result = prime * result + ((nbSharesEndPeriod == null) ? 0 : nbSharesEndPeriod.hashCode());
-		result = prime * result + ((period == null) ? 0 : period.hashCode());
-		result = prime * result + ((startYear == null) ? 0 : startYear.hashCode());
-		return result;
+		return Objects.hash(account, balanceSheets, currency, endYear, firstInput, freeFloat, id, lastModified,
+				nbSharesEndPeriod, operations, period, publicationDate, startDate, startYear, stock, valuation);
 	}
 
 	/* (non-Javadoc)
@@ -364,34 +347,16 @@ public class Review implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Review other = (Review) obj;
-		if (endYear == null) {
-			if (other.endYear != null)
-				return false;
-		} else if (!endYear.equals(other.endYear))
-			return false;
-		if (firstInput == null) {
-			if (other.firstInput != null)
-				return false;
-		} else if (!firstInput.equals(other.firstInput))
-			return false;
-		if (id != other.id)
-			return false;
-		if (nbSharesEndPeriod == null) {
-			if (other.nbSharesEndPeriod != null)
-				return false;
-		} else if (!nbSharesEndPeriod.equals(other.nbSharesEndPeriod))
-			return false;
-		if (period == null) {
-			if (other.period != null)
-				return false;
-		} else if (!period.equals(other.period))
-			return false;
-		if (startYear == null) {
-			if (other.startYear != null)
-				return false;
-		} else if (!startYear.equals(other.startYear))
-			return false;
-		return true;
+		return Objects.equals(account, other.account) && Objects.equals(balanceSheets, other.balanceSheets)
+				&& Objects.equals(currency, other.currency) && Objects.equals(endYear, other.endYear)
+				&& Objects.equals(firstInput, other.firstInput) && Objects.equals(freeFloat, other.freeFloat)
+				&& Objects.equals(id, other.id) && Objects.equals(lastModified, other.lastModified)
+				&& Objects.equals(nbSharesEndPeriod, other.nbSharesEndPeriod)
+				&& Objects.equals(operations, other.operations) && Objects.equals(period, other.period)
+				&& Objects.equals(publicationDate, other.publicationDate) && Objects.equals(startDate, other.startDate)
+				&& Objects.equals(startYear, other.startYear) && Objects.equals(stock, other.stock)
+				&& Objects.equals(valuation, other.valuation);
 	}
+
 
 }

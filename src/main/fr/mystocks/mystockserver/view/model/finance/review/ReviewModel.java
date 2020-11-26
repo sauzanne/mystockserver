@@ -18,6 +18,7 @@ import fr.mystocks.mystockserver.view.model.finance.balancesheets.BalanceSheetsM
 import fr.mystocks.mystockserver.view.model.finance.currency.CurrencyModel;
 import fr.mystocks.mystockserver.view.model.finance.operations.OperationsModel;
 import fr.mystocks.mystockserver.view.model.finance.stock.StockModel;
+import fr.mystocks.mystockserver.view.model.finance.valuation.ValuationModel;
 import fr.mystocks.mystockserver.view.model.security.AccountModel;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY // mandatory for serialization
@@ -45,6 +46,8 @@ public class ReviewModel {
 	private Double freeFloat;
 	
 	private CurrencyModel currency;
+	
+	private ValuationModel valuation;
 	
 	@JsonProperty("startDate")
 	@JsonSerialize(using = LocalDateSerializer.class)
@@ -267,6 +270,12 @@ public class ReviewModel {
 		if(r.getCurrency()!=null) {
 			currency = new CurrencyModel();
 			currency.convertFromCurrency(r.getCurrency());
+		}
+		
+		if(r.getValuation()!=null) {
+			valuation = new ValuationModel();
+			valuation.convertFromValuation(r.getValuation());
+
 		}
 	}
 

@@ -75,6 +75,8 @@ public class ReviewController {
 	private final static String PARAM_PUBLICATION_DATE = "pd";
 	private final static String PARAM_NB_SHARES_END_PERIOD = "ns";
 	private final static String PARAM_FREE_FLOAT = "ff";
+	private final static String PARAM_VALUATION_ID = "v";
+
 
 	private final static String PARAM_ID = "id";
 
@@ -136,6 +138,7 @@ public class ReviewController {
 			@FormParam(PARAM_NB_SHARES_END_PERIOD) String paramNbSharesEndPeriod,
 			@FormParam(PARAM_FREE_FLOAT) String paramFreeFloat, @FormParam(PARAM_OPERATIONS) Integer operationsId,
 			@FormParam(PARAM_BALANCE_SHEETS) Integer balanceSheetsId, @FormParam(PARAM_CURRENCY_ID) Integer currencyId,
+			@FormParam(PARAM_VALUATION_ID) Integer valuationId,
 			@Context SecurityContext securityContext) {
 
 		ResponseBuilder responseForError = Response.status(Status.BAD_REQUEST);
@@ -191,7 +194,7 @@ public class ReviewController {
 
 			return Response.ok(reviewService.createUpdateReview(token, id, stockId, periodEnum, startYear, endYear,
 					localStartDate, localPublicationDate, nbSharesEndPeriod, freeFloat, operationsId, balanceSheetsId,
-					currencyId)).build();
+					currencyId, valuationId)).build();
 		} catch (FunctionalException e) {
 			responseForError.entity(messageSource.getMessage(e.getKeyError(), null, context.getLocale()));
 			return responseForError.build();

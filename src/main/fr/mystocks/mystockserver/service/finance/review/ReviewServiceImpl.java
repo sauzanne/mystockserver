@@ -18,6 +18,7 @@ import fr.mystocks.mystockserver.data.finance.currency.Currency;
 import fr.mystocks.mystockserver.data.finance.operations.Operations;
 import fr.mystocks.mystockserver.data.finance.review.Review;
 import fr.mystocks.mystockserver.data.finance.stock.Stock;
+import fr.mystocks.mystockserver.data.finance.valuation.Valuation;
 import fr.mystocks.mystockserver.data.security.Account;
 import fr.mystocks.mystockserver.service.finance.constant.PeriodEnum;
 import fr.mystocks.mystockserver.technic.exceptions.ExceptionTools;
@@ -50,7 +51,7 @@ public class ReviewServiceImpl implements ReviewService {
 	public Integer createUpdateReview(String token, Integer id, Integer stockId, PeriodEnum periodEnum,
 			Integer startYear, Integer endYear, LocalDate startDate, LocalDate publicationDate,
 			BigInteger nbSharesEndPeriod, Double freeFloat, Integer operationsId, Integer balanceSheetsId,
-			Integer currencyId) {
+			Integer currencyId, Integer valuationId) {
 		try {
 			
 			Account account = accountDao.getAccountByToken(token);
@@ -79,6 +80,14 @@ public class ReviewServiceImpl implements ReviewService {
 
 			if (balanceSheetsId != null) {
 				r.setBalanceSheets(new BalanceSheets(balanceSheetsId));
+			}
+			
+			if (balanceSheetsId != null) {
+				r.setBalanceSheets(new BalanceSheets(balanceSheetsId));
+			}
+			
+			if(valuationId!=null) {
+				r.setValuation(new Valuation(valuationId));
 			}
 
 			r.setStartYear(startYear);
