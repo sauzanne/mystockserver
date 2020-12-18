@@ -25,8 +25,8 @@ public class Valuation implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	@Column(name = "expected_growth")
-	private BigDecimal expectedGrowth;
+	@Column(name = "expected_growth_rate")
+	private BigDecimal expectedGrowthRate;
 
 	@Column(name = "first_input")
 	private LocalDateTime firstInput;
@@ -51,15 +51,15 @@ public class Valuation implements Serializable {
 	/**
 	 * @return the expectedGrowth
 	 */
-	public BigDecimal getExpectedGrowth() {
-		return expectedGrowth;
+	public BigDecimal getExpectedGrowthRate() {
+		return expectedGrowthRate;
 	}
 
 	/**
 	 * @param expectedGrowth the expectedGrowth to set
 	 */
-	public void setExpectedGrowth(BigDecimal expectedGrowth) {
-		this.expectedGrowth = expectedGrowth;
+	public void setExpectedGrowthRate(BigDecimal expectedGrowth) {
+		this.expectedGrowthRate = expectedGrowth;
 	}
 
 	/*
@@ -69,7 +69,7 @@ public class Valuation implements Serializable {
 	 */
 	@Override
 	public int hashCode() {
-		return Objects.hash(expectedGrowth, firstInput, id, lastModified);
+		return Objects.hash(expectedGrowthRate, firstInput, id, lastModified);
 	}
 
 	/*
@@ -86,7 +86,7 @@ public class Valuation implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Valuation other = (Valuation) obj;
-		return Objects.equals(expectedGrowth, other.expectedGrowth) && Objects.equals(firstInput, other.firstInput)
+		return Objects.equals(expectedGrowthRate, other.expectedGrowthRate) && Objects.equals(firstInput, other.firstInput)
 				&& id == other.id && Objects.equals(lastModified, other.lastModified);
 	}
 

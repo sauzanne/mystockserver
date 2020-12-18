@@ -49,7 +49,7 @@ public class ValuationController {
 
 	private final static String PARAM_ID = "id";
 	private final static String PARAM_TOKEN = "t";
-	private final static String PARAM_EXPECTED_GROWTH = "eg";
+	private final static String PARAM_EXPECTED_GROWTH_RATE = "egr";
 
 
 	@RolesAllowed(RoleConst.READONLY_USER)
@@ -57,13 +57,13 @@ public class ValuationController {
 	@POST
 	@Path("postValuation")
 	public Response postOperations(@FormParam(PARAM_TOKEN) String token, @FormParam(PARAM_ID) Integer id,
-			@FormParam(PARAM_EXPECTED_GROWTH) String paramExpectedGrowth, @Context SecurityContext securityContext) {
+			@FormParam(PARAM_EXPECTED_GROWTH_RATE) String paramExpectedGrowthRate, @Context SecurityContext securityContext) {
 
 		ResponseBuilder responseForError = Response.status(Status.BAD_REQUEST);
 
 		ControllerMessageTools controllerMessageTools = new ControllerMessageTools(messageSource, context.getLocale());
 
-		BigDecimal expectedGrowth = controllerMessageTools.validateBigDecimalParameter(paramExpectedGrowth, PARAM_EXPECTED_GROWTH);
+		BigDecimal expectedGrowthRate = controllerMessageTools.validateBigDecimalParameter(paramExpectedGrowthRate, PARAM_EXPECTED_GROWTH_RATE);
 		controllerMessageTools.checkEmptyParameter(token, PARAM_TOKEN);
 
 		if (!controllerMessageTools.getErrorMessages().isEmpty()) {
@@ -75,7 +75,7 @@ public class ValuationController {
 
 		try {
 			return Response
-					.ok(valuationService.storeValuation(token, id, expectedGrowth),
+					.ok(valuationService.storeValuation(token, id, expectedGrowthRate),
 							MediaType.APPLICATION_JSON)
 					.build();
 		} catch (FunctionalException e) {

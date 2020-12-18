@@ -71,11 +71,11 @@ public class ReviewController {
 	private final static String PARAM_START_DATE = "sd";
 	private final static String PARAM_OPERATIONS = "o";
 	private final static String PARAM_BALANCE_SHEETS = "bs";
-	private final static String PARAM_CURRENCY_ID = "c";
+	private final static String PARAM_CURRENCY = "c";
 	private final static String PARAM_PUBLICATION_DATE = "pd";
 	private final static String PARAM_NB_SHARES_END_PERIOD = "ns";
 	private final static String PARAM_FREE_FLOAT = "ff";
-	private final static String PARAM_VALUATION_ID = "v";
+	private final static String PARAM_VALUATION = "v";
 
 
 	private final static String PARAM_ID = "id";
@@ -137,8 +137,8 @@ public class ReviewController {
 			@FormParam(PARAM_START_DATE) String startDate, @FormParam(PARAM_PUBLICATION_DATE) String publicationDate,
 			@FormParam(PARAM_NB_SHARES_END_PERIOD) String paramNbSharesEndPeriod,
 			@FormParam(PARAM_FREE_FLOAT) String paramFreeFloat, @FormParam(PARAM_OPERATIONS) Integer operationsId,
-			@FormParam(PARAM_BALANCE_SHEETS) Integer balanceSheetsId, @FormParam(PARAM_CURRENCY_ID) Integer currencyId,
-			@FormParam(PARAM_VALUATION_ID) Integer valuationId,
+			@FormParam(PARAM_BALANCE_SHEETS) Integer balanceSheetsId, @FormParam(PARAM_CURRENCY) Integer currencyId,
+			@FormParam(PARAM_VALUATION) Integer valuationId,
 			@Context SecurityContext securityContext) {
 
 		ResponseBuilder responseForError = Response.status(Status.BAD_REQUEST);
@@ -151,7 +151,7 @@ public class ReviewController {
 			controllerMessageTools.checkEmptyParameter(startYear, PARAM_START_YEAR);
 			controllerMessageTools.checkEmptyParameter(period, PARAM_PERIOD);
 			controllerMessageTools.checkEmptyParameter(startDate, PARAM_START_DATE);
-			controllerMessageTools.checkEmptyParameter(currencyId, PARAM_CURRENCY_ID);
+			controllerMessageTools.checkEmptyParameter(currencyId, PARAM_CURRENCY);
 
 			BigInteger nbSharesEndPeriod = controllerMessageTools.validateBigIntegerParameter(paramNbSharesEndPeriod,
 					PARAM_NB_SHARES_END_PERIOD);

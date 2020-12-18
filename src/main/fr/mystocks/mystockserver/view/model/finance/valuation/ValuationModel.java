@@ -19,7 +19,7 @@ public class ValuationModel {
 
 	private Integer id;
 
-	private BigDecimal expectedGrowth;
+	private BigDecimal expectedGrowthRate;
 
 	@JsonProperty("lastModified")
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
@@ -68,15 +68,15 @@ public class ValuationModel {
 	/**
 	 * @return the expectedGrowth
 	 */
-	public BigDecimal getExpectedGrowth() {
-		return expectedGrowth;
+	public BigDecimal getExpectedGrowthRate() {
+		return expectedGrowthRate;
 	}
 
 	/**
 	 * @param expectedGrowth the expectedGrowth to set
 	 */
-	public void setExpectedGrowth(BigDecimal expectedGrowth) {
-		this.expectedGrowth = expectedGrowth;
+	public void setExpectedGrowthRate(BigDecimal expectedGrowth) {
+		this.expectedGrowthRate = expectedGrowth;
 	}
 
 	/**

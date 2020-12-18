@@ -306,7 +306,7 @@ public class ValuationServiceImpl implements ValuationService {
 	}
 	
 	@Override
-	public Integer storeValuation(String token, Integer id, BigDecimal expectedGrowth) {
+	public Integer storeValuation(String token, Integer id, BigDecimal expectedGrowthRate) {
 		LocalDateTime now = LocalDateTime.now();
 		try {
 
@@ -325,7 +325,7 @@ public class ValuationServiceImpl implements ValuationService {
 			}
 
 
-			valuation.setExpectedGrowth(expectedGrowth);
+			valuation.setExpectedGrowthRate(expectedGrowthRate);
 			
 			if (id == null || id == 0) {
 				valuation.setFirstInput(now);
