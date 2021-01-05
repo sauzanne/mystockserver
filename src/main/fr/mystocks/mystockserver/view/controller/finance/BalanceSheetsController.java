@@ -57,7 +57,7 @@ public class BalanceSheetsController {
 	@Application(type = Type.SOFTWARE, os = OS.WIN, name = ApplicationEnum.MYSTOCKS)
 	@POST
 	@Path("postBalanceSheets")
-	public Response postOperations(@FormParam(PARAM_TOKEN) String token, @FormParam(PARAM_ID) Integer id,
+	public Response postBalanceSheets(@FormParam(PARAM_TOKEN) String token, @FormParam(PARAM_ID) Integer id,
 			@FormParam(PARAM_ASSETS) Integer assetsId, @FormParam(PARAM_LIABILITIES) Integer liabilitiesId,
 			@FormParam(PARAM_EQUITIES) Integer equitiesId,
 			@Context SecurityContext securityContext) {
