@@ -34,6 +34,9 @@ public class Stock implements Serializable {
 
 	@Column(name = "isin")
 	private String isin;
+	
+	@Column(name="amf_code")
+	private String amfCode;
 
 	@Column(name = "name")
 	private String name;
@@ -120,6 +123,20 @@ public class Stock implements Serializable {
 	 */
 	public void setIsin(String isin) {
 		this.isin = isin;
+	}
+
+	/**
+	 * @return the amfCode
+	 */
+	public String getAmfCode() {
+		return amfCode;
+	}
+
+	/**
+	 * @param amfCode the amfCode to set
+	 */
+	public void setAmfCode(String amfCode) {
+		this.amfCode = amfCode;
 	}
 
 	/**

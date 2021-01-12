@@ -42,7 +42,7 @@ public class StockTickerServiceImpl implements StockTickerService {
 			boolean byPassPriceVerification) {
 		LocalDateTime now = LocalDateTime.now();
 		try {
-			Stock stock = stockDao.findByIsin(isin);
+			Stock stock = stockDao.getStockByIsin(isin);
 			if (stock == null) {
 				throw new FunctionalException(this, "error.finance.stock.isin.notfound");
 			}

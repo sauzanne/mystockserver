@@ -179,3 +179,7 @@ insert into stock(id,isin,name,stock_type_id, server_user_id, first_input, last_
 insert into stock(id,isin,name,stock_type_id, server_user_id, first_input, last_modified, greenrj_listed, mystocks_listed) values(1003,'FR0011471135','ERYTECH PHARMA',1,1000,'2017-04-02 13:29:14','2017-04-02 13:29:14',0,1);
 insert into stock(id,isin,name,stock_type_id, server_user_id, first_input, last_modified, greenrj_listed, mystocks_listed) values(1004,'FR0013258662','ALD',1,1000,'2017-07-29 11:06:34','2017-07-29 11:06:32',0,1);
 insert into stock(id,isin,name,stock_type_id, server_user_id, first_input, last_modified, greenrj_listed, mystocks_listed) values(1005,'NL0000400653','GEMALTO',1,1000,'2017-10-11 08:57:04','2017-10-11 08:57:00',0,1);
+
+
+ALTER TABLE `mystocks`.`stock` 
+ADD COLUMN `amf_code` varchar(11) NULL AFTER `isin`

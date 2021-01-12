@@ -7,7 +7,12 @@ import fr.mystocks.mystockserver.data.finance.stock.Stock;
 
 public interface StockDao<T> extends Dao<T> {
     
-    Stock findByIsin(String isin);
+    /**
+     * Find a stock by isin
+     * @param isin isin code (usage of like allowed)
+     * @return 
+     */
+    Stock getStockByIsin(String isin);
     
     /**
      * @author sauzanne
@@ -16,6 +21,10 @@ public interface StockDao<T> extends Dao<T> {
      * @return
      */
     List<Stock> findByName(String name);
+
+	List<Stock> findByIsin(String isin);
+    
+
 
 	
 }

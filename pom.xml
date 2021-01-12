@@ -49,6 +49,8 @@
 		<mail.smtp.starttls.enable>false</mail.smtp.starttls.enable>
 		<cron.measurecalculation>0 30 9,14 * * 1-7</cron.measurecalculation>
 		<cron.measurealert>0 */15 * * * 1-7</cron.measurealert>
+		<cron.amfupdate>0 0 */1 * * 1-7</cron.amfupdate>
+		
 
 
 
@@ -393,6 +395,13 @@
 			<artifactId>powermock-api-easymock</artifactId>
 			<version>${powermock.version}</version>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<!-- jsoup HTML parser library @ https://jsoup.org/ -->
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.13.1</version>
 		</dependency>
 
 

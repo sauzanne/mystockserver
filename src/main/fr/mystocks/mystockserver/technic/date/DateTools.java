@@ -134,6 +134,14 @@ public final class DateTools {
 		}
 		return null;
 	}
+	
+	
+	public static long getEpoch(LocalDateTime time) {
+		ZoneId zoneId = ZoneId.systemDefault(); // or: ZoneId.of("Europe/Oslo");
+		long epoch = time.atZone(zoneId).toEpochSecond();
+		return epoch;
+	}
+
 
 
 }

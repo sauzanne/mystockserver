@@ -21,11 +21,20 @@ import fr.mystocks.mystockserver.data.finance.stock.Stock;
 public class StockDaoImpl extends AbstractDaoImpl<Stock> implements StockDao<Stock> {
 
 	@Override
-	public Stock findByIsin(String isin) {
+	public Stock getStockByIsin(String isin) {
 		Criteria criteria = getSession().createCriteria(Stock.class);
-		criteria.add(Restrictions.eq("isin", isin));
+		criteria.add(Restrictions.eq("isin",isin));
 		return (Stock) criteria.uniqueResult();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Stock> findByIsin(String isin) {
+		Criteria criteria = getSession().createCriteria(Stock.class);
+		criteria.add(Restrictions.ilike("isin", "%" + isin + "%", MatchMode.ANYWHERE));
+		return (List<Stock>) criteria.list();
+	}
+
 
 	@SuppressWarnings("unchecked")
 	@Override

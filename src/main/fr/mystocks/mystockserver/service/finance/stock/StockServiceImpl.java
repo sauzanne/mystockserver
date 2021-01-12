@@ -32,7 +32,7 @@ public class StockServiceImpl implements StockService {
 			boolean greenrjListed) {
 		LocalDateTime now = LocalDateTime.now();
 		try {
-			Stock stock = stockDao.findByIsin(isin);
+			Stock stock = stockDao.getStockByIsin(isin);
 			if (stock == null) {
 				stock = new Stock();
 			}
@@ -66,7 +66,7 @@ public class StockServiceImpl implements StockService {
 			if (id != null) {
 				s = stockDao.findById(id);
 			} else if (!Strings.isNullOrEmpty(isin)) {
-				s = stockDao.findByIsin(isin);
+				s = stockDao.getStockByIsin(isin);
 			} else if (!Strings.isNullOrEmpty(name)) {
 				result.addAll(stockDao.findByName(name));
 			}
