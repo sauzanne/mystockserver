@@ -134,7 +134,19 @@ public class AmfServiceImpl implements AmfService {
 				.collect(Collectors.toList());
 
 		for (Stock stock : listStockToUpdate) {
-			String codeAmf = getCodeAmf(stock);
+			try {
+				String codeAmf = getCodeAmf(stock);
+
+				if (codeAmf != null) {
+					stock.setLastModified(LocalDateTime.now());
+					stock.setAmfCode(codeAmf);
+					stockDao.update(stock);
+				} else {
+					logger.error("Impossible to get AMF code for " + stock.getIsin() + " / " + stock.getName());
+				}
+			} catch (Exception e) {
+				ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
+			}
 		}
 
 		String amfStats = "\nAmf update ended at " + LocalDateTime.now();
