@@ -30,6 +30,8 @@ public class OperationsModel {
 	private BigDecimal costOfRevenues;
 
 	private BigDecimal financialExpenses;
+	
+	private BigDecimal incomeTaxes;
 
 	private BigDecimal shareownersEarnings;
 
@@ -161,6 +163,20 @@ public class OperationsModel {
 	 */
 	public void setFinancialExpenses(BigDecimal financialExpenses) {
 		this.financialExpenses = financialExpenses;
+	}
+
+	/**
+	 * @return the incomeTaxes
+	 */
+	public BigDecimal getIncomeTaxes() {
+		return incomeTaxes;
+	}
+
+	/**
+	 * @param incomeTaxes the incomeTaxes to set
+	 */
+	public void setIncomeTaxes(BigDecimal incomeTaxes) {
+		this.incomeTaxes = incomeTaxes;
 	}
 
 	/**

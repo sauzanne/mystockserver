@@ -536,5 +536,7 @@ insert into operations(id, revenues, ebit,current_ebit,ebitda, cost_of_revenues,
 insert into operations(id, revenues, ebit,current_ebit,ebitda, cost_of_revenues, financial_expenses, shareowners_earnings, operational_cash_flow, free_cash_flow, exceptional_items, first_input, last_modified) values (668,19470000.00,680000.00,680000.00,1890000.00,NULL,NULL,690000.00,NULL,NULL,NULL,now(),null);
 
 
+ALTER TABLE mystocks.operations 
+ADD COLUMN income_taxes DECIMAL(18,2) NULL AFTER `financial_expenses`
 
 

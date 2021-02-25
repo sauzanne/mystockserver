@@ -1,5 +1,6 @@
 package fr.mystocks.mystockserver.test.amf;
 
+import org.assertj.core.util.Strings;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,12 +34,26 @@ public class AmfTest {
 		try {
 			Stock s = new Stock();
 			s.setName("BIGBEN INTERACTIVE");
-			amfService.getCodeAmf(s);
+			String isin = amfService.getCodeAmf(s);
+			Assert.assertTrue(!Strings.isNullOrEmpty(isin));
 			return;
 		} catch (Exception e) {
 			ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
 		}
 		Assert.fail();
 	}
+	
+	@Test
+	public void testCronAmfUpdate() {
+		try {
+			amfService.cronAmfUpdate();
+			Assert.assertTrue(true);
+			return;
+		} catch (Exception e) {
+			ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
+		}
+		Assert.fail();
+	}
+
 
 }

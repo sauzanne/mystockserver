@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 public interface OperationsService {
 
 	/**
-	 * Store an operations
+	 * Store operation
 	 * @param token
 	 * @param id
 	 * @param revenues
@@ -13,16 +13,17 @@ public interface OperationsService {
 	 * @param currentEbit
 	 * @param ebitda
 	 * @param costOfRevenues
-	 * @param financialExpenses
+	 * @param financialExpenses financialExpenses
+	 * @param incomeTaxes incomeTaxes
 	 * @param shareownersEarnings
 	 * @param adjustedEarnings
 	 * @param operationalCashFlow
 	 * @param freeCashFlow
 	 * @param exceptionalItems
-	 * @return id of the stored operations
+	 * @return
 	 */
 	Integer storeOperations(String token, Integer id, BigDecimal revenues, BigDecimal ebit, BigDecimal currentEbit,
-			BigDecimal ebitda, BigDecimal costOfRevenues, BigDecimal financialExpenses, BigDecimal shareownersEarnings,
+			BigDecimal ebitda, BigDecimal costOfRevenues, BigDecimal financialExpenses, BigDecimal incomeTaxes, BigDecimal shareownersEarnings,
 			BigDecimal adjustedEarnings, BigDecimal operationalCashFlow, BigDecimal freeCashFlow,
 			BigDecimal exceptionalItems);
 

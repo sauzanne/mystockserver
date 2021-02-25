@@ -55,6 +55,7 @@ public class OperationsController {
 	private final static String PARAM_CURRENT_EBIT = "ce";
 	private final static String PARAM_EBITDA = "ea";
 	private final static String PARAM_COST_OF_REVENUES = "cor";
+	private final static String PARAM_INCOME_TAXES = "it";
 	private final static String PARAM_FINANCIAL_EXPENSES = "fe";
 	private final static String PARAM_SHAREOWNERS_EARNINGS = "se";
 	private final static String PARAM_ADJUSTED_EARNINGS = "ae";
@@ -71,6 +72,7 @@ public class OperationsController {
 			@FormParam(PARAM_CURRENT_EBIT) String paramCurrentEbit, @FormParam(PARAM_EBITDA) String paramEbitda,
 			@FormParam(PARAM_COST_OF_REVENUES) String paramCostOfRevenues,
 			@FormParam(PARAM_FINANCIAL_EXPENSES) String paramFinancialExpenses,
+			@FormParam(PARAM_INCOME_TAXES) String paramIncomeTaxes,
 			@FormParam(PARAM_SHAREOWNERS_EARNINGS) String paramShareownersEarnings,
 			@FormParam(PARAM_ADJUSTED_EARNINGS) String paramAdjustedEarnings,
 			@FormParam(PARAM_OPERATIONAL_CASH_FLOW) String paramOperationalCashFlow,
@@ -90,6 +92,10 @@ public class OperationsController {
 				PARAM_COST_OF_REVENUES);
 		BigDecimal financialExpenses = controllerMessageTools.validateBigDecimalParameter(paramFinancialExpenses,
 				PARAM_FINANCIAL_EXPENSES);
+		
+		BigDecimal incomeTaxes = controllerMessageTools.validateBigDecimalParameter(paramIncomeTaxes,
+				PARAM_INCOME_TAXES);
+
 		BigDecimal shareownersEarnings = controllerMessageTools.validateBigDecimalParameter(paramShareownersEarnings,
 				PARAM_SHAREOWNERS_EARNINGS);
 		BigDecimal adjustedEarnings = controllerMessageTools.validateBigDecimalParameter(paramAdjustedEarnings,
@@ -115,7 +121,7 @@ public class OperationsController {
 
 		try {
 			return Response.ok(operationsService.storeOperations(token, id, revenues, ebit, currentEbit, ebitda,
-					costOfRevenues, financialExpenses, shareownersEarnings, adjustedEarnings, operationalCashFlow,
+					costOfRevenues, financialExpenses, incomeTaxes, shareownersEarnings, adjustedEarnings, operationalCashFlow,
 					freeCashFlow, exceptionalItems), MediaType.APPLICATION_JSON).build();
 		} catch (FunctionalException e) {
 			responseForError.entity(messageSource.getMessage(e.getKeyError(), null, context.getLocale()));

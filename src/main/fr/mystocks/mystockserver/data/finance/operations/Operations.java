@@ -43,6 +43,9 @@ public class Operations implements Serializable {
 	@Column(name = "financial_expenses")
 	private BigDecimal financialExpenses;
 	
+	@Column(name = "income_taxes")
+	private BigDecimal incomeTaxes;
+	
 	@Column(name = "shareowners_earnings")
 	private BigDecimal shareownersEarnings;
 	
@@ -182,6 +185,20 @@ public class Operations implements Serializable {
 	}
 
 	/**
+	 * @return the incomeTaxes
+	 */
+	public BigDecimal getIncomeTaxes() {
+		return incomeTaxes;
+	}
+
+	/**
+	 * @param incomeTaxes the incomeTaxes to set
+	 */
+	public void setIncomeTaxes(BigDecimal incomeTaxes) {
+		this.incomeTaxes = incomeTaxes;
+	}
+
+	/**
 	 * @author sauzanne @return the shareownersEarnings
 	 */
 	public BigDecimal getShareownersEarnings() {
@@ -281,19 +298,13 @@ public class Operations implements Serializable {
 	    this.lastModified = lastModified;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return Objects.hash(adjustedEarnings, costOfRevenues, currentEbit, ebit, ebitda, exceptionalItems,
-				financialExpenses, firstInput, freeCashFlow, id, lastModified, operationalCashFlow, revenues,
-				shareownersEarnings);
+				financialExpenses, firstInput, freeCashFlow, id, incomeTaxes, lastModified, operationalCashFlow,
+				revenues, shareownersEarnings);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -309,21 +320,12 @@ public class Operations implements Serializable {
 				&& Objects.equals(ebitda, other.ebitda) && Objects.equals(exceptionalItems, other.exceptionalItems)
 				&& Objects.equals(financialExpenses, other.financialExpenses)
 				&& Objects.equals(firstInput, other.firstInput) && Objects.equals(freeCashFlow, other.freeCashFlow)
-				&& Objects.equals(id, other.id) && Objects.equals(lastModified, other.lastModified)
+				&& Objects.equals(id, other.id) && Objects.equals(incomeTaxes, other.incomeTaxes)
+				&& Objects.equals(lastModified, other.lastModified)
 				&& Objects.equals(operationalCashFlow, other.operationalCashFlow)
 				&& Objects.equals(revenues, other.revenues)
 				&& Objects.equals(shareownersEarnings, other.shareownersEarnings);
-	}
-
-
-
-
-
-
-
-
-	
-	
+	}	
 	
 
 }

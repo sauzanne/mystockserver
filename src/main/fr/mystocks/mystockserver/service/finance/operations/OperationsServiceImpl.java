@@ -30,7 +30,7 @@ public class OperationsServiceImpl implements OperationsService {
 
 	@Override
 	public Integer storeOperations(String token, Integer id, BigDecimal revenues, BigDecimal ebit, BigDecimal currentEbit,
-			BigDecimal ebitda, BigDecimal costOfRevenues, BigDecimal financialExpenses, BigDecimal shareownersEarnings, BigDecimal adjustedEarnings,
+			BigDecimal ebitda, BigDecimal costOfRevenues, BigDecimal financialExpenses, BigDecimal incomeTaxes, BigDecimal shareownersEarnings, BigDecimal adjustedEarnings,
 			BigDecimal operationalCashFlow, BigDecimal freeCashFlow, BigDecimal exceptionalItems) {
 		LocalDateTime now = LocalDateTime.now();
 		try {
@@ -55,6 +55,7 @@ public class OperationsServiceImpl implements OperationsService {
 			operations.setEbit(ebit);
 			operations.setEbitda(ebitda);
 			operations.setFinancialExpenses(financialExpenses);
+			operations.setIncomeTaxes(incomeTaxes);
 			operations.setExceptionalItems(exceptionalItems);
 			operations.setFreeCashFlow(freeCashFlow);
 			operations.setOperationalCashFlow(operationalCashFlow);
