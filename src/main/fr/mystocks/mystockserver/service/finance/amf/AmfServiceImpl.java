@@ -41,6 +41,8 @@ public class AmfServiceImpl implements AmfService {
 	private static final String Q = "q";
 	private static final String TIMESTAMP = "timestamp";
 
+	private static final String STOCK_TYPE_DEFAULT_CODE = "stocks.type.default";
+
 	@Autowired
 	private PropertiesTools propertiesTools;
 
@@ -57,17 +59,19 @@ public class AmfServiceImpl implements AmfService {
 		int limit = 1000;
 		try {
 			String jsonResponse = HttpTools.getURLWithHeaders(AMF_URL + TechnicalConstant.QUESTION + Q
-					+ TechnicalConstant.EQUALS + URLEncoder.encode(stock.getName(), TechnicalConstant.ENCODING) + TechnicalConstant.AMPERSAND_SEPARATOR + LIMIT
-					+ TechnicalConstant.EQUALS + limit + TechnicalConstant.AMPERSAND_SEPARATOR + TIMESTAMP
-					+ TechnicalConstant.EQUALS + DateTools.getEpoch(LocalDateTime.now()), null);
+					+ TechnicalConstant.EQUALS + URLEncoder.encode(stock.getName(), TechnicalConstant.ENCODING)
+					+ TechnicalConstant.AMPERSAND_SEPARATOR + LIMIT + TechnicalConstant.EQUALS + limit
+					+ TechnicalConstant.AMPERSAND_SEPARATOR + TIMESTAMP + TechnicalConstant.EQUALS
+					+ DateTools.getEpoch(LocalDateTime.now()), null);
 
 			if (!Strings.isNullOrEmpty(jsonResponse)) {
 				String cleanResponse = StringEscapeUtils.unescapeJava(jsonResponse.trim());
 				List<String> reponses = Arrays.asList(cleanResponse.split("\\n")).stream()
 						.filter(r -> !r.trim().isEmpty()).collect(Collectors.toList());
-				
-				if(reponses.size() > 1) {
-					logger.error("WARNING : multiple response for stock : "+stock.getName()+"("+stock.getIsin()+")");
+
+				if (reponses.size() > 1) {
+					logger.error(
+							"WARNING : multiple response for stock : " + stock.getName() + "(" + stock.getIsin() + ")");
 				}
 
 				String[] amfCode = reponses.get(0).split("\\|");
@@ -134,7 +138,8 @@ public class AmfServiceImpl implements AmfService {
 		List<Stock> listStockFR = stockDao.findByIsin("FR");
 
 		// on prend la liste des valeurs à 'updater'
-		List<Stock> listStockToUpdate = listStockFR.stream().filter(s -> s.getAmfCode() == null)
+		List<Stock> listStockToUpdate = listStockFR.stream()
+				.filter(s -> s.getAmfCode() == null && s.getStockType().getCode().equals(STOCK_TYPE_DEFAULT_CODE))
 				.collect(Collectors.toList());
 
 		for (Stock stock : listStockToUpdate) {

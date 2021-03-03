@@ -86,6 +86,8 @@
 				<jdbc.url>jdbc:mysql://localhost:3306?useLegacyDatetimeCode=false&amp;serverTimezone=Europe/Amsterdam</jdbc.url>
 				<jdbc.username>ellebasi</jdbc.username>
 				<jdbc.password>21e4dWFrlHXoQtWz$vDFoClEJky8fd8w</jdbc.password>
+				<cron.amfupdate>0 0 18 * * 1-7</cron.amfupdate>
+				
 			</properties>
 		</profile>
 	</profiles>
