@@ -55,7 +55,7 @@ public class AmfServiceImpl implements AmfService {
 	private final static String MAIL_ADMIN = "sauzanne@gmail.com";
 
 	@Override
-	public String getCodeAmf(Stock stock) {
+	public String getCodeAmf(Stock stock, StringBuffer error) {
 		int limit = 1000;
 		try {
 			String jsonResponse = HttpTools.getURLWithHeaders(AMF_URL + TechnicalConstant.QUESTION + Q
@@ -70,8 +70,10 @@ public class AmfServiceImpl implements AmfService {
 						.filter(r -> !r.trim().isEmpty()).collect(Collectors.toList());
 
 				if (reponses.size() > 1) {
-					logger.error(
-							"WARNING : multiple response for stock : " + stock.getName() + "(" + stock.getIsin() + ")");
+					String warning = "WARNING : multiple response for stock : " + stock.getName() + "("
+							+ stock.getIsin() + ")\n";
+					logger.error(warning);
+					error.append(warning);
 				}
 
 				String[] amfCode = reponses.get(0).split("\\|");
@@ -123,7 +125,7 @@ public class AmfServiceImpl implements AmfService {
 
 	}
 
-	@Scheduled(cron = "${cron.measurecalculation}")
+	@Scheduled(cron = "${cron.amfupdate}")
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void cronAmfUpdate() {
@@ -142,23 +144,27 @@ public class AmfServiceImpl implements AmfService {
 				.filter(s -> s.getAmfCode() == null && s.getStockType().getCode().equals(STOCK_TYPE_DEFAULT_CODE))
 				.collect(Collectors.toList());
 
+		StringBuffer error = new StringBuffer();
 		for (Stock stock : listStockToUpdate) {
 			try {
-				String codeAmf = getCodeAmf(stock);
+				String codeAmf = getCodeAmf(stock, error);
 
 				if (codeAmf != null) {
 					stock.setLastModified(LocalDateTime.now());
 					stock.setAmfCode(codeAmf);
 					stockDao.update(stock);
 				} else {
-					logger.error("Impossible to get AMF code for " + stock.getIsin() + " / " + stock.getName());
+					String errorAmfCode = "Impossible to get AMF code for " + stock.getIsin() + " / " + stock.getName()
+							+ "\n";
+					error.append(error);
+					logger.error(errorAmfCode);
 				}
 			} catch (Exception e) {
 				ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
 			}
 		}
 
-		String amfStats = "\nAmf update ended at " + LocalDateTime.now();
+		String amfStats = "\nAmf update report :\n" + error.toString() + "\nAmf update ended at " + LocalDateTime.now();
 
 		mailTools.sendMessage(MAIL_ADMIN, "Amd update ended at " + LocalDateTime.now() + " with success", amfStats);
 

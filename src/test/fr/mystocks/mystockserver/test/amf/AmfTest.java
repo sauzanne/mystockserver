@@ -25,16 +25,16 @@ import fr.mystocks.mystockserver.technic.exceptions.ExceptionTools;
 public class AmfTest {
 	@Autowired
 	private AmfService amfService;
-		
+
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-	
-	
+
 	@Test
 	public void testRecuperationValeursAmf() {
 		try {
 			Stock s = new Stock();
 			s.setName("BIGBEN INTERACTIVE");
-			String isin = amfService.getCodeAmf(s);
+			StringBuffer error = new StringBuffer();
+			String isin = amfService.getCodeAmf(s, error);
 			Assert.assertTrue(!Strings.isNullOrEmpty(isin));
 			return;
 		} catch (Exception e) {
@@ -42,7 +42,7 @@ public class AmfTest {
 		}
 		Assert.fail();
 	}
-	
+
 	@Test
 	public void testCronAmfUpdate() {
 		try {
@@ -54,6 +54,5 @@ public class AmfTest {
 		}
 		Assert.fail();
 	}
-
 
 }

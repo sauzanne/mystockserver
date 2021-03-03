@@ -8,6 +8,12 @@ public interface AmfService {
 
 	void cronAmfUpdate();
 
-	String getCodeAmf(Stock stock);
+	/**
+	 * Get Amf Code
+	 * @param stock stock to get amfcode
+	 * @param error buffer for error
+	 * @return the amf code
+	 */
+	String getCodeAmf(Stock stock, StringBuffer error);
 
 }

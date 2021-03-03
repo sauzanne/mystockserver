@@ -144,6 +144,50 @@ insert into place_closing(place_id, date_closing) values (2, '2021-12-24');
 
 insert into place_closing(place_id, date_closing) values (2, '2021-12-31');
 
+/* oslo, id = 9 */
+insert into place_closing(place_id, date_closing) values (9, '2021-01-01');
+
+insert into place_closing(place_id, date_closing) values (9, '2021-04-01');
+
+insert into place_closing(place_id, date_closing) values (9, '2021-04-02');
+
+insert into place_closing(place_id, date_closing) values (9, '2021-04-05');
+
+insert into place_closing(place_id, date_closing) values (9, '2021-05-13');
+
+insert into place_closing(place_id, date_closing) values (9, '2021-05-17');
+
+insert into place_closing(place_id, date_closing) values (9, '2021-05-24');
+
+insert into place_closing(place_id, date_closing) values (9, '2021-12-24');
+
+insert into place_closing(place_id, date_closing) values (9, '2021-12-31');
+
+/* Copenhagen, id = 15 */
+insert into place_closing(place_id, date_closing) values (15, '2021-01-01');
+
+insert into place_closing(place_id, date_closing) values (15, '2021-04-01');
+
+insert into place_closing(place_id, date_closing) values (15, '2021-04-02');
+
+insert into place_closing(place_id, date_closing) values (15, '2021-04-05');
+
+insert into place_closing(place_id, date_closing) values (15, '2021-04-30');
+
+
+insert into place_closing(place_id, date_closing) values (15, '2021-05-13');
+
+insert into place_closing(place_id, date_closing) values (15, '2021-05-14');
+
+
+insert into place_closing(place_id, date_closing) values (15, '2021-05-24');
+
+insert into place_closing(place_id, date_closing) values (15, '2021-12-24');
+
+insert into place_closing(place_id, date_closing) values (15, '2021-12-31');
+
+
+
 
 
 
