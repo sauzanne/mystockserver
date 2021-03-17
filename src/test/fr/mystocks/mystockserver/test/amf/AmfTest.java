@@ -1,5 +1,7 @@
 package fr.mystocks.mystockserver.test.amf;
 
+import java.time.LocalDate;
+
 import org.assertj.core.util.Strings;
 import org.junit.Assert;
 import org.junit.Test;
@@ -42,6 +44,22 @@ public class AmfTest {
 		}
 		Assert.fail();
 	}
+	
+	@Test
+	public void testRecuperationResultatsAmf() {
+		try {
+			Stock s = new Stock();
+			s.setName("BIGBEN INTERACTIVE");
+			s.setAmfCode("RS00003294");
+			String result = amfService.getResult(s, LocalDate.of(2020, 1, 1));
+			Assert.assertTrue(!Strings.isNullOrEmpty(result));
+			return;
+		} catch (Exception e) {
+			ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
+		}
+		Assert.fail();
+	}
+
 
 	@Test
 	public void testCronAmfUpdate() {
@@ -54,5 +72,18 @@ public class AmfTest {
 		}
 		Assert.fail();
 	}
+	
+	@Test
+	public void testCronAmfUpdatePublication() {
+		try {
+			amfService.cronAmfUpdatePublication();
+			Assert.assertTrue(true);
+			return;
+		} catch (Exception e) {
+			ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
+		}
+		Assert.fail();
+	}
+
 
 }

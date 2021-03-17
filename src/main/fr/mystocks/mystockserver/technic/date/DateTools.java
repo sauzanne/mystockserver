@@ -11,7 +11,7 @@ import java.util.GregorianCalendar;
 public final class DateTools {
 	
 	private final static DateTimeFormatter JSON_DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
+	public final static DateTimeFormatter FRENCH_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	private DateTools() {
 		super();
 	}
@@ -141,6 +141,11 @@ public final class DateTools {
 		long epoch = time.atZone(zoneId).toEpochSecond();
 		return epoch;
 	}
+	
+	public static String convertLocalDateToFormat(LocalDate localDateToConvert, DateTimeFormatter dateTimeFormatter) {
+		return localDateToConvert.format(dateTimeFormatter);
+	}
+
 
 
 

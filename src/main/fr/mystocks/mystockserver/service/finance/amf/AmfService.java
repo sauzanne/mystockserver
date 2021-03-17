@@ -1,10 +1,12 @@
 package fr.mystocks.mystockserver.service.finance.amf;
 
+import java.time.LocalDate;
+
 import fr.mystocks.mystockserver.data.finance.stock.Stock;
 
 public interface AmfService {
 
-	String getResult(String valueName, String jetonSociete);
+	String getResult(Stock stock, LocalDate fromDate);
 
 	void cronAmfUpdate();
 
@@ -15,5 +17,7 @@ public interface AmfService {
 	 * @return the amf code
 	 */
 	String getCodeAmf(Stock stock, StringBuffer error);
+
+	void cronAmfUpdatePublication();
 
 }
