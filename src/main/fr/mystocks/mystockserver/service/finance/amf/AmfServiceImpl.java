@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -26,12 +27,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Strings;
 
+import fr.mystocks.mystockserver.dao.finance.amf.notification.NotificationDao;
 import fr.mystocks.mystockserver.dao.finance.amf.publication.PublicationDao;
 import fr.mystocks.mystockserver.dao.finance.amf.publicationtype.PublicationTypeDao;
 import fr.mystocks.mystockserver.dao.finance.stock.StockDao;
+import fr.mystocks.mystockserver.data.finance.amf.notification.Notification;
 import fr.mystocks.mystockserver.data.finance.amf.publication.Publication;
 import fr.mystocks.mystockserver.data.finance.amf.publicationtype.PublicationType;
 import fr.mystocks.mystockserver.data.finance.stock.Stock;
+import fr.mystocks.mystockserver.data.security.Account;
+import fr.mystocks.mystockserver.service.finance.amf.publication.PublicationService;
 import fr.mystocks.mystockserver.technic.constant.TechnicalConstant;
 import fr.mystocks.mystockserver.technic.date.DateTools;
 import fr.mystocks.mystockserver.technic.exceptions.ExceptionTools;
@@ -46,7 +51,6 @@ public class AmfServiceImpl implements AmfService {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	private static final String AMF_LIST_COMPANIES_URL = "https://bdif.amf-france.org/technique/bdif-societes";
-	private static final String AMF_BASE_URL = "https://bdif.amf-france.org";
 
 	private static final String LIMIT = "limit";
 	private static final String Q = "q";
@@ -55,8 +59,6 @@ public class AmfServiceImpl implements AmfService {
 	private static final LocalDate PUBLICATION_START_SEARCH = LocalDate.of(2021, 3, 1);
 
 	private static final String STOCK_TYPE_DEFAULT_CODE = "stocks.type.default";
-
-	private static final String DU = "du";
 
 	@Autowired
 	private PropertiesTools propertiesTools;
@@ -69,6 +71,12 @@ public class AmfServiceImpl implements AmfService {
 
 	@Autowired
 	private PublicationTypeDao<PublicationType> publicationTypeDao;
+
+	@Autowired
+	private NotificationDao<Notification> notificationDao;
+
+	@Autowired
+	private PublicationService publicationService;
 
 	@Autowired
 	private MailTools mailTools;
@@ -127,8 +135,16 @@ public class AmfServiceImpl implements AmfService {
 					.filter(l -> l.attr("href").startsWith("/technique/proxy-lien?docId=")).map(l -> l.attr("href"))
 					.collect(Collectors.toList());
 
+			List<Publication> publicationsToSend = new ArrayList<>();
 			for (String link : listLink) {
-				getDownloadPage(link, stock);
+				Publication p = publicationService.getDownloadPage(link, stock);
+				if (p != null) {
+					publicationsToSend.add(p);
+				}
+			}
+
+			for (Publication p : publicationsToSend) {
+				sendPublication(p);
 			}
 
 		} catch (Exception e) {
@@ -138,66 +154,35 @@ public class AmfServiceImpl implements AmfService {
 
 	}
 
-	private void getDownloadPage(String link, Stock stock) {
-		try {
-			String jsonResponse = HttpTools.getURLWithHeaders(AMF_BASE_URL + link, null);
+	private void sendPublication(Publication p) {
 
-			Document jsoupDocument = Jsoup.parse(jsonResponse);
-			Elements spanDocPDIF = jsoupDocument.select("span[class*=docBDIF]");
-			Elements divTitreBdif = jsoupDocument.select("div[name*=titreBdif]");
+		List<Account> accounts = notificationDao.findSubsriberByStock(p.getStock().getId());
 
-			Optional<Element> optSpanPublishAt = jsoupDocument.select("span").stream()
-					.filter(e -> e.childNodeSize() > 0 && e.childNode(0).outerHtml().contains("Publié le")).findFirst();
-			LocalDate publicationDate = null;
-			String publicationDateText = null;
-			String docBDIF = null;
-			String publicationTypeText = null;
+		if (!accounts.isEmpty()) {
 
-			if (spanDocPDIF.get(0).childNode(0).outerHtml().indexOf(DU) != -1) {
-				String[] spanDocPDIFContentSplitted = spanDocPDIF.get(0).childNode(0).outerHtml().split(DU);
+			String subject = propertiesTools.getProperty("amf.mail.subject", new String[] { p.getStock().getName() });
 
-				publicationDateText = spanDocPDIFContentSplitted[1].trim();
-				docBDIF = spanDocPDIFContentSplitted[0].split("n°")[1].trim();
-				publicationTypeText = divTitreBdif.get(0).childNode(0).outerHtml().split(",")[0].trim();
-			} else if (optSpanPublishAt.isPresent()) {
-				publicationDateText = optSpanPublishAt.get().text().split(":")[1].trim();
-				publicationTypeText = jsoupDocument.select("h3[class*=bdif]").first().text().trim();
-				
-				
-			}
+			String comment = "";
 
-			try {
-				publicationDate = LocalDate.parse(publicationDateText,
-						DateTimeFormatter.ofPattern("dd MMMM u", Locale.FRANCE));
-			} catch (DateTimeParseException e) {
-				publicationDate = LocalDate.parse(publicationDateText,
-						DateTimeFormatter.ofPattern("d MMMM u", Locale.FRANCE));
+			String datePublication = DateTools.convertLocalDateToFormat(p.getDatePublication(),
+					DateTools.FRENCH_DATE_FORMATTER);
+			for (Account a : accounts) {
+				String body = propertiesTools.getProperty("amf.mail.body",
+						new String[] { a.getFirstName(), p.getStock().getName(), datePublication,
+								p.getPublicationType().getPublicationType(), AmfService.AMF_BASE_URL + p.getLink() });
+				try {
+					mailTools.sendMessage(a.getMail(), null, subject, body, null, true);
+				} catch (RuntimeException e) {
+					ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
+				}
 
 			}
-			
-			String linkPDF = jsoupDocument.select("a[title*=Consulter le document]").attr("href").toString();
-
-
-			PublicationType publicationType = publicationTypeDao.findByName(publicationTypeText);
-
-			if (publicationType == null) {
-				publicationType = new PublicationType(publicationTypeText);
-				publicationTypeDao.create(publicationType);
-			}
-
-			Publication publication = new Publication(publicationDate, publicationType, stock, linkPDF, docBDIF);
-
-			publicationDao.create(publication);
-
-		} catch (Exception e) {
-			ExceptionTools.processException(this, logger, e);
 		}
 
 	}
 
 	@Scheduled(cron = "${cron.amfupdate.publication}")
 	@Override
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void cronAmfUpdatePublication() {
 		double acceptableErrorRate = 0.02;
 		logger.error("Amf update publication started at " + LocalDateTime.now() + " acceptable error rate fixed at "
@@ -233,7 +218,7 @@ public class AmfServiceImpl implements AmfService {
 		String amfStats = "\nAmf update publication report :\n" + error.toString() + "\nAmf update ended at "
 				+ LocalDateTime.now();
 
-		mailTools.sendMessage(MAIL_ADMIN, "Amd update publication ended at " + LocalDateTime.now() + " with success",
+		mailTools.sendMessage(MAIL_ADMIN, "Amf update publication ended at " + LocalDateTime.now() + " with success",
 				amfStats);
 
 		logger.error(amfStats);
@@ -278,10 +263,13 @@ public class AmfServiceImpl implements AmfService {
 				ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
 			}
 		}
+		String amfStats = "\nAmf update report :\n" + error.toString() + "\nAmf update ended at "
+				+ LocalDateTime.now();
 
-		String amfStats = "\nAmf update report :\n" + error.toString() + "\nAmf update ended at " + LocalDateTime.now();
+		if (!Strings.isNullOrEmpty(error.toString())) {
 
-		mailTools.sendMessage(MAIL_ADMIN, "Amd update ended at " + LocalDateTime.now() + " with success", amfStats);
+			mailTools.sendMessage(MAIL_ADMIN, "Amf update ended at " + LocalDateTime.now() + " with success", amfStats);
+		}
 
 		logger.error(amfStats);
 

@@ -18,6 +18,8 @@ import fr.mystocks.mystockserver.data.finance.amf.publication.Publication;
 @Repository("publicationDao")
 public class PublicationDaoImpl extends AbstractDaoImpl<Publication> implements PublicationDao<Publication> {
 	private static final String BIND_STOCK_ID = "stockId";
+	private static final String BIND_BDIF = "bdifCode";
+
 
 	@Override
 	public LocalDate findLastPublicationDateByStock(Integer stockId) {
@@ -35,5 +37,23 @@ public class PublicationDaoImpl extends AbstractDaoImpl<Publication> implements 
 
 		return (LocalDate) query.uniqueResult();
 	}
+	
+	@Override
+	public Publication findPublicationByBDIFCode(String code) {
+		StringBuilder request = new StringBuilder();
+
+		request.append("select p from Publication p");
+
+
+		request.append(" where p.docBdif=:" + BIND_BDIF);
+		request.append(" order by p.datePublication desc");
+
+		Query query = getSession().createQuery(request.toString());
+		
+		query.setParameter(BIND_BDIF, code);
+
+		return (Publication) query.uniqueResult();
+	}
+
 
 }

@@ -57,7 +57,7 @@ public class SpringConfiguration {
 	public MessageSource messageSource() {
 		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
 		messageSource.setBasenames(new String[] { "classpath:properties/error", "classpath:properties/common",
-				"classpath:properties/measure" });
+				"classpath:properties/measure", "classpath:properties/amf" });
 		messageSource.setDefaultEncoding(TechnicalConstant.ENCODING);
 		return messageSource;
 	}

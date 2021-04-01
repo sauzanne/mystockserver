@@ -27,3 +27,5 @@ create index amf_publication_type_ix_stock_id on amf_publication(stock_id);
 
 alter table amf_publication add CONSTRAINT amf_publication_fk_stock_id foreign key amf_publication_type_ix_stock_id(stock_id) references stock(id);
 
+ALTER TABLE `mystocks`.`amf_publication` 
+ADD COLUMN `last_modified` datetime NULL AFTER `link`

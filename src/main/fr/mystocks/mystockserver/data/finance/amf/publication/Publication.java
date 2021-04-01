@@ -2,6 +2,7 @@ package fr.mystocks.mystockserver.data.finance.amf.publication;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -47,6 +48,10 @@ public class Publication implements Serializable {
 	
 	@Column(name="doc_bdif")
 	private String docBdif;
+	
+	@Column(name = "last_modified")
+	private LocalDateTime lastModified;
+
 
 	public Publication() {
 		super();
@@ -54,13 +59,14 @@ public class Publication implements Serializable {
 
 
 	public Publication(LocalDate datePublication, PublicationType publicationType, Stock stock, String link,
-			String docBdif) {
+			String docBdif, LocalDateTime lastModified) {
 		super();
 		this.datePublication = datePublication;
 		this.publicationType = publicationType;
 		this.stock = stock;
 		this.link = link;
 		this.docBdif = docBdif;
+		this.lastModified = lastModified;
 	}
 
 
@@ -133,6 +139,21 @@ public class Publication implements Serializable {
 	public void setLink(String link) {
 		this.link = link;
 	}
+	/**
+	 * @return the lastModified
+	 */
+	public LocalDateTime getLastModified() {
+		return lastModified;
+	}
+
+
+	/**
+	 * @param lastModified the lastModified to set
+	 */
+	public void setLastModified(LocalDateTime lastModified) {
+		this.lastModified = lastModified;
+	}
+
 
 	@Override
 	public int hashCode() {
@@ -151,6 +172,8 @@ public class Publication implements Serializable {
 		return Objects.equals(datePublication, other.datePublication) && Objects.equals(id, other.id)
 				&& Objects.equals(link, other.link) && Objects.equals(publicationType, other.publicationType);
 	}
+
+
 	
 	
 	

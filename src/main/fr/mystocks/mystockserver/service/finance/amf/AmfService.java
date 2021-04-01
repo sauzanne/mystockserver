@@ -5,6 +5,10 @@ import java.time.LocalDate;
 import fr.mystocks.mystockserver.data.finance.stock.Stock;
 
 public interface AmfService {
+	
+	static final String AMF_BASE_URL = "https://bdif.amf-france.org";
+	static final String DU = "du";
+
 
 	String getResult(Stock stock, LocalDate fromDate);
 

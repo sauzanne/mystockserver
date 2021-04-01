@@ -12,6 +12,8 @@ public final class DateTools {
 	
 	private final static DateTimeFormatter JSON_DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	public final static DateTimeFormatter FRENCH_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	public final static DateTimeFormatter FRENCH_DATE_HOUR_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
 	private DateTools() {
 		super();
 	}
