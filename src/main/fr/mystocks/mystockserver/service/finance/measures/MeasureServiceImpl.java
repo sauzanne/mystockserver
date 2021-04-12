@@ -117,7 +117,7 @@ public class MeasureServiceImpl implements MeasureService {
 					binaryOperator.name(), false);
 
 			if (allreadyDefinedAlerts != null && !allreadyDefinedAlerts.isEmpty()) {
-				throw new FunctionalException(this, "error.finance.measurealert.exist");
+				throw new FunctionalException(this, "error.finance.alert.exist");
 
 			}
 

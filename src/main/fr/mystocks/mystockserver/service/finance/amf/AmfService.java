@@ -3,6 +3,7 @@ package fr.mystocks.mystockserver.service.finance.amf;
 import java.time.LocalDate;
 
 import fr.mystocks.mystockserver.data.finance.stock.Stock;
+import fr.mystocks.mystockserver.service.finance.amf.constant.AmfAddDeleteEnum;
 
 public interface AmfService {
 	
@@ -23,5 +24,7 @@ public interface AmfService {
 	String getCodeAmf(Stock stock, StringBuffer error);
 
 	void cronAmfUpdatePublication();
+
+	Integer subscribeAmfAlert(String login, String codeStockTicker, AmfAddDeleteEnum addDelete);
 
 }

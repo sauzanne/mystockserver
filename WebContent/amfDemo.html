@@ -1,0 +1,221 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>MystockServer - Measure Alert</title>
+<meta charset="UTF-8">
+<script type="text/javascript" src="js/jquery2.24.min.js"></script>
+<script type="text/javascript" src="js/commonDemo.js"></script>
+<link rel="stylesheet" href="css/commonDemo.css" type="text/css" />
+<script type="application/javascript">
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	var urlServer = location.href.substring(0, location.href.indexOf("mystockserver") + 14)+ "api/";
+				
+	function postCreateAmfAlert(dType) {
+		$.ajax({
+			type : 'POST',
+			headers : {"Authorization": "Basic "+$("#idToken").val()},
+			contentType : "application/x-www-form-urlencoded",
+			data : $("#idCreateAmfForm").serialize(),
+			dataType : dType,
+			url : urlServer + "finance/amf/postSubscribeAmfAlert",
+			success : function(data, textStatus, jqXHR) {
+				$("#idResults").val(jqXHR.responseText);
+				$("#codeCreateAmfAlert").text(jqXHR.status);
+				$("#dateCreateAmfAlert").text(getCurrentDate);
+				$("#divCreateAmfAlert").show();
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#idResults").val(jqXHR.responseText);
+				$("#codeCreateAmfAlert").text(jqXHR.status);
+				$("#dateCreateAmfAlert").text(getCurrentDate);
+				$("#divCreateAmfAlert").show();
+			}
+		});
+	}
+	
+	function getAllMeasureAlert(dType) {
+		$.ajax({
+			type : 'GET',
+			headers : {"Authorization": "Basic "+$("#idToken").val()},
+			dataType : dType,
+			url : urlServer + "finance/measure/getAllMeasureAlert?l="+$("#idLogin").val()+"&t="+$("#idTriggered")[0].checked,
+			success : function(data, textStatus, jqXHR) {
+				$("#resultAllMeasureAlertForm").val(jqXHR.responseText);
+				$("#codeAllMeasureAlertForm").text(jqXHR.status);
+				$("#dateAllMeasureAlertForm").text(getCurrentDate);
+				$("#divAllMeasureAlertForm").show();
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#resultAllMeasureAlertForm").val(jqXHR.responseText);
+				$("#codeAllMeasureAlertForm").text(jqXHR.status);
+				$("#dateAllMeasureAlertForm").text(getCurrentDate);
+				$("#divAllMeasureAlertForm").show();
+			}
+		});
+
+	}
+
+
+	
+
+	function disableButton(name) {
+		if (document.getElementsByName(name)[0].disabled) {
+			document.getElementsByName(name)[0].disabled = false;
+		} else {
+			document.getElementsByName(name)[0].disabled = true;
+		}
+
+	}
+
+ 	function getFile(dType) {
+		$.ajax({
+			type : 'GET',
+			headers : {"Authorization": "Basic "+$("#idToken").val()},
+			dataType : "application/octet-stream",
+			url : urlServer + "finance/measure/getFile",
+			success : function(){
+				window.location = "result.csv";
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				$("#resultAllMeasureAlertForm").val(jqXHR.responseText);
+				$("#codeAllMeasureAlertForm").text(jqXHR.status);
+				$("#dateAllMeasureAlertForm").text(getCurrentDate);
+				$("#divAllMeasureAlertForm").show();
+			}
+		/* 	success : function(data, textStatus, jqXHR) {
+				$("#resultAllMeasureAlertForm").val(jqXHR.responseText);
+				$("#codeAllMeasureAlertForm").text(jqXHR.status);
+				$("#dateAllMeasureAlertForm").text(getCurrentDate);
+				$("#divAllMeasureAlertForm").show();
+			},*/
+			
+		});
+
+	} 
+ 	
+ 	function convertArrayOfObjectsToCSV(args) {  
+        var result, ctr, keys, columnDelimiter, lineDelimiter, data;
+
+        data = args.data || null;
+        //data = jQuery.parseJSON(args) || null;
+        if (data == null || !data.length) {
+            return null;
+        }
+        
+        data = jQuery.parseJSON(data);
+
+        columnDelimiter = args.columnDelimiter || ';';
+        lineDelimiter = args.lineDelimiter || '\n';
+
+        keys = Object.keys(data[0]);
+
+        result = '';
+        result += keys.join(columnDelimiter);
+        result += lineDelimiter;
+
+        data.forEach(function(item) {
+            ctr = 0;
+            keys.forEach(function(key) {
+                if (ctr > 0) result += columnDelimiter;
+
+                result += item[key];
+                ctr++;
+            });
+            result += lineDelimiter;
+        });
+
+        return result;
+    }
+
+ 	function downloadCSV(stockData) {  
+        var data, filename, link;
+        var csv = convertArrayOfObjectsToCSV({
+            data: stockData
+        });
+        if (csv == null) return;
+
+        filename = 'export.csv';
+
+        if (!csv.match(/^data:text\/csv/i)) {
+            csv = 'data:text/csv;charset=utf-8,' + csv;
+        }
+        data = encodeURI(csv);
+
+        link = document.createElement('a');
+        link.setAttribute('href', data);
+        link.setAttribute('download', filename);
+        link.click();
+    }
+
+
+
+
+
+
+
+
+</script>
+</head>
+<body>
+	<br />
+	<div style="height: 100px; vertical-align: middle;">
+		<h1>MystockServer - Amf</h1>
+	</div>
+
+	<br /> Token
+	<input type="text" id="idToken" placeholder="Input your token">
+	<br />
+
+
+
+	<br />
+	<br />
+	<h3>Create amf alert</h3>
+	<br /> Instructions : define an alert to receipt all amf news on a stock
+	<br /> Each 20 minutes mystockserver run a batch and alert you by mail if
+	one of your alert is triggered
+	<br />
+	<br />
+
+	<br />
+	<br />
+	<form name="createMeasureForm" method="post" id="idCreateAmfForm">
+
+		<input type="text" id="l" placeholder="login" name="l"> <input
+			type="text" id="st" placeholder="stock ticker" name="st">  Add/delete <select id="ad" name="ad">
+			<option value="a">Add</option>
+			<option value="d">Delete</option>
+		</select>
+		<input type="button"
+			onclick="postCreateAmfAlert('text')" value="create Measure/Alert" />
+	</form>
+	<div id="divCreateAmfAlert" style="display: none;">
+		<span style="font-weight: bold">Code : </span> <span
+			id="codeCreateAmfAlert"></span> <span style="font-weight: bold">Date
+			: </span> <span id="dateCreateAmfAlert"></span>
+	</div>
+	<br /> Result
+	<br />
+
+
+	<textarea cols="50" id="idResults">
+	</textarea>
+
+	<br>
+	<br>
+	<br>
+
+</body>
+
+</html>

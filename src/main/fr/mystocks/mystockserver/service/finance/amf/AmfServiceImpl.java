@@ -3,19 +3,14 @@ package fr.mystocks.mystockserver.service.finance.amf;
 import java.net.URLEncoder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,15 +26,20 @@ import fr.mystocks.mystockserver.dao.finance.amf.notification.NotificationDao;
 import fr.mystocks.mystockserver.dao.finance.amf.publication.PublicationDao;
 import fr.mystocks.mystockserver.dao.finance.amf.publicationtype.PublicationTypeDao;
 import fr.mystocks.mystockserver.dao.finance.stock.StockDao;
+import fr.mystocks.mystockserver.dao.finance.stockticker.StockTickerDao;
+import fr.mystocks.mystockserver.dao.security.account.AccountDao;
 import fr.mystocks.mystockserver.data.finance.amf.notification.Notification;
 import fr.mystocks.mystockserver.data.finance.amf.publication.Publication;
 import fr.mystocks.mystockserver.data.finance.amf.publicationtype.PublicationType;
 import fr.mystocks.mystockserver.data.finance.stock.Stock;
+import fr.mystocks.mystockserver.data.finance.stockticker.StockTicker;
 import fr.mystocks.mystockserver.data.security.Account;
+import fr.mystocks.mystockserver.service.finance.amf.constant.AmfAddDeleteEnum;
 import fr.mystocks.mystockserver.service.finance.amf.publication.PublicationService;
 import fr.mystocks.mystockserver.technic.constant.TechnicalConstant;
 import fr.mystocks.mystockserver.technic.date.DateTools;
 import fr.mystocks.mystockserver.technic.exceptions.ExceptionTools;
+import fr.mystocks.mystockserver.technic.exceptions.FunctionalException;
 import fr.mystocks.mystockserver.technic.http.HttpTools;
 import fr.mystocks.mystockserver.technic.mail.MailTools;
 import fr.mystocks.mystockserver.technic.properties.PropertiesTools;
@@ -55,6 +55,8 @@ public class AmfServiceImpl implements AmfService {
 	private static final String LIMIT = "limit";
 	private static final String Q = "q";
 	private static final String TIMESTAMP = "timestamp";
+
+	private static final String PARIS_CODE_PLACE = "PA";
 
 	private static final LocalDate PUBLICATION_START_SEARCH = LocalDate.of(2021, 3, 1);
 
@@ -81,7 +83,59 @@ public class AmfServiceImpl implements AmfService {
 	@Autowired
 	private MailTools mailTools;
 
+	@Autowired
+	private StockTickerDao<StockTicker> stockTickerDao;
+
+	@Autowired
+	private AccountDao<Account> accountDao;
+
 	private final static String MAIL_ADMIN = "sauzanne@gmail.com";
+
+	@Override
+	public Integer subscribeAmfAlert(String login, String codeStockTicker, AmfAddDeleteEnum addDelete) {
+
+		try {
+			StockTicker stockTicker = stockTickerDao.findByCodeAndPlace(codeStockTicker, PARIS_CODE_PLACE, true);
+
+			if (stockTicker == null) {
+				throw new FunctionalException(this, "error.finance.stockticker.notfound");
+			}
+
+			Account account = accountDao.getAccountByLogin(login);
+			if (account == null) {
+				throw new FunctionalException(this, "error.account.login");
+			}
+
+			List<Notification> notifications = notificationDao.findNotification(stockTicker.getStock().getId(),
+					account.getId());
+
+			if (!notifications.isEmpty() && addDelete == AmfAddDeleteEnum.Add) {
+				throw new FunctionalException(this, "error.finance.alert.exist");
+			}
+			else if(notifications.isEmpty() && addDelete==AmfAddDeleteEnum.Delete) {
+				throw new FunctionalException(this, "error.finance.alert.notexist");
+			}
+
+			if (addDelete == AmfAddDeleteEnum.Add) {
+
+				Notification n = new Notification();
+
+				n.setAccount(account);
+				n.setStock(stockTicker.getStock());
+
+				notificationDao.create(n);
+
+				return n.getId();
+			} else {
+				notifications.stream().forEach(n -> notificationDao.delete(n));
+			}
+
+		} catch (RuntimeException e) {
+			ExceptionTools.processException(this, logger, e);
+		}
+		return null;
+
+	}
 
 	@Override
 	public String getCodeAmf(Stock stock, StringBuffer error) {
@@ -148,7 +202,7 @@ public class AmfServiceImpl implements AmfService {
 			}
 
 		} catch (Exception e) {
-			ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
+			ExceptionTools.processException(this, logger, e);
 		}
 		return null;
 
@@ -156,13 +210,11 @@ public class AmfServiceImpl implements AmfService {
 
 	private void sendPublication(Publication p) {
 
-		List<Account> accounts = notificationDao.findSubsriberByStock(p.getStock().getId());
+		List<Account> accounts = notificationDao.findSubscriber(p.getStock().getId(), null);
 
 		if (!accounts.isEmpty()) {
 
 			String subject = propertiesTools.getProperty("amf.mail.subject", new String[] { p.getStock().getName() });
-
-			String comment = "";
 
 			String datePublication = DateTools.convertLocalDateToFormat(p.getDatePublication(),
 					DateTools.FRENCH_DATE_FORMATTER);
@@ -184,10 +236,7 @@ public class AmfServiceImpl implements AmfService {
 	@Scheduled(cron = "${cron.amfupdate.publication}")
 	@Override
 	public void cronAmfUpdatePublication() {
-		double acceptableErrorRate = 0.02;
-		logger.error("Amf update publication started at " + LocalDateTime.now() + " acceptable error rate fixed at "
-				+ acceptableErrorRate * 100 + " %");
-		LocalDate calculationDate = DateTools.getPreviousOpenDate(LocalDate.now());
+		logger.error("Amf update publication started at " + LocalDateTime.now());
 
 		// étape 1 : recherche et mise à jour des actions
 
@@ -211,15 +260,19 @@ public class AmfServiceImpl implements AmfService {
 				getResult(stock, lastPublicationDate);
 
 			} catch (Exception e) {
+				error.append("\nImpossible to get last publication for  " + stock.getIsin() + "\n"
+						+ e.getLocalizedMessage());
 				ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
 			}
 		}
 
 		String amfStats = "\nAmf update publication report :\n" + error.toString() + "\nAmf update ended at "
 				+ LocalDateTime.now();
+		if (error.length() > 0) {
 
-		mailTools.sendMessage(MAIL_ADMIN, "Amf update publication ended at " + LocalDateTime.now() + " with success",
-				amfStats);
+			mailTools.sendMessage(MAIL_ADMIN,
+					"Amf update publication ended at " + LocalDateTime.now() + " with success", amfStats);
+		}
 
 		logger.error(amfStats);
 
@@ -229,10 +282,7 @@ public class AmfServiceImpl implements AmfService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void cronAmfUpdate() {
-		double acceptableErrorRate = 0.02;
-		logger.error("Amf update started at " + LocalDateTime.now() + " acceptable error rate fixed at "
-				+ acceptableErrorRate * 100 + " %");
-		LocalDate calculationDate = DateTools.getPreviousOpenDate(LocalDate.now());
+		logger.error("Amf update started at " + LocalDateTime.now());
 
 		// étape 1 : recherche et mise à jour des actions
 
@@ -263,10 +313,9 @@ public class AmfServiceImpl implements AmfService {
 				ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
 			}
 		}
-		String amfStats = "\nAmf update report :\n" + error.toString() + "\nAmf update ended at "
-				+ LocalDateTime.now();
+		String amfStats = "\nAmf update report :\n" + error.toString() + "\nAmf update ended at " + LocalDateTime.now();
 
-		if (!Strings.isNullOrEmpty(error.toString())) {
+		if (error.length() > 0) {
 
 			mailTools.sendMessage(MAIL_ADMIN, "Amf update ended at " + LocalDateTime.now() + " with success", amfStats);
 		}

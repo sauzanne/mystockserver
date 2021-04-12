@@ -7,6 +7,8 @@ UNIQUE(publication_type)
 
 
 
+drop table amf_publication;
+
 CREATE TABLE mystocks.amf_publication (
    id INT UNSIGNED AUTO_INCREMENT NOT NULL,
    date_publication date NOT NULL,
@@ -14,8 +16,9 @@ CREATE TABLE mystocks.amf_publication (
    amf_publication_type_id INT UNSIGNED not null,
    stock_id INT UNSIGNED not null,
    link varchar(2048) not null,
+   last_modified datetime NULL,
 PRIMARY KEY (id),
-unique(doc_bdif)
+unique(date_publication, stock_id, link)
 ) ENGINE = InnoDB CHARSET=UTF8 ROW_FORMAT = DEFAULT;
 
 create index amf_publication_type_ix_amf_publication_type_id on amf_publication(amf_publication_type_id);
@@ -26,6 +29,3 @@ alter table amf_publication add CONSTRAINT amf_publication_fk_amf_publication_ty
 create index amf_publication_type_ix_stock_id on amf_publication(stock_id);
 
 alter table amf_publication add CONSTRAINT amf_publication_fk_stock_id foreign key amf_publication_type_ix_stock_id(stock_id) references stock(id);
-
-ALTER TABLE `mystocks`.`amf_publication` 
-ADD COLUMN `last_modified` datetime NULL AFTER `link`

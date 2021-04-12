@@ -11,4 +11,6 @@ public interface PublicationDao<T> extends Dao<T> {
 
 	Publication findPublicationByBDIFCode(String code);
 
+	Publication findPublicationByLink(String link);
+
 }

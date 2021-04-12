@@ -19,6 +19,8 @@ import fr.mystocks.mystockserver.data.finance.amf.publication.Publication;
 public class PublicationDaoImpl extends AbstractDaoImpl<Publication> implements PublicationDao<Publication> {
 	private static final String BIND_STOCK_ID = "stockId";
 	private static final String BIND_BDIF = "bdifCode";
+	private static final String BIND_LINK = "link";
+
 
 
 	@Override
@@ -54,6 +56,24 @@ public class PublicationDaoImpl extends AbstractDaoImpl<Publication> implements 
 
 		return (Publication) query.uniqueResult();
 	}
+	
+	@Override
+	public Publication findPublicationByLink(String link) {
+		StringBuilder request = new StringBuilder();
+
+		request.append("select p from Publication p");
+
+
+		request.append(" where p.link=:" + BIND_LINK);
+		request.append(" order by p.datePublication desc");
+
+		Query query = getSession().createQuery(request.toString());
+		
+		query.setParameter(BIND_LINK, link);
+
+		return (Publication) query.uniqueResult();
+	}
+
 
 
 }

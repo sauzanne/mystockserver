@@ -75,6 +75,8 @@ public class PublicationServiceImpl implements PublicationService {
 				logger.debug("Publication with BDIFCode " + docBDIF + " already exist !");
 				return null;
 			}
+			
+
 
 			try {
 				publicationDate = LocalDate.parse(publicationDateText,
@@ -86,6 +88,12 @@ public class PublicationServiceImpl implements PublicationService {
 			}
 
 			String linkPDF = jsoupDocument.select("a[title*=Consulter le document]").attr("href").toString();
+			
+			if (publicationDao.findPublicationByLink(linkPDF) != null) {
+				logger.debug("Publication with link PDF " + linkPDF + " already exist !");
+				return null;
+			}
+
 
 			PublicationType publicationType = publicationTypeDao.findByName(publicationTypeText);
 
@@ -95,6 +103,8 @@ public class PublicationServiceImpl implements PublicationService {
 			}
 
 			Publication publication = new Publication(publicationDate, publicationType, stock, linkPDF, docBDIF, LocalDateTime.now());
+			
+			
 
 			publicationDao.create(publication);
 
