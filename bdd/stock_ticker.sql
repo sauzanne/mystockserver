@@ -262,4 +262,4 @@ insert into stock_ticker(code,stock_id, place_id,main_place,server_user_id,disab
 
 
 ALTER TABLE `mystocks`.`stock_ticker` 
-MODIFY `code` varchar(6) not NULL;
+MODIFY `code` varchar(8) not NULL;

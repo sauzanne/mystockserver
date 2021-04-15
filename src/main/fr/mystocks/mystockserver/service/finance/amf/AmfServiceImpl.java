@@ -260,7 +260,7 @@ public class AmfServiceImpl implements AmfService {
 				getResult(stock, lastPublicationDate);
 
 			} catch (Exception e) {
-				error.append("\nImpossible to get last publication for  " + stock.getIsin() + "\n"
+				error.append("\nImpossible to get last publication for  " + stock.getName() + "("+stock.getIsin()+")\n"
 						+ e.getLocalizedMessage());
 				ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
 			}
@@ -304,9 +304,8 @@ public class AmfServiceImpl implements AmfService {
 					stock.setAmfCode(codeAmf);
 					stockDao.update(stock);
 				} else {
-					String errorAmfCode = "Impossible to get AMF code for " + stock.getIsin() + " / " + stock.getName()
-							+ "\n";
-					error.append(error);
+					String errorAmfCode = "Impossible to get AMF code for "+ stock.getName() + "("+stock.getIsin()+")\n";
+					error.append(errorAmfCode);
 					logger.error(errorAmfCode);
 				}
 			} catch (Exception e) {
