@@ -169,9 +169,6 @@ public class MeasureCalculationServiceImpl implements MeasureCalculationService 
 		}
 		calculationStats += "\nMeasures calculations ended at " + LocalDateTime.now();
 
-		mailTools.sendMessage(MAIL_ADMIN,
-				"measure calculations ended at " + LocalDateTime.now() + " with success", calculationStats);
-
 		logger.error(calculationStats);
 
 	}

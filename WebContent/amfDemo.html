@@ -44,23 +44,23 @@
 		});
 	}
 	
-	function getAllMeasureAlert(dType) {
+	function getAllAmfAlert(dType) {
 		$.ajax({
 			type : 'GET',
 			headers : {"Authorization": "Basic "+$("#idToken").val()},
 			dataType : dType,
-			url : urlServer + "finance/measure/getAllMeasureAlert?l="+$("#idLogin").val()+"&t="+$("#idTriggered")[0].checked,
+			url : urlServer + "finance/amf/getAllAmfAlert?l="+$("#idLogin").val(),
 			success : function(data, textStatus, jqXHR) {
-				$("#resultAllMeasureAlertForm").val(jqXHR.responseText);
-				$("#codeAllMeasureAlertForm").text(jqXHR.status);
-				$("#dateAllMeasureAlertForm").text(getCurrentDate);
-				$("#divAllMeasureAlertForm").show();
+				$("#resultAllAmfAlertForm").val(jqXHR.responseText);
+				$("#codeAllAmfAlertForm").text(jqXHR.status);
+				$("#dateAllAmfAlertForm").text(getCurrentDate);
+				$("#divAllAmfAlertForm").show();
 			},
 			error : function(jqXHR, textStatus, errorThrown) {
-				$("#resultAllMeasureAlertForm").val(jqXHR.responseText);
-				$("#codeAllMeasureAlertForm").text(jqXHR.status);
-				$("#dateAllMeasureAlertForm").text(getCurrentDate);
-				$("#divAllMeasureAlertForm").show();
+				$("#resultAllAmfAlertForm").val(jqXHR.responseText);
+				$("#codeAllAmfAlertForm").text(jqXHR.status);
+				$("#dateAllAmfAlertForm").text(getCurrentDate);
+				$("#divAllAmfAlertForm").show();
 			}
 		});
 
@@ -78,31 +78,6 @@
 
 	}
 
- 	function getFile(dType) {
-		$.ajax({
-			type : 'GET',
-			headers : {"Authorization": "Basic "+$("#idToken").val()},
-			dataType : "application/octet-stream",
-			url : urlServer + "finance/measure/getFile",
-			success : function(){
-				window.location = "result.csv";
-			},
-			error : function(jqXHR, textStatus, errorThrown) {
-				$("#resultAllMeasureAlertForm").val(jqXHR.responseText);
-				$("#codeAllMeasureAlertForm").text(jqXHR.status);
-				$("#dateAllMeasureAlertForm").text(getCurrentDate);
-				$("#divAllMeasureAlertForm").show();
-			}
-		/* 	success : function(data, textStatus, jqXHR) {
-				$("#resultAllMeasureAlertForm").val(jqXHR.responseText);
-				$("#codeAllMeasureAlertForm").text(jqXHR.status);
-				$("#dateAllMeasureAlertForm").text(getCurrentDate);
-				$("#divAllMeasureAlertForm").show();
-			},*/
-			
-		});
-
-	} 
  	
  	function convertArrayOfObjectsToCSV(args) {  
         var result, ctr, keys, columnDelimiter, lineDelimiter, data;
@@ -215,6 +190,31 @@
 	<br>
 	<br>
 	<br>
+
+	<form name="allAmfAlertForm" method="get"
+		id="idAllAmfAlertForm"">
+
+		<input type="text" id="idLogin" placeholder="login" name="l">
+
+		<input
+			type="button" onclick="getAllAmfAlert('text')"
+			value="get all amf alert" />
+	</form>
+
+	<div id="divAllAmfAlertForm" style="display: none;">
+		<span style="font-weight: bold">Code : </span> <span
+			id="codeAllAmfAlertForm"></span> <span style="font-weight: bold">Date
+			: </span> <span id="dateAllAmfAlertForm"></span>
+	</div>
+	</br> Result
+	</br>
+
+	<textarea cols="50" id="resultAllAmfAlertForm">
+	</textarea>
+	<br>
+	<input type="button" onclick="downloadCSV($('#resultAllAmfAlertForm').val())" value="convert to CSV file" />	<div style="width: 100%; text-align: center;">
+		<b>Mystocks - Copyright 2021</b>
+	</div>
 
 </body>
 

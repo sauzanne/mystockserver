@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 import fr.mystocks.mystockserver.dao.finance.amf.publication.PublicationDao;
 import fr.mystocks.mystockserver.dao.finance.amf.publicationtype.PublicationTypeDao;
@@ -40,6 +42,8 @@ public class PublicationServiceImpl implements PublicationService {
 
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	
+	private final static String NUMERO = "n°";
 
 
 	@Override
@@ -60,10 +64,14 @@ public class PublicationServiceImpl implements PublicationService {
 			String publicationTypeText = null;
 
 			if (spanDocPDIF.get(0).childNode(0).outerHtml().indexOf(AmfService.DU) != -1) {
-				String[] spanDocPDIFContentSplitted = spanDocPDIF.get(0).childNode(0).outerHtml().split(AmfService.DU);
+				
+				List<String> spanDocPDIFContentSplitted = Lists.newArrayList(spanDocPDIF.get(0).childNode(0).outerHtml().split(AmfService.DU));
 
-				publicationDateText = spanDocPDIFContentSplitted[1].trim();
-				docBDIF = spanDocPDIFContentSplitted[0].split("n°")[1].trim();
+				// on récupère forcément le dernier élément
+				publicationDateText = spanDocPDIFContentSplitted.get(spanDocPDIFContentSplitted.size()-1).trim();
+				
+				//on parcourt la liste à la recherche d'un n°
+				docBDIF = spanDocPDIFContentSplitted.stream().filter(s -> s.lastIndexOf(NUMERO)!=-1).findFirst().orElse("").split(NUMERO)[1].trim();
 				publicationTypeText = divTitreBdif.get(0).childNode(0).outerHtml().split(",")[0].trim();
 			} else if (optSpanPublishAt.isPresent()) {
 				publicationDateText = optSpanPublishAt.get().text().split(":")[1].trim();
@@ -110,6 +118,8 @@ public class PublicationServiceImpl implements PublicationService {
 
 			return publication;
 		} catch (Exception e) {
+			logger.error("getDownloadPage, link =  "+ link);
+			logger.error(ExceptionTools.parseTrace(e));
 			ExceptionTools.processException(this, logger, e);
 		}
 		return null;

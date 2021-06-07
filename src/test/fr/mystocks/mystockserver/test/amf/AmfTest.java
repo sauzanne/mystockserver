@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import fr.mystocks.mystockserver.data.finance.stock.Stock;
 import fr.mystocks.mystockserver.service.finance.amf.AmfService;
+import fr.mystocks.mystockserver.service.finance.amf.publication.PublicationService;
 import fr.mystocks.mystockserver.technic.configuration.start.SpringBootWebApplication;
 import fr.mystocks.mystockserver.technic.exceptions.ExceptionTools;
 
@@ -26,7 +27,20 @@ public class AmfTest {
 	@Autowired
 	private AmfService amfService;
 
+	@Autowired
+	private PublicationService publicationService;
+
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+	@Test
+	public void testLVMH() {
+		Stock s = new Stock();
+		s.setName("LVMH MOET HENNESSY-LOUIS VUITTON");
+
+		publicationService.getDownloadPage(
+				"/Fiche-BDIF?xtcr=1&isSearch=true&docId=10S-3110-02.C_C.20-0113-S01&lastSearchPage=https%3A%2F%2Fbdif.amf-france.org%2FmagnoliaPublic%2Famf%2FResultat-de-recherche-BDIF%3FformId%3DBDIF%26DOC_TYPE%3DBDIF%26LANGUAGE%3Dfr%26subFormId%3Das%26BDIF_RAISON_SOCIALE%3DLVMH%2BMOET%2BHENNESSY-LOUIS%2BVUITTON%26bdifJetonSociete%3DRS00001689%26DATE_PUBLICATION%3D%26DATE_OBSOLESCENCE%3D%26valid_form%3DLancer%2Bla%2Brecherche%26isSearch%3Dtrue&xtmc=-LVMH-MOET-HENNESSY-LOUIS-VUITTON",
+				s);
+	}
 
 	@Test
 	public void testRecuperationValeursAmf() {
@@ -42,7 +56,6 @@ public class AmfTest {
 		}
 		Assert.fail();
 	}
-	
 
 	@Test
 	public void testCronAmfUpdate() {
@@ -55,7 +68,7 @@ public class AmfTest {
 		}
 		Assert.fail();
 	}
-	
+
 	@Test
 	public void testCronAmfUpdatePublication() {
 		try {
@@ -67,6 +80,5 @@ public class AmfTest {
 		}
 		Assert.fail();
 	}
-
 
 }

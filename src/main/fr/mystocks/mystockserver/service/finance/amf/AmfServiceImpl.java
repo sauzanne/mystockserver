@@ -43,6 +43,7 @@ import fr.mystocks.mystockserver.technic.exceptions.FunctionalException;
 import fr.mystocks.mystockserver.technic.http.HttpTools;
 import fr.mystocks.mystockserver.technic.mail.MailTools;
 import fr.mystocks.mystockserver.technic.properties.PropertiesTools;
+import fr.mystocks.mystockserver.view.model.finance.amf.AmfStockModel;
 
 @Service("amfService")
 @Transactional
@@ -111,8 +112,7 @@ public class AmfServiceImpl implements AmfService {
 
 			if (!notifications.isEmpty() && addDelete == AmfAddDeleteEnum.Add) {
 				throw new FunctionalException(this, "error.finance.alert.exist");
-			}
-			else if(notifications.isEmpty() && addDelete==AmfAddDeleteEnum.Delete) {
+			} else if (notifications.isEmpty() && addDelete == AmfAddDeleteEnum.Delete) {
 				throw new FunctionalException(this, "error.finance.alert.notexist");
 			}
 
@@ -260,8 +260,8 @@ public class AmfServiceImpl implements AmfService {
 				getResult(stock, lastPublicationDate);
 
 			} catch (Exception e) {
-				error.append("\nImpossible to get last publication for  " + stock.getName() + "("+stock.getIsin()+")\n"
-						+ e.getLocalizedMessage());
+				error.append("\nImpossible to get last publication for  " + stock.getName() + "(" + stock.getIsin()
+						+ ")\n" + e.getLocalizedMessage());
 				ExceptionTools.processExceptionOnlyWithLogging(this, logger, e);
 			}
 		}
@@ -304,7 +304,8 @@ public class AmfServiceImpl implements AmfService {
 					stock.setAmfCode(codeAmf);
 					stockDao.update(stock);
 				} else {
-					String errorAmfCode = "Impossible to get AMF code for "+ stock.getName() + "("+stock.getIsin()+")\n";
+					String errorAmfCode = "Impossible to get AMF code for " + stock.getName() + "(" + stock.getIsin()
+							+ ")\n";
 					error.append(errorAmfCode);
 					logger.error(errorAmfCode);
 				}
@@ -321,6 +322,30 @@ public class AmfServiceImpl implements AmfService {
 
 		logger.error(amfStats);
 
+	}
+
+	@Override
+	public List<AmfStockModel> getAllMeasure(String login) {
+		try {
+			Account account = accountDao.getAccountByLogin(login);
+			if (account == null) {
+				throw new FunctionalException(this, "error.account.login");
+			}
+
+			List<Notification> notifications = notificationDao.findNotification(null, account.getId());
+
+			List<AmfStockModel> listStockModel = notifications.stream().map(n -> n.getStock())
+					.map(s -> new AmfStockModel(s.getIsin(),
+							s.getListStockTicker().stream().findFirst().orElse(new StockTicker()).getCode(),
+							s.getName()))
+					.collect(Collectors.toList());
+
+			return listStockModel;
+
+		} catch (RuntimeException e) {
+			ExceptionTools.processException(this, logger, e);
+		}
+		return null;
 	}
 
 }

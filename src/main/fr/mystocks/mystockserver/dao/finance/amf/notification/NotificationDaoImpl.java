@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import fr.mystocks.mystockserver.dao.AbstractDaoImpl;
 import fr.mystocks.mystockserver.data.finance.amf.notification.Notification;
 import fr.mystocks.mystockserver.data.security.Account;
+import fr.mystocks.mystockserver.technic.hql.HqlTools;
 
 /**
  * @author sauzanne
@@ -27,7 +28,7 @@ public class NotificationDaoImpl extends AbstractDaoImpl<Notification> implement
 		StringBuilder request = new StringBuilder();
 
 		request.append("select a ");
-		
+
 		return (List<Account>) requestNotificationByStockAndAccount(stockId, accountId, request).list();
 	}
 
@@ -36,23 +37,28 @@ public class NotificationDaoImpl extends AbstractDaoImpl<Notification> implement
 		request.append(" inner join n.account a ");
 		request.append(" inner join n.stock s ");
 
-		request.append(" where s.id=:" + BIND_STOCK_ID);
+		if (stockId != null) {
+			HqlTools.getClauseWhere(request);
+			request.append("s.id=:" + BIND_STOCK_ID);
+		}
 
 		if (accountId != null) {
-			request.append(" and a.id=:" + BIND_ACCOUNT_ID);
-
+			HqlTools.getClauseWhere(request);
+			request.append(" a.id=:" + BIND_ACCOUNT_ID);
 		}
 
 		Query query = getSession().createQuery(request.toString());
 
-		query.setParameter(BIND_STOCK_ID, stockId);
+		if (stockId != null) {
+			query.setParameter(BIND_STOCK_ID, stockId);
+		}
 
 		if (accountId != null) {
 			query.setParameter(BIND_ACCOUNT_ID, accountId);
 		}
 		return query;
 	}
-	
+
 	@Override
 	public List<Notification> findNotification(Integer stockId, Integer accountId) {
 		StringBuilder request = new StringBuilder();
@@ -61,6 +67,5 @@ public class NotificationDaoImpl extends AbstractDaoImpl<Notification> implement
 
 		return (List<Notification>) requestNotificationByStockAndAccount(stockId, accountId, request).list();
 	}
-
 
 }
