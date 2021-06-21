@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum RoleEnum {
-	SUPERADMIN(3, RoleConst.SUPERADMIN), ADMIN(2, RoleConst.ADMIN), USER(1, RoleConst.USER), READONLY_USER(0,
+	SUPERADMIN(4, RoleConst.SUPERADMIN), ADMIN(3, RoleConst.ADMIN), USER(2, RoleConst.USER), READONLY_USER(1,
 			RoleConst.READONLY_USER);
 
 	private final int authorizationLevel;

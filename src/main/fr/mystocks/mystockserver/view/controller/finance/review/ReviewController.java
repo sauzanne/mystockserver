@@ -131,7 +131,7 @@ public class ReviewController {
 	@Application(type = Type.SOFTWARE, os = OS.WIN, name = ApplicationEnum.MYSTOCKS)
 	@POST
 	@Path("postReview")
-	public Response postNewsFlow(@FormParam(PARAM_TOKEN) String token, @FormParam(PARAM_ID) Integer id,
+	public Response postReview(@FormParam(PARAM_TOKEN) String token, @FormParam(PARAM_ID) Integer id,
 			@FormParam(PARAM_STOCK) Integer stockId, @FormParam(PARAM_PERIOD) String period,
 			@FormParam(PARAM_START_YEAR) Integer startYear, @FormParam(PARAM_END_YEAR) Integer endYear,
 			@FormParam(PARAM_START_DATE) String startDate, @FormParam(PARAM_PUBLICATION_DATE) String publicationDate,
