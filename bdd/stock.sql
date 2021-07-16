@@ -183,3 +183,8 @@ insert into stock(id,isin,name,stock_type_id, server_user_id, first_input, last_
 
 ALTER TABLE `mystocks`.`stock` 
 ADD COLUMN `amf_code` varchar(11) NULL AFTER `isin`
+
+
+ALTER TABLE `mystocks`.`stock` 
+ADD COLUMN `amf_no_update` tinyint NULL default 0
+

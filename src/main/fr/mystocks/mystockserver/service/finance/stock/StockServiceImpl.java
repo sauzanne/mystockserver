@@ -41,6 +41,7 @@ public class StockServiceImpl implements StockService {
 			stock.setIsin(isin);
 			stock.setName(name);
 			stock.setUser(user);
+			stock.setAmfNoUpdate(false);
 			StockType st = new StockType();
 			st.setId(stockType);
 			stock.setStockType(st);

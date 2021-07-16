@@ -3,6 +3,7 @@ package fr.mystocks.mystockserver.data.finance.stock;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,6 +38,9 @@ public class Stock implements Serializable {
 	
 	@Column(name="amf_code")
 	private String amfCode;
+	
+	@Column(name="amf_no_update")
+	private boolean amfNoUpdate;
 
 	@Column(name = "name")
 	private String name;
@@ -229,31 +233,13 @@ public class Stock implements Serializable {
 		this.mystocksListed = mystocksListed;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
+
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((firstInput == null) ? 0 : firstInput.hashCode());
-		result = prime * result + ((greenrjListed == null) ? 0 : greenrjListed.hashCode());
-		result = prime * result + id;
-		result = prime * result + ((isin == null) ? 0 : isin.hashCode());
-		result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
-		result = prime * result + ((mystocksListed == null) ? 0 : mystocksListed.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((stockType == null) ? 0 : stockType.hashCode());
-		return result;
+		return Objects.hash(amfCode, amfNoUpdate, firstInput, greenrjListed, id, isin, lastModified, listStockTicker,
+				mystocksListed, name, stockType, user);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -263,44 +249,13 @@ public class Stock implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Stock other = (Stock) obj;
-		if (firstInput == null) {
-			if (other.firstInput != null)
-				return false;
-		} else if (!firstInput.equals(other.firstInput))
-			return false;
-		if (greenrjListed == null) {
-			if (other.greenrjListed != null)
-				return false;
-		} else if (!greenrjListed.equals(other.greenrjListed))
-			return false;
-		if (id != other.id)
-			return false;
-		if (isin == null) {
-			if (other.isin != null)
-				return false;
-		} else if (!isin.equals(other.isin))
-			return false;
-		if (lastModified == null) {
-			if (other.lastModified != null)
-				return false;
-		} else if (!lastModified.equals(other.lastModified))
-			return false;
-		if (mystocksListed == null) {
-			if (other.mystocksListed != null)
-				return false;
-		} else if (!mystocksListed.equals(other.mystocksListed))
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (stockType == null) {
-			if (other.stockType != null)
-				return false;
-		} else if (!stockType.equals(other.stockType))
-			return false;
-		return true;
+		return Objects.equals(amfCode, other.amfCode) && amfNoUpdate == other.amfNoUpdate
+				&& Objects.equals(firstInput, other.firstInput) && Objects.equals(greenrjListed, other.greenrjListed)
+				&& Objects.equals(id, other.id) && Objects.equals(isin, other.isin)
+				&& Objects.equals(lastModified, other.lastModified)
+				&& Objects.equals(listStockTicker, other.listStockTicker)
+				&& Objects.equals(mystocksListed, other.mystocksListed) && Objects.equals(name, other.name)
+				&& Objects.equals(stockType, other.stockType) && Objects.equals(user, other.user);
 	}
 
 	/**
@@ -315,6 +270,20 @@ public class Stock implements Serializable {
 	 */
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	/**
+	 * @return the amfNoUpdate
+	 */
+	public boolean isAmfNoUpdate() {
+		return amfNoUpdate;
+	}
+
+	/**
+	 * @param amfNoUpdate the amfNoUpdate to set
+	 */
+	public void setAmfNoUpdate(boolean amfNoUpdate) {
+		this.amfNoUpdate = amfNoUpdate;
 	}
 
 }

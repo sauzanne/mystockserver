@@ -245,7 +245,7 @@ public class AmfServiceImpl implements AmfService {
 
 		// on prend la liste des valeurs à 'updater'
 		List<Stock> listStockToUpdatePublication = listStockFR.stream()
-				.filter(s -> s.getAmfCode() != null && s.getStockType().getCode().equals(STOCK_TYPE_DEFAULT_CODE))
+				.filter(s -> s.getAmfCode() != null && !s.isAmfNoUpdate() && s.getStockType().getCode().equals(STOCK_TYPE_DEFAULT_CODE))
 				.collect(Collectors.toList());
 
 		StringBuffer error = new StringBuffer();
