@@ -23,6 +23,7 @@ public class NotificationDaoImpl extends AbstractDaoImpl<Notification> implement
 	private static final String BIND_STOCK_ID = "stockId";
 	private static final String BIND_ACCOUNT_ID = "accountId";
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Account> findSubscriber(Integer stockId, Integer accountId) {
 		StringBuilder request = new StringBuilder();
@@ -59,6 +60,7 @@ public class NotificationDaoImpl extends AbstractDaoImpl<Notification> implement
 		return query;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Notification> findNotification(Integer stockId, Integer accountId) {
 		StringBuilder request = new StringBuilder();
